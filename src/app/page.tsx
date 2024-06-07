@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./page.module.css";
 import SNSButton from "./conponents/SNSButton";
+import FAQItem from "./conponents/FAQItems";
 
 const Home = () => {
   return (
@@ -64,7 +65,7 @@ const Home = () => {
                   </p>
                 </div>
               </div>
-              <div className="anm_mod right delay flex divide-x rounded-lg border bg-gray-50">
+              <div className="flex divide-x rounded-lg border bg-gray-50">
                 <div className="flex items-center p-2 text-indigo-500 md:p-4 ">
                   <span className="material-symbols-outlined">payments</span>
                 </div>
@@ -79,7 +80,7 @@ const Home = () => {
                   </p>
                 </div>
               </div>
-              <div className="anm_mod left delay flex divide-x rounded-lg border bg-gray-50">
+              <div className=" flex divide-x rounded-lg border bg-gray-50">
                 <div className="flex items-center p-2 text-indigo-500 md:p-4 ">
                   <span className="material-symbols-outlined">hub</span>
                 </div>
@@ -94,7 +95,7 @@ const Home = () => {
                   </p>
                 </div>
               </div>
-              <div className="anm_mod right delay flex divide-x rounded-lg border bg-gray-50">
+              <div className="flex divide-x rounded-lg border bg-gray-50">
                 <div className="flex items-center p-2 text-indigo-500 md:p-4 ">
                   <span className="material-symbols-outlined">
                     discover_tune
@@ -125,82 +126,34 @@ const Home = () => {
               </p>
             </div>
             <div className="grid gap-8 sm:grid-cols-2 sm:gap-y-10 xl:grid-cols-3">
-              <div className="anm_mod left delay relative rounded-lg bg-gray-100 p-5 pt-8">
-                <span className="absolute -top-4 left-4 inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500 text-white">
-                  <svg
-                    xmlns="https://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.732 1 3 3 0 104.865 0 1 1 0 11-1.732-1A1 1 0 0010 7z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </span>
-                <h3 className="mb-3  text-gray-800 text-lg font-semibold md:text-xl">
-                  部費はありますか？
-                </h3>
-                <p className="text-gray-500">
-                  月々1,000円の部費を徴収しています．
-                  <br />
-                  その中からイベントの運営費や機材の購入に充てています．
-                </p>
+              <div className=" relative rounded-lg bg-gray-100 p-5 pt-8">
+                <FAQItem
+                  question="部費はありますか？"
+                  answer="半年で6000円の部費を徴収しています．その中からイベントの運営や機材の購入に充てています．"
+                />
               </div>
-              <div className="anm_mod right delay relative rounded-lg bg-gray-100 p-5 pt-8">
-                <span className="absolute -top-4 left-4 inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500 text-white">
-                  <svg
-                    xmlns="https://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.732 1 3 3 0 104.865 0 1 1 0 11-1.732-1A1 1 0 0010 7z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </span>
-                <h3 className="mb-3  text-gray-800 text-lg font-semibold md:text-xl">
-                  イベントはどんなものがありますか？
-                </h3>
-                <p className="text-gray-500">
-                  新歓ライブや学祭ライブなど，年間を通して様々なイベントがあります．
-                  <br />
-                  詳細はSNSをご覧ください．
-                </p>
+              <div className=" relative rounded-lg bg-gray-100 p-5 pt-8">
+                <FAQItem
+                  question="イベントはどんなものがありますか？"
+                  answer="新歓ライブや学際でのライブ、定期演奏会など，年間を通して様々なイベントがあります．詳細はSNSをご覧ください．"
+                />
               </div>
-              <div className="anm_mod left delay relative rounded-lg bg-gray-100 p-5 pt-8">
-                <span className="absolute -top-4 left-4 inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500 text-white">
-                  <svg
-                    xmlns="https://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.732 1 3 3 0 104.865 0 1 1 0 11-1.732-1A1 1 0 0010 7z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </span>
-                <h3 className="mb-3 text-lg  text-gray-800 font-semibold md:text-xl">
-                  初心者でも大丈夫ですか？
-                </h3>
-                <p className="text-gray-500">
-                  もちろんです！
-                  <br />
-                  初心者の方でも大歓迎です．一緒に成長していきましょう！
-                </p>
+              <div className=" relative rounded-lg bg-gray-100 p-5 pt-8">
+                <FAQItem
+                  question="初心者でも大丈夫ですか？"
+                  answer="もちろんです！初心者の方でも大歓迎です．一緒に成長していきましょう！"
+                />
+              </div>
+              <div className=" relative rounded-lg bg-gray-100 p-5 pt-8">
+                <FAQItem
+                  question="わからないことがあるのですが..."
+                  answer="どんな些細なことでも結構です！SNSの方までご連絡ください！"
+                />
               </div>
             </div>
           </div>
           <div className="m-5">
-            <h1>次は部室で会いましょう！</h1>
+            <h2>次は部室で会いましょう！</h2>
             <SNSButton />
           </div>
         </div>

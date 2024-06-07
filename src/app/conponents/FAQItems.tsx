@@ -1,6 +1,12 @@
 import React from "react";
 
-const FAQItem = ({ question, answer }) => (
+const FAQItem = ({
+  question,
+  answer,
+}: {
+  question: string;
+  answer: string;
+}) => (
   <div className="anm_mod right delay relative rounded-lg bg-gray-100 p-5 pt-8">
     <span className="absolute -top-4 left-4 inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500 text-white">
       <svg

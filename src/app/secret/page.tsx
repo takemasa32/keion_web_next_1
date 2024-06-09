@@ -26,10 +26,6 @@ const AudioPlayerPage: React.FC = () => {
     }
   };
   const playAll = () => {
-    audioRef1.current?.pause();
-    audioRef2.current?.pause();
-    audioRef3.current?.pause();
-    audioRef4.current?.pause();
     audioRef1.current?.play();
     audioRef2.current?.play();
     audioRef3.current?.play();

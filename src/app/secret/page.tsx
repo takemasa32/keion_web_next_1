@@ -21,35 +21,23 @@ const AudioPlayerPage: React.FC = () => {
       <Head>
         <meta name="robots" content="noindex" />
       </Head>
-      <div className="flex flex-col space-y-4 p-4">
-        <Button
-          variant="secondary"
-          className="self-center"
-          onClick={() => playSound("/secret/audio/meow.mp3")}
-        >
-          にゃーお
-        </Button>
-        <Button
-          variant="secondary"
-          className="self-center"
-          onClick={() => playSound("/secret/audio/dosu.mp3")}
-        >
-          どすっ
-        </Button>
-        <Button
-          variant="secondary"
-          className="self-center"
-          onClick={() => playSound("/secret/audio/burudo-za-.mp3")}
-        >
-          ブルドーザー
-        </Button>
-        <Button
-          variant="secondary"
-          className="self-center"
-          onClick={() => playSound("/secret/audio/baikinman.mp3")}
-        >
-          バイキンマン
-        </Button>
+      <div className="flex flex-col sm:flex-row sm:flex-wrap justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 p-4">
+        <div className="flex justify-center space-x-4 sm:w-1/2">
+          <Button variant="secondary" onClick={() => playSound("/secret/audio/meow.mp3")}>
+            にゃーお
+          </Button>
+          <Button variant="secondary" onClick={() => playSound("/secret/audio/dosu.mp3")}>
+            どすっ
+          </Button>
+        </div>
+        <div className="flex justify-center space-x-4 sm:w-1/2">
+          <Button variant="secondary" onClick={() => playSound("/secret/audio/burudo-za-.mp3")}>
+            ブルドーザー
+          </Button>
+          <Button variant="secondary" onClick={() => playSound("/secret/audio/baikinman.mp3")}>
+            バイキンマン
+          </Button>
+        </div>
       </div>
       <div className="flex justify-center items-center h-screen">
         <Image

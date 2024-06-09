@@ -39,7 +39,7 @@ const AudioPlayerPage: React.FC = () => {
           </Button>
         </div>
       </div>
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center ">
         <Image
           src="/secret/photo/happyouBaikinman.jpg"
           alt="好きなブルドーザー発表バイキソマン"

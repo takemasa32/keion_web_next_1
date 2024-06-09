@@ -26,7 +26,11 @@ const Home = () => {
                   はじめまして！島根大学 軽音楽部です！
                 </p>
               </ScrollReveal>
-              <div onClick={secretPass >= 10 ? () => router.push("/secret") : undefined}>
+              <div
+                onClick={
+                  secretPass >= 10 ? () => router.push("/secret?id=secretService") : undefined
+                }
+              >
                 <h1 className="mb-8 text-3xl font-bold text-black sm:text-4xl md:mb-12 md:text-5xl">
                   共に音楽を
                   <br />

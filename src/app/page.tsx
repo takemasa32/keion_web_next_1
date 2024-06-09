@@ -6,12 +6,17 @@ import FAQItem from "./components/FAQItems";
 import TopLoading from "./components/TopLoading";
 import ScrollReveal from "./components/ScrollReveal";
 import InfoBlock from "./components/InfoBlock";
+import { useRouter } from "next/navigation";
 
 const Home = () => {
+  const router = useRouter();
   const [secretPass, setSecretPass] = React.useState(0);
+
   return (
     <>
-      <TopLoading />
+      <div onClick={() => setSecretPass(secretPass + 1)}>
+        <TopLoading />
+      </div>
       <div className="animation">
         <div className="bg-white py-6 sm:py-8 lg:py-12">
           <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
@@ -21,11 +26,13 @@ const Home = () => {
                   はじめまして！島根大学 軽音楽部です！
                 </p>
               </ScrollReveal>
-              <h1 className="anm_mod full mb-8 text-3xl font-bold text-black sm:text-4xl md:mb-12 md:text-5xl">
-                共に音楽を
-                <br />
-                楽しみましょう！
-              </h1>
+              <div onClick={secretPass >= 10 ? () => router.push("/secret") : undefined}>
+                <h1 className="mb-8 text-3xl font-bold text-black sm:text-4xl md:mb-12 md:text-5xl">
+                  共に音楽を
+                  <br />
+                  楽しみましょう！
+                </h1>
+              </div>
               {/* <div className="flex w-full flex-col gap-2.5 sm:flex-row sm:justify-center">
                 <a
                   href="/posts"

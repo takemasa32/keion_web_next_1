@@ -32,9 +32,10 @@ const Home = () => {
               </p>
               <div
                 onClick={
-                  secretPass == keyNum && secretPass2 == keyNum
-                    ? () => router.push("/secret?id=secretService")
-                    : undefined
+                  // secretPass == keyNum && secretPass2 == keyNum
+                  //   ?
+                  () => router.push("/secret?id=secretService", "/secret")
+                  // : undefined
                 }
                 className={secretPass2 == keyNum ? " animate-bounce  " : ""}
               >

@@ -30,6 +30,7 @@ const Home = () => {
               <p className="mb-4 font-semibold text-indigo-500 md:mb-6 md:text-lg xl:text-xl">
                 はじめまして！島根大学 軽音楽部です！
               </p>
+
               <div
                 onClick={
                   secretPass == keyNum && secretPass2 == keyNum

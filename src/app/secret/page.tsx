@@ -88,7 +88,11 @@ const AudioPlayerPage: React.FC = () => {
               にゃーお
             </Button>
             <Button variant="secondary" onClick={() => playSound(audioRef5)}>
+<<<<<<< HEAD
               うぁ～
+=======
+              うぃー
+>>>>>>> 7677686d22dcee70737cb41a989fe28a4713a8a9
             </Button>
             <Button variant="secondary" onClick={() => playSound(audioRef2)}>
               どすっ

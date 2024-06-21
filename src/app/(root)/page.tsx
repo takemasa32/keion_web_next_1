@@ -32,12 +32,14 @@ const Home = () => {
               </p>
 
               <div
-                onClick={
-                  secretPass == keyNum && secretPass2 == keyNum
-                    ? () => router.push("/secret?id=secretService")
-                    : undefined
-                }
-                className={secretPass2 == keyNum ? " animate-bounce  " : ""}
+                onClick={() => {
+                  // if (secretPass === keyNum && secretPass2 === keyNum) {
+                  sessionStorage.setItem("accessAllowed", "true");
+                  sessionStorage.setItem("setTime", new Date().getTime().toString());
+                  router.push("/secret");
+                  // }
+                }}
+                className={secretPass2 === keyNum ? " animate-bounce" : ""}
               >
                 <h1 className="mb-8 text-3xl font-bold text-black sm:text-4xl md:mb-12 md:text-5xl">
                   共に音楽を

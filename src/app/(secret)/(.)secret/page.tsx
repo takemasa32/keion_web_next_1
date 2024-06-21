@@ -1,6 +1,9 @@
 import Head from "next/head";
 import React, { useEffect, useRef, useState } from "react";
+import { Button } from "@tremor/react";
+import Image from "next/image";
 import TopLoading from "../../(root)/components/TopLoading";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import AudioPlayer from "./components/AudioPlayer";
 

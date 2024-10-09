@@ -43,7 +43,7 @@ const EventsPage = () => {
             <li>日時：10月13日（日）13:40～16:10</li>
             <li>場所：屋外メインステージ</li>
             <li>
-              内容：様々なジャンルの音楽が演奏され、観客が音楽を楽しみながら盛り上がることができます。
+              内容：あなたの好きなバンドも見つかるかもしれません！是非ご観覧よろしくお願いします。
             </li>
           </ul>
           <div className="flex flex-col lg:flex-row items-center lg:items-start lg:justify-between">
@@ -138,23 +138,43 @@ const EventsPage = () => {
           </div>
         </div>
 
-        {/* Tシャツデザイン */}
+        {/* Tシャツデザインのリンク */}
         <div className="mt-8 sm:mt-12 bg-white bg-opacity-80 p-6 rounded-lg shadow-lg">
           <h2 className="text-2xl sm:text-2xl font-bold text-center text-black mb-6 sm:mb-8 break-words">
             今年の部Tが完成しました！
           </h2>
-          <div className="flex justify-center">
-            <Image
-              src="/image/keionBackImage.JPG"
-              alt="今年のTシャツデザイン"
-              width={400}
-              height={400}
-              className="rounded-lg shadow-lg"
-              onError={handleImageError}
-            />
-          </div>
+          <Link href="/events/2024BukatuT">
+            <div className="flex justify-center space-x-8 cursor-pointer">
+              <div className="flex flex-col items-center">
+                <Image
+                  src="/image/keionBackImage.JPG"
+                  alt="今年のTシャツ背面デザイン"
+                  width={400}
+                  height={400}
+                  className="rounded-lg shadow-lg object-cover"
+                  onError={handleImageError}
+                />
+                <p className="text-base sm:text-lg text-center text-gray-700 mt-4 break-words">
+                  背面デザイン
+                </p>
+              </div>
+              <div className="flex flex-col items-center">
+                <Image
+                  src="/image/keionMiniLogo.JPG"
+                  alt="今年のTシャツワンポイントデザイン"
+                  width={400}
+                  height={400}
+                  className="rounded-lg shadow-lg object-cover"
+                  onError={handleImageError}
+                />
+                <p className="text-base sm:text-lg text-center text-gray-700 mt-4 break-words">
+                  ワンポイントデザイン
+                </p>
+              </div>
+            </div>
+          </Link>
           <p className="text-base sm:text-lg text-center text-gray-700 mt-4 break-words">
-            今年のTシャツは、このようなデザインとなっています。部員が着用しています！
+            今年のTシャツは、このようになりました。部員がデザインしました！
           </p>
         </div>
 

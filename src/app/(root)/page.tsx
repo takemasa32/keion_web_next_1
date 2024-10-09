@@ -47,20 +47,6 @@ const Home = () => {
                   楽しみましょう！
                 </h1>
               </div>
-              {/* <div className="flex w-full flex-col gap-2.5 sm:flex-row sm:justify-center">
-                <a
-                  href="/posts"
-                  className="anm_mod left btn btn-secondary inline-block rounded-lg px-8 py-3 text-center text-sm font-semibold text-gray-500 outline-none ring-indigo-300 transition duration-100 hover:bg-gray-300 focus-visible:ring active:text-gray-700 md:text-base"
-                >
-                  活動記録を見る
-                </a>
-                <a
-                  href="/sns"
-                  className="anm_mod right btn btn-secondary inline-block rounded-lg px-8 py-3 text-center text-sm font-semibold text-gray-500 outline-none ring-indigo-300 transition duration-100 hover:bg-gray-300 focus-visible:ring active:text-gray-700 md:text-base"
-                >
-                  SNSを確認する
-                </a>
-              </div> */}
             </div>
           </div>
         </div>
@@ -152,7 +138,9 @@ const Home = () => {
             </div>
           </div>
           <div className="m-5">
-            <h2>次は部室で会いましょう！</h2>
+            <h2 className="text-center text-2xl font-bold text-gray-800 md:mb-6 lg:text-3xl">
+              次は部室で会いましょう！
+            </h2>
             <ScrollReveal>
               <SNSButton />
             </ScrollReveal>

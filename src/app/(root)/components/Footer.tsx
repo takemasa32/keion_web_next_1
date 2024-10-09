@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer className="bg-gradient-to-r from-purple-600 to-blue-500 text-white mt-auto py-6">
       <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center justify-between">
-        <p className="text-sm text-center md:text-left">© 2023 島根大学 軽音楽部</p>
+        <p className="text-sm text-center md:text-left">© 2023-2024 島根大学 軽音楽部</p>
         <div className="flex space-x-4 mt-4 md:mt-0">
           <a
             href="https://twitter.com/shimaneU_keion"

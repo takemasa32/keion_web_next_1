@@ -11,24 +11,29 @@ const EventsPage = () => {
   };
 
   return (
-    <div className="bg-white py-6 sm:py-8 lg:py-12">
-      <div className="container mx-auto px-4">
-        <h1 className="text-3xl sm:text-4xl font-bold text-center text-black mb-8 sm:mb-12 break-words">
-          2024年島根大学
-          <br />
-          大学祭
-        </h1>
-
-        <p className="text-base sm:text-lg text-gray-700 mb-6 sm:mb-8 text-center break-words">
-          島根大学軽音楽部は、
-          <br />
-          今年の島根大学の大学祭「淞風祭」で、
-          <br />
-          複数のイベントを行います。
-        </p>
+    <div className="relative bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-400 min-h-screen py-6 sm:py-8 lg:py-12">
+      <div className="container relative z-10 mx-auto px-4">
+        <div className="bg-black bg-opacity-50 p-4 rounded-lg mb-8 sm:mb-12">
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-center text-white break-words">
+              2024年
+              <br />
+              島根大学 大学祭
+            </h1>
+          </div>
+          <div className="pt-6 ">
+            <p className="text-base sm:text-lg text-white text-center break-words">
+              島根大学軽音楽部は、
+              <br />
+              今年の島根大学の大学祭「淞風祭」で、
+              <br />
+              複数のイベントを行います。
+            </p>
+          </div>
+        </div>
 
         {/* オープンステージでのライブパフォーマンス */}
-        <div className="mb-12 sm:mb-16">
+        <div className="mb-12 sm:mb-16 bg-white bg-opacity-80 p-6 rounded-lg shadow-lg">
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-black mb-6 sm:mb-8 break-words">
             オープンステージでの
             <br />
@@ -62,7 +67,7 @@ const EventsPage = () => {
         </div>
 
         {/* 屋台とグッズ販売 */}
-        <div className="mb-12 sm:mb-16">
+        <div className="mb-12 sm:mb-16 bg-white bg-opacity-80 p-6 rounded-lg shadow-lg">
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-black mb-6 sm:mb-8 break-words">
             屋台とグッズ販売
           </h2>
@@ -99,7 +104,7 @@ const EventsPage = () => {
         </div>
 
         {/* 屋内企画 */}
-        <div className="mb-12 sm:mb-16">
+        <div className="mb-12 sm:mb-16 bg-white bg-opacity-80 p-6 rounded-lg shadow-lg">
           <h2 className="text-2xl sm:text-3xl font-bold text-center text-black mb-6 sm:mb-8 break-words">
             屋内企画
           </h2>
@@ -134,9 +139,9 @@ const EventsPage = () => {
         </div>
 
         {/* Tシャツデザイン */}
-        <div className="mt-8 sm:mt-12">
+        <div className="mt-8 sm:mt-12 bg-white bg-opacity-80 p-6 rounded-lg shadow-lg">
           <h2 className="text-2xl sm:text-2xl font-bold text-center text-black mb-6 sm:mb-8 break-words">
-            今年のTシャツデザインができました！
+            今年の部Tが完成しました！
           </h2>
           <div className="flex justify-center">
             <Image
@@ -154,7 +159,7 @@ const EventsPage = () => {
         </div>
 
         {/* イベント情報 */}
-        <div className="mt-8 sm:mt-12">
+        <div className="mt-8 sm:mt-12 bg-white bg-opacity-80 p-6 rounded-lg shadow-lg">
           <h1 className="text-2xl sm:text-3xl font-bold text-center text-black mb-6 sm:mb-8 break-words">
             イベント情報
           </h1>
@@ -191,6 +196,28 @@ const EventsPage = () => {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* 背景の装飾 */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+        <svg
+          className="absolute top-0 left-0 w-64 h-64 opacity-50 animate-spin-slow"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <line x1="14.31" y1="8" x2="20.05" y2="17.94" />
+          <line x1="9.69" y1="8" x2="21.17" y2="8" />
+          <line x1="7.38" y1="12" x2="13.12" y2="2.06" />
+          <line x1="9.69" y1="16" x2="3.95" y2="6.06" />
+          <line x1="14.31" y1="16" x2="2.83" y2="16" />
+          <line x1="16.62" y1="12" x2="10.88" y2="21.94" />
+        </svg>
       </div>
     </div>
   );

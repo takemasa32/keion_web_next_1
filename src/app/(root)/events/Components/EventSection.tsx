@@ -24,7 +24,6 @@ const EventSection: React.FC<EventSectionProps> = ({
         <div>
           <li>日時：⏱{dates.join(" / ")}</li>
           <li>場所：{location}</li>
-          <li>{description}</li>
         </div>
       </ul>
       <div className="flex flex-col lg:flex-row items-center lg:items-start lg:justify-between">
@@ -40,9 +39,7 @@ const EventSection: React.FC<EventSectionProps> = ({
           ></iframe>
         </div>
         <div className="w-full lg:w-1/2 lg:pl-4">
-          <p className="text-base sm:text-lg text-gray-700 mb-4 break-words">
-            軽音特製フルーツ入りドリンクです。ライブと言えばワンドリンク制！！ぜひライブや模擬店のお供にいかがですか！？
-          </p>
+          <p className="text-base sm:text-lg text-gray-700 mb-4 break-words">{description}</p>
           <p className="text-base sm:text-lg text-gray-700 mb-4 break-words">
             📍{location}
             <br />⏱{dates.join(" / ")}

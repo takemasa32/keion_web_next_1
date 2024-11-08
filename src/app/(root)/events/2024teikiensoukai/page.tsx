@@ -27,32 +27,35 @@ const EventsPage = () => {
             <h1 className="text-3xl sm:text-4xl font-bold text-center text-white break-words">
               2024年
               <br />
-              島根大学 大学祭
+              定期演奏会
             </h1>
           </div>
           <div className="pt-6 ">
             <p className="text-base sm:text-lg text-white text-center break-words">
               島根大学軽音楽部は、
               <br />
-              今年の島根大学の大学祭「淞風祭」で、
+              今年も定期演奏会を行います！
               <br />
-              複数のイベントを行います。
+              ぜひお楽しみに！
             </p>
           </div>
         </div>
-        <BandSchedule
-          eventName="オープンステージでのライブパフォーマンス"
-          eventDate="2024-10-13"
+        {/* <BandSchedule
+          eventName="2024年度定期演奏会"
+          eventDate="2024-12-21"
           bandSchedule={bandScheduleData}
           isDebugMode={true} //TODO: 本番環境ではfalseにする
-        />
+        /> */}
+        {
+          //TODO:実装を今後行う
+        }
 
         <EventSection
           title="2024年度 定期演奏会"
-          dates={["2024-10-13", "2024-10-14"]}
-          location="メインストリート ブース36"
-          description="軽音部特製のラバーバンドやマフラータオルといったオリジナルグッズの販売、ドリンクの販売"
-          mapSrc="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12994.669619825514!2d133.0632445285708!3d35.48777202691312!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f1.1!3m3!1m2!1s0x35570447d6b9c935%3A0x38f76f85ddd0e6df!2z44CSNjkwLTA4MjMg5bO25qC555yM5p2-5rGf5biC6KW_5bed5rSl55S677yR77yQ77yQ77yW77yQ!5e0!3m2!1sja!2sjp"
+          dates={["2024-12-21"]}
+          location="安来市総合文化ホール アルテピア"
+          description="島根大学軽音部 年に一度の集大成となるライブです。ぜひご観覧に来てください。"
+          mapSrc="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13005.069972902245!2d133.226691039205!3d35.423403150290596!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3556fc17460f8a8b%3A0x876867d7ff94bba3!2z5a6J5p2l5biC57eP5ZCI5paH5YyW44Ob44O844OrIOOCouODq-ODhuODlOOCog!5e0!3m2!1sja!2sjp!4v1731082476456!5m2!1sja!2sjp"
         />
         <div className="mt-8 sm:mt-12 bg-white bg-opacity-80 p-6 rounded-lg shadow-lg">
           <h2 className="text-2xl sm:text-2xl font-bold text-center text-black mb-6 sm:mb-8 break-words">
@@ -74,7 +77,7 @@ const EventsPage = () => {
               </div>
               <div className="flex flex-col items-center">
                 <CustomImage
-                  src="/image/keionMiniLogo.JPG"
+                  src="/image/2024keionMiniLogo.JPG"
                   alt="今年のTシャツワンポイントデザイン"
                   width={400}
                   height={400}

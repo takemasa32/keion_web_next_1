@@ -12,13 +12,14 @@ export const events: Event[] = [
     date: "2024年12月21日",
     description:
       "今年度の定期演奏会の日時が決定されました。年に一度の最大のイベントへ是非お越しください",
-    image: "/image/keionBackImage.JPG",
+    image: "/image/2024keionMiniLogo.JPG",
     link: "/events/2024teikiensoukai",
   },
   {
     title: "2024年島根大学 大学祭",
     date: "2024年10月13日-10月14日",
     description: "大学祭が開催されます。ステージと室内2箇所で行われます。詳細はこちらから",
+    image: "/image/2024keionMiniLogo.JPG",
     link: "/events/2024daigakusai",
   },
   {

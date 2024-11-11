@@ -17,6 +17,8 @@ const PopupModal = ({
   children,
   startDate,
   endDate,
+  cancelText,
+  confirmText,
 }: {
   isOpen: boolean;
   onRequestClose: () => void;
@@ -25,6 +27,8 @@ const PopupModal = ({
   children: React.ReactNode;
   startDate: Date;
   endDate: Date;
+  cancelText?: string;
+  confirmText?: string;
 }) => {
   const [shouldShow, setShouldShow] = useState(false);
   const [isPC, setIsPC] = useState(false);
@@ -75,18 +79,26 @@ const PopupModal = ({
             onClick={onRequestClose}
             className="px-4 py-2 bg-blue-300 text-white rounded hover:bg-blue-400 transition-colors duration-200"
           >
-            キャンセル
+            {cancelText ? cancelText : "キャンセル"}
           </button>
           <button
             onClick={onConfirm}
             className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors duration-200"
           >
-            移動する
+            {confirmText ? confirmText : "移動する"}
           </button>
         </div>
       </div>
     </Modal>
   );
+};
+
+// 特定の日付までの日数を計算する関数
+const calculateDaysUntil = (targetDate: Date): number => {
+  const currentDate = new Date();
+  const timeDifference = targetDate.getTime() - currentDate.getTime();
+  const daysDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
+  return daysDifference;
 };
 
 const Home = () => {
@@ -115,12 +127,55 @@ const Home = () => {
     setIsModalOpen(false);
   };
 
+  const eventLink = "/events/2024teikiensoukai";
   const navigateToEventPage = () => {
-    router.push("/events/2024daigakusai");
+    router.push(eventLink);
   };
+
+  const eventDate = new Date(Date.UTC(2024, 11, 21)); // 2024/12/21
+
+  const daysUntilDate = calculateDaysUntil(eventDate);
 
   return (
     <>
+      {/* ポップアップモーダル */}
+      <PopupModal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        onConfirm={navigateToEventPage}
+        contentLabel="定期演奏会のお知らせ"
+        startDate={new Date(Date.UTC(2024, 10, 1))} // 2024/11/1
+        endDate={eventDate}
+        cancelText="閉じる"
+        confirmText="特設ページへ"
+      >
+        <div className="flex justify-center mb-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-12 w-12 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M13 16h-1v-4h-1m1-4h.01M12 18h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"
+            />
+          </svg>
+        </div>
+        <h2 className="text-2xl font-bold mb-4 text-center text-white">
+          2024年度定期演奏会について
+        </h2>
+        <p className="mb-4 text-center text-white">
+          {daysUntilDate
+            ? `今年の定期演奏会まであと${daysUntilDate}日です！`
+            : "今年も定期演奏会が開催されます！"}
+          <br />
+          特設ページに移動しますか？
+        </p>
+      </PopupModal>
       <div
         onClick={() => {
           setSecretPass(secretPass + 1);
@@ -252,38 +307,6 @@ const Home = () => {
           </div>
         </div>
       </div>
-      {/* ポップアップモーダル */}
-      <PopupModal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
-        onConfirm={navigateToEventPage}
-        contentLabel="大学祭のお知らせ"
-        startDate={new Date(Date.UTC(2024, 9, 1))} // 2024年10月1日 UTC
-        endDate={new Date(Date.UTC(2024, 9, 15))} // 2024年10月15日 UTC
-      >
-        <div className="flex justify-center mb-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-12 w-12 text-white"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M13 16h-1v-4h-1m1-4h.01M12 18h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"
-            />
-          </svg>
-        </div>
-        <h2 className="text-2xl font-bold mb-4 text-center text-white">大学祭のお知らせ</h2>
-        <p className="mb-4 text-center text-white">
-          今年も大学祭が開催されます！
-          <br />
-          特設ページに移動しますか？
-        </p>
-      </PopupModal>
     </>
   );
 };

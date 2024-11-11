@@ -165,12 +165,10 @@ const Home = () => {
             />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold mb-4 text-center text-white">
-          2024年度定期演奏会について
-        </h2>
+        <h2 className="text-2xl font-bold mb-4 text-center text-white">お知らせ</h2>
         <p className="mb-4 text-center text-white">
           {daysUntilDate
-            ? `今年の定期演奏会まであと${daysUntilDate}日です！`
+            ? `今年の定期演奏会があと${daysUntilDate}日で開催されます！`
             : "今年も定期演奏会が開催されます！"}
           <br />
           特設ページに移動しますか？

@@ -201,7 +201,9 @@ const BandSchedule: React.FC<BandScheduleProps> = ({
       </div>
       {/* 実際の時間によって表示が変化する案内 */}
       <div className="mt-4 text-center">
-        <p className="text-sm text-gray-500">※現在の日付,時刻によって表示が変化します。</p>
+        <p className="text-sm text-gray-500">
+          ※現在の日付,時刻によって表示が変化するようになっています。
+        </p>
       </div>
     </div>
   );

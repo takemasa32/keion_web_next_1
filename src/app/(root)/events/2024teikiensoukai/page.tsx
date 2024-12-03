@@ -5,7 +5,8 @@ import CustomImage from "../Components/CustomImage";
 import EventList from "../Components/EventList";
 import BandSchedule from "../Components/BandSchedule";
 import EventSection from "../Components/EventSection";
-import { bandScheduleData } from "./data";
+import { bandData, bandScheduleData } from "./data";
+import BandShowcase from "./_components/BandShowcase";
 
 const EventsPage = () => {
   return (
@@ -29,11 +30,7 @@ const EventsPage = () => {
             </p>
           </div>
         </div>
-
-        {
-          //TODO:実装を今後行う
-        }
-
+        {/* イベント紹介 */}
         <EventSection
           title="2024年度 定期演奏会"
           dates={["2024-12-21"]}
@@ -41,7 +38,9 @@ const EventsPage = () => {
           description="島根大学軽音部 年に一度の集大成となるライブです。ぜひご観覧に来てください。"
           mapSrc="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13005.069972902245!2d133.226691039205!3d35.423403150290596!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3556fc17460f8a8b%3A0x876867d7ff94bba3!2z5a6J5p2l5biC57eP5ZCI5paH5YyW44Ob44O844OrIOOCouODq-ODhuODlOOCog!5e0!3m2!1sja!2sjp!4v1731082476456!5m2!1sja!2sjp"
         />
-
+        {/* バンド紹介 */}
+        <BandShowcase data={bandData} />
+        {/* スケジュール */}
         <BandSchedule
           eventName="2024年度定期演奏会"
           eventDate="2024-12-21"

@@ -46,7 +46,9 @@ const EventsPage = () => {
           eventName="2024年度定期演奏会"
           eventDate="2024-12-21"
           bandSchedule={bandScheduleData}
-          isDebugMode={true}
+          isDebugMode={process.env.NODE_ENV === "development"}
+          viewSetting="close"
+          BandScheduleLink="/events/2024teikiensoukai/schedule"
         />
         <div className="mt-8 sm:mt-12 bg-white bg-opacity-80 p-6 rounded-lg shadow-lg">
           <h2 className="text-2xl sm:text-2xl font-bold text-center text-black mb-6 sm:mb-8 break-words">

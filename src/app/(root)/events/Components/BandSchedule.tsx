@@ -1,4 +1,6 @@
 "use client";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 type Band = {
@@ -47,6 +49,8 @@ type BandScheduleProps = {
   eventDate: string;
   bandSchedule: Band[];
   isDebugMode?: boolean;
+  viewSetting?: "open" | "close";
+  BandScheduleLink?: string;
 };
 
 const BandSchedule: React.FC<BandScheduleProps> = ({
@@ -54,10 +58,14 @@ const BandSchedule: React.FC<BandScheduleProps> = ({
   eventDate,
   bandSchedule,
   isDebugMode = false,
+  viewSetting,
+  BandScheduleLink,
 }) => {
   const [virtualDateTime, setVirtualDateTime] = useState<Date | null>(null);
-  const [showAll, setShowAll] = useState(false);
-
+  const [showAll, setShowAll] = useState(
+    viewSetting ? (viewSetting == "open" ? true : viewSetting == "close" ? false : false) : false
+  );
+  const router = useRouter();
   const handleDateTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedDateTime = new Date(e.target.value);
     if (!isNaN(selectedDateTime.getTime())) {
@@ -86,6 +94,7 @@ const BandSchedule: React.FC<BandScheduleProps> = ({
     <div className="mb-12 sm:mb-16 bg-white bg-opacity-80 p-6 rounded-lg shadow-lg">
       <h2 className="text-2xl sm:text-3xl font-bold text-center text-black mb-6 sm:mb-8">
         {eventName}
+        <br /> タイムスケジュール
       </h2>
       {isDebugMode && (
         <div className="mb-4">
@@ -136,8 +145,8 @@ const BandSchedule: React.FC<BandScheduleProps> = ({
           <thead>
             <tr>
               <th className="py-2 px-4 border-b border-gray-200 text-black">バンド名</th>
-              <th className="py-2 px-4 border-b border-gray-200 text-black">開始時間</th>
-              <th className="py-2 px-4 border-b border-gray-200 text-black">終了時間</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-black">開始</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-black">終了</th>
             </tr>
           </thead>
           <tbody>
@@ -174,12 +183,25 @@ const BandSchedule: React.FC<BandScheduleProps> = ({
             })}
           </tbody>
         </table>
-        <button
-          onClick={() => setShowAll(!showAll)}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          {showAll ? "閉じる" : "全て表示"}
-        </button>
+        {viewSetting ? null : (
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            {showAll ? "閉じる" : "全て表示"}
+          </button>
+        )}
+        {BandScheduleLink ? (
+          <Link href={BandScheduleLink}>
+            <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+              スケジュールページへ
+            </button>
+          </Link>
+        ) : null}
+      </div>
+      {/* 実際の時間によって表示が変化する案内 */}
+      <div className="mt-4 text-center">
+        <p className="text-sm text-gray-500">※現在の日付,時刻によって表示が変化します。</p>
       </div>
     </div>
   );

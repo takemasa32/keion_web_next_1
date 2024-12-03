@@ -22,7 +22,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
         {data.map((band, index) => (
           <div
             key={index}
-            className="cursor-pointer transform transition duration-300 hover:scale-105 "
+            className="cursor-pointer transform transition duration-300 hover:scale-105"
             onClick={() => openModal(band)}
           >
             <div className="relative w-full h-0 pb-[100%]">
@@ -32,7 +32,8 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
                 layout="fill"
                 objectFit="cover"
                 sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 25vw"
-                className="rounded-lg shadow-md"
+                className="rounded-lg shadow-md transition-opacity duration-500 ease-in-out opacity-0"
+                onLoadingComplete={(img) => img.classList.remove("opacity-0")}
               />
             </div>
           </div>
@@ -44,7 +45,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
           isOpen={!!selectedBand}
           onRequestClose={closeModal}
           contentLabel="Band Details"
-          className="fixed mx-4 inset-0 flex items-center justify-center z-50 transition-opacity duration-600"
+          className="fixed m-4 inset-0 flex items-center justify-center z-50 transition-opacity duration-600"
           overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-600"
           ariaHideApp={false}
         >
@@ -55,13 +56,16 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
             >
               &times;
             </button>
-            <Image
-              src={selectedBand.photo}
-              alt={selectedBand.name}
-              width={500}
-              height={500}
-              className="w-full h-auto mb-4 rounded"
-            />
+            <div className="relative w-full h-0 pb-[100%]">
+              <Image
+                src={selectedBand.photo}
+                alt={selectedBand.name}
+                layout="fill"
+                objectFit="cover"
+                className="w-full h-auto mb-4 rounded transition-opacity duration-500 ease-in-out bg-gray-400 animate-pulse"
+                onLoadingComplete={(img) => img.classList.remove("bg-black", "animate-pulse")}
+              />
+            </div>
             <h2 className="text-2xl text-gray-700 text-center font-bold">{selectedBand.name}</h2>
             <p className="text-sm text-gray-500 text-center font-bold mb-2">
               {selectedBand.copyFrom}

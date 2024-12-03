@@ -57,7 +57,7 @@ export const bandData = [
     name: "🎱s",
     copyFrom: "ZAZEN BOYS",
     comment:
-      "快活CLUBからやって参りました🎱sです。\n１つになった私たちの音, kimochiあなたに伝えたい。\nアルテピアでずっとずっとずっとずっと待ってます。\n快活CLUBからやって参りました🎱sでした。",
+      "快活CLUBからやって参りました🎱sです。\n1つになった私たちの音, kimochiあなたに伝えたい。\nアルテピアでずっとずっとずっとずっと待ってます。\n快活CLUBからやって参りました🎱sでした。",
     photo: "/image/2024teien/8sA-sya.jpg",
     order: 5,
   },

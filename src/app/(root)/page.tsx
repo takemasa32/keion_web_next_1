@@ -7,6 +7,7 @@ import ScrollReveal from "./components/ScrollReveal";
 import InfoBlock from "./components/InfoBlock";
 import { useRouter } from "next/navigation";
 import Modal from "react-modal";
+import { FaGuitar } from "react-icons/fa";
 
 // ポップアップモーダルコンポーネント
 const PopupModal = ({
@@ -150,20 +151,7 @@ const Home = () => {
         confirmText="特設ページへ"
       >
         <div className="flex justify-center mb-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-12 w-12 text-white"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M13 16h-1v-4h-1m1-4h.01M12 18h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"
-            />
-          </svg>
+          <FaGuitar className="text-6xl h-12 w-12 my-2 animate-bounce" />
         </div>
         <h2 className="text-2xl font-bold mb-4 text-center text-white">お知らせ</h2>
         <p className="mb-4 text-center text-white">
@@ -299,9 +287,7 @@ const Home = () => {
             <h2 className="text-center text-2xl font-bold text-gray-800 md:mb-6 lg:text-3xl">
               次は部室で会いましょう！
             </h2>
-            <ScrollReveal>
-              <SNSButton />
-            </ScrollReveal>
+            <SNSButton />
           </div>
         </div>
       </div>

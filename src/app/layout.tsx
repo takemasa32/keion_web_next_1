@@ -1,8 +1,6 @@
 import "./globals.css";
 import { ReactNode } from "react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import Header from "@/app/(root)/components/Header";
-import Footer from "@/app/(root)/components/Footer";
 import { GoogleAnalytics } from "@next/third-parties/google";
 
 export const metadata = {
@@ -16,7 +14,6 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
   return (
     <html lang="ja">
       <head>
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
         {/* ICON */}
         <link rel="icon" href="./../favicon.ico" />
         <GoogleAnalytics gaId={process.env.GA_ID ?? ""} />
@@ -30,10 +27,8 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
             // paddingBottom: "env(safe-area-inset-bottom)",
           }}
         >
-          <Header />
           <SpeedInsights />
           {children}
-          <Footer />
         </div>
       </body>
     </html>

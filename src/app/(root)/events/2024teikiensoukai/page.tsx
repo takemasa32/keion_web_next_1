@@ -6,18 +6,6 @@ import EventList from "../Components/EventList";
 import BandSchedule from "../Components/BandSchedule";
 import EventSection from "../Components/EventSection";
 
-const bandScheduleData = [
-  { date: "2024-10-13", name: "珍満boys", start: "13:10", end: "13:25" },
-  { date: "2024-10-13", name: "ムラムラオカズ", start: "13:30", end: "13:45" },
-  { date: "2024-10-13", name: "きゃのん公園", start: "13:50", end: "14:05" },
-  { date: "2024-10-13", name: "0 痔 SAN KAN-CHI GRADUAT", start: "14:10", end: "14:25" },
-  { date: "2024-10-13", name: "maaiskin", start: "14:30", end: "14:45" },
-  { date: "2024-10-13", name: "apricot", start: "14:50", end: "15:05" },
-  { date: "2024-10-13", name: "凛として林業", start: "15:10", end: "15:25" },
-  { date: "2024-10-13", name: "クロレキシ団", start: "15:30", end: "15:45" },
-  { date: "2024-10-13", name: "本当に変", start: "15:50", end: "16:05" },
-];
-
 const EventsPage = () => {
   return (
     <div className="relative bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-400 min-h-screen py-6 sm:py-8 lg:py-12">

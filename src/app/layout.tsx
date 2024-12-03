@@ -19,17 +19,8 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
         <GoogleAnalytics gaId={process.env.GA_ID ?? ""} />
       </head>
       <body>
-        <div
-          id="__next"
-          className="flex flex-col min-h-screen bg-white"
-          style={{
-            paddingTop: "env(safe-area-inset-top)",
-            // paddingBottom: "env(safe-area-inset-bottom)",
-          }}
-        >
-          <SpeedInsights />
-          {children}
-        </div>
+        <SpeedInsights />
+        {children}
       </body>
     </html>
   );

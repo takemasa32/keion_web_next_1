@@ -174,7 +174,7 @@ const Home = () => {
           <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
             <div className="mx-auto flex max-w-xl flex-col items-center text-center">
               <p className="mb-4 font-semibold text-indigo-500 md:mb-6 md:text-lg xl:text-xl">
-                はじめまして！島根大学 軽音楽部です！
+                はじめまして！こんにちは！島根大学 軽音楽部です！
               </p>
 
               <div
@@ -259,19 +259,32 @@ const Home = () => {
                 <div className=" relative rounded-lg bg-gray-100 p-5 pt-8">
                   <FAQItem
                     question="部費はありますか？"
-                    answer="半年で6000円の部費を徴収しています．その中からイベントの運営や機材の購入に充てています．"
+                    answer="半年で6000円の部費を徴収しています.<br/>その中からイベントの運営や機材の購入に充てています．"
+                    additional="※部Tの代金など,別途費用がかかることもあります．"
                   />
                 </div>
                 <div className=" relative rounded-lg bg-gray-100 p-5 pt-8">
                   <FAQItem
                     question="イベントはどんなものがありますか？"
-                    answer="新歓ライブや学際でのライブ、定期演奏会など，年間を通して様々なイベントがあります．詳細はSNSをご覧ください．"
+                    answer="新歓ライブや学際でのライブ、定期演奏会など,年間を通して様々なイベントがあります．詳細はSNSなどをご覧ください．"
                   />
                 </div>
                 <div className=" relative rounded-lg bg-gray-100 p-5 pt-8">
                   <FAQItem
                     question="初心者でも大丈夫ですか？"
-                    answer="もちろんです！初心者の方でも大歓迎です．一緒に成長していきましょう！"
+                    answer="もちろんです！例年ほぼ半数が入部時は初心者です．<br/>初心者の方も大歓迎ですので、一緒に成長していきましょう！"
+                  />
+                </div>
+                <div className=" relative rounded-lg bg-gray-100 p-5 pt-8">
+                  <FAQItem
+                    question="楽器は自分で買わないといけない？"
+                    answer="パートにもよりますが、家での練習のためにも、購入することをおすすめします。<br/>入部後に部や先輩から借りて体験などすることも可能ですので、気軽にご相談ください！"
+                  />
+                </div>
+                <div className=" relative rounded-lg bg-gray-100 p-5 pt-8">
+                  <FAQItem
+                    question="続けられるか不安です..."
+                    answer="物は試し、楽器の演奏は生活を豊かにする一生の趣味となると思います。<br/>まずは挑戦してみることをおすすめします！どの楽器も最初は大変ですが、こつこつ臆さずに練習し、ライブへの出演を続けることで"
                   />
                 </div>
                 <div className=" relative rounded-lg bg-gray-100 p-5 pt-8">

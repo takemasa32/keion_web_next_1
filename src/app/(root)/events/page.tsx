@@ -18,8 +18,8 @@ const EventsPage = () => {
           {events.map((event, index) => (
             <Link href={event.link || "#"} key={index}>
               <div
-                className={`relative bg-gray-100 rounded-lg shadow-lg overflow-hidden cursor-pointer transition-transform transform hover:scale-105 ${
-                  event.link ? "hover:bg-gray-200" : ""
+                className={`relative bg-gray-100 rounded-lg shadow-lg overflow-hidden cursor-pointer transition-transform transform  ${
+                  event.link ? "hover:scale-105 hover:bg-gray-200" : ""
                 }`}
               >
                 <Image

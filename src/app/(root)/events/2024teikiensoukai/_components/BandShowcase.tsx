@@ -1,5 +1,3 @@
-// BandShowcase.tsx
-
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
@@ -8,7 +6,7 @@ import { BandData } from "../data";
 
 export const BandShowcase = ({ data }: { data: BandData[] }) => {
   const [selectedBand, setSelectedBand] = useState<BandData | null>(null);
-
+  const totalBands = data.length;
   const openModal = (band: BandData) => {
     setSelectedBand(band);
   };
@@ -24,16 +22,19 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
         {data.map((band, index) => (
           <div
             key={index}
-            className="cursor-pointer transform transition duration-300 hover:scale-105"
+            className="cursor-pointer transform transition duration-300 hover:scale-105 "
             onClick={() => openModal(band)}
           >
-            <Image
-              src={band.photo}
-              alt={band.name}
-              width={500}
-              height={500}
-              className="w-full h-auto rounded-lg shadow-md"
-            />
+            <div className="relative w-full h-0 pb-[100%]">
+              <Image
+                src={band.photo}
+                alt={band.name}
+                layout="fill"
+                objectFit="cover"
+                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 25vw"
+                className="rounded-lg shadow-md"
+              />
+            </div>
           </div>
         ))}
       </div>
@@ -43,11 +44,11 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
           isOpen={!!selectedBand}
           onRequestClose={closeModal}
           contentLabel="Band Details"
-          className="fixed inset-0 flex  m-2 items-center justify-center z-50"
+          className="fixed inset-0 flex items-center justify-center z-50"
           overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40"
           ariaHideApp={false}
         >
-          <div className="bg-white rounded-lg p-6 max-w-lg mx-auto relative z-50">
+          <div className="bg-white rounded-lg p-6 max-w-lg mx-auto relative z-50 transform transition-transform duration-300 scale-100">
             <button
               onClick={closeModal}
               className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-2xl"
@@ -61,13 +62,33 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
               height={500}
               className="w-full h-auto mb-4 rounded"
             />
-            <h2 className="text-2xl text-gray-600 text-center font-bold mb-2">
-              {selectedBand.name}
-            </h2>
-            <h3 className="text-xl text-center text-gray-600 mb-4">{selectedBand.copyFrom}</h3>
-            <p className="text-gray-600 whitespace-pre-line">
-              {selectedBand.comment.replace(/\\n/g, "\n")}
+            <h2 className="text-2xl text-gray-700 text-center font-bold">{selectedBand.name}</h2>
+            <p className="text-sm text-gray-500 text-center font-bold mb-2">
+              {selectedBand.copyFrom}
             </p>
+            <p
+              className="text-gray-500 text-center mb-4"
+              dangerouslySetInnerHTML={{ __html: selectedBand.comment.replace(/\n/g, "<br />") }}
+            ></p>
+            <div className="flex items-center justify-center mb-4"></div>
+            <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+              <div
+                className="bg-gray-500 h-2.5 rounded-full"
+                style={{ width: `${Math.floor((selectedBand.order / totalBands) * 100)}%` }}
+              ></div>
+            </div>
+            <div className="flex justify-between text-gray-500 text-sm">
+              <span>開演</span>
+              <span>終演</span>
+            </div>
+            <div className="flex items-center justify-center mb-4">
+              <button
+                onClick={closeModal}
+                className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+              >
+                close
+              </button>
+            </div>
           </div>
         </Modal>
       )}

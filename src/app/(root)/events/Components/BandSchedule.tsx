@@ -29,7 +29,11 @@ const getCurrentBandIndex = (bandSchedule: Band[], virtualDateTime: Date | null)
 
   for (let i = 0; i < bandSchedule.length; i++) {
     const band = bandSchedule[i];
-    if (band.date === currentDate && currentTime >= band.start && currentTime <= band.end) {
+    if (
+      band.date === currentDate &&
+      parseTime(currentTime) >= parseTime(band.start) &&
+      parseTime(currentTime) <= parseTime(band.end)
+    ) {
       currentBandIndex = i;
       break;
     }
@@ -99,12 +103,12 @@ const BandSchedule: React.FC<BandScheduleProps> = ({
             イベントは {eventDate} に開催されます。お楽しみに！
           </p>
         )}
-        {currentDate === eventDate && currentTime < eventStartTime && (
+        {currentDate == eventDate && parseTime(currentTime) < parseTime(eventStartTime) && (
           <p className="text-lg text-gray-700 mb-4">
             演奏は {eventStartTime} に開始します。お楽しみに！
           </p>
         )}
-        {currentDate === eventDate && currentTime > eventEndTime && (
+        {currentDate === eventDate && parseTime(currentTime) > parseTime(eventEndTime) && (
           <p className="text-lg text-gray-700 mb-4">
             本日の演奏は終了しました。ご来場ありがとうございました！
           </p>
@@ -114,6 +118,17 @@ const BandSchedule: React.FC<BandScheduleProps> = ({
             <p className="text-lg text-gray-700">
               現在演奏中のバンド: <strong>{bandSchedule[currentBandIndex].name}</strong> (
               {bandSchedule[currentBandIndex].start} - {bandSchedule[currentBandIndex].end})
+            </p>
+          </div>
+        )}
+        {currentDate === eventDate && currentBandIndex === -1 && (
+          <div className="mt-4">
+            <p className="text-lg text-gray-700">
+              現在は休憩時間です。次に演奏するバンド:{" "}
+              <strong>
+                {bandSchedule.find((band) => parseTime(currentTime) < parseTime(band.start))
+                  ?.name || "なし"}
+              </strong>
             </p>
           </div>
         )}

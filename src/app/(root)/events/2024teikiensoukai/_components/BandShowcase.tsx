@@ -44,8 +44,8 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
           isOpen={!!selectedBand}
           onRequestClose={closeModal}
           contentLabel="Band Details"
-          className="fixed inset-0 flex items-center justify-center z-50"
-          overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="fixed mx-4 inset-0 flex items-center justify-center z-50 transition-opacity duration-600"
+          overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-600"
           ariaHideApp={false}
         >
           <div className="bg-white rounded-lg p-6 max-w-lg mx-auto relative z-50 transform transition-transform duration-300 scale-100">

@@ -10,11 +10,28 @@ const styles = `
     transform: rotateY(180deg);
     transition: transform 0.6s;
   }
+  .loading-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top: 4px solid #000;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 `;
 
 export const BandShowcase = ({ data }: { data: BandData[] }) => {
   const [selectedBand, setSelectedBand] = useState<BandData | null>(null);
   const [flippingIndex, setFlippingIndex] = useState<number | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const totalBands = data.length;
 
   const openModal = (band: BandData, index: number) => {
@@ -48,14 +65,19 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
               onClick={() => openModal(band, index)}
             >
               <div className="relative w-full h-0 pb-[100%]">
+                {loading && <div className="loading-spinner"></div>}
                 <Image
                   src={band.photo}
                   alt={band.name}
-                  layout="fill"
-                  objectFit="cover"
+                  fill
                   sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 25vw"
                   className="rounded-lg shadow-md transition-opacity duration-500 ease-in-out opacity-0"
-                  onLoadingComplete={(img) => img.classList.remove("opacity-0")}
+                  style={{ objectFit: "cover" }}
+                  onLoad={(e) => {
+                    const img = e.currentTarget as HTMLImageElement;
+                    img.classList.remove("opacity-0");
+                    setLoading(false);
+                  }}
                 />
               </div>
             </div>
@@ -67,11 +89,11 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
             isOpen={!!selectedBand}
             onRequestClose={closeModal}
             contentLabel="Band Details"
-            className="fixed mx-4 my-6 inset-0 flex items-center justify-center z-50 transition-opacity duration-600"
+            className="fixed mx-4 my-6 inset-0 flex max-h-lvh items-center justify-center z-50 transition-opacity duration-600"
             overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-600"
             ariaHideApp={false}
           >
-            <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-auto relative z-50 transform transition-transform duration-300 scale-100">
+            <div className="bg-white rounded-lg p-6 max-w-lg mx-auto relative z-50 transform transition-transform duration-300 scale-100">
               <button
                 onClick={closeModal}
                 className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-2xl"
@@ -79,13 +101,20 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
                 &times;
               </button>
               <div className="relative w-full h-0 pb-[100%]">
+                {loading && <div className="loading-spinner"></div>}
                 <Image
                   src={selectedBand.photo}
                   alt={selectedBand.name}
-                  layout="fill"
-                  objectFit="cover"
-                  className="w-full h-auto mb-4 rounded transition-opacity duration-500 ease-in-out bg-gray-200 animate-pulse"
-                  onLoadingComplete={(img) => img.classList.remove("bg-gray-200", "animate-pulse")}
+                  fill
+                  className="w-full h-auto mb-4 rounded transition-opacity duration-500 ease-in-out bg-gray-400 animate-pulse"
+                  style={{ objectFit: "cover" }}
+                  onLoad={(img) => {
+                    (img.currentTarget as HTMLImageElement).classList.remove(
+                      "bg-black",
+                      "animate-pulse"
+                    );
+                    setLoading(false);
+                  }}
                 />
               </div>
               <h2 className="text-2xl text-gray-700 text-center font-bold">{selectedBand.name}</h2>
@@ -100,6 +129,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
                   }}
                 ></p>
               </div>
+              <div className="flex items-center justify-center mb-4"></div>
               <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
                 <div
                   className="bg-gray-500 h-2.5 rounded-full"

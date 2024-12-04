@@ -31,9 +31,13 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
 
   return (
     <>
-      <style>{styles}</style> {/* スタイルを追加 */}
+      <style>{styles}</style>
       <div className="mb-12 sm:mb-16 bg-white bg-opacity-80 p-6 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-black text-center mb-8">出演バンド</h1>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-black text-center ">出演バンド</h1>
+          <p className="mt-1 text-sm text-gray-600 text-center ">画像をクリックでバンド詳細へ</p>
+        </div>
+
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
           {data.map((band, index) => (
             <div

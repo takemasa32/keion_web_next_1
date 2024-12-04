@@ -80,7 +80,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
           {data.map((band, index) => (
             <div
-              key={index}
+              key={band.name}
               className={`cursor-pointer transform transition duration-300 ${
                 flippingIndex === index ? "flip opacity-15 " : ""
               }`}

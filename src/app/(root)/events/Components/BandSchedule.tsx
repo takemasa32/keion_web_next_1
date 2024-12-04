@@ -107,9 +107,14 @@ const BandSchedule: React.FC<BandScheduleProps> = ({
         </div>
       )}
       <div className="flex flex-col items-center">
-        {currentDate !== eventDate && (
+        {currentDate < eventDate && (
           <p className="text-lg text-gray-700 mb-4">
             イベントは {eventDate} に開催されます。お楽しみに！
+          </p>
+        )}
+        {currentDate > eventDate && (
+          <p className="text-lg text-gray-700 mb-4">
+            イベントは {eventDate} に開催されました！ ご観覧いただいた方々ありがとうございました！
           </p>
         )}
         {currentDate == eventDate && parseTime(currentTime) < parseTime(eventStartTime) && (
@@ -130,17 +135,20 @@ const BandSchedule: React.FC<BandScheduleProps> = ({
             </p>
           </div>
         )}
-        {currentDate === eventDate && currentBandIndex === -1 && (
-          <div className="mt-4">
-            <p className="text-lg text-gray-700">
-              現在は休憩時間です。次に演奏するバンド:{" "}
-              <strong>
-                {bandSchedule.find((band) => parseTime(currentTime) < parseTime(band.start))
-                  ?.name || "なし"}
-              </strong>
-            </p>
-          </div>
-        )}
+        {currentDate === eventDate &&
+          parseTime(currentTime) < parseTime(eventEndTime) &&
+          parseTime(eventStartTime) < parseTime(currentTime) &&
+          currentBandIndex === -1 && (
+            <div className="mt-4">
+              <p className="text-lg text-gray-700">
+                現在は休憩時間です。次に演奏するバンド:{" "}
+                <strong>
+                  {bandSchedule.find((band) => parseTime(currentTime) < parseTime(band.start))
+                    ?.name || "なし"}
+                </strong>
+              </p>
+            </div>
+          )}
         <table className="min-w-full bg-white border border-gray-200 mt-4">
           <thead>
             <tr>
@@ -152,28 +160,32 @@ const BandSchedule: React.FC<BandScheduleProps> = ({
           <tbody>
             {bandsToShow.map((band, index) => {
               const previousBandEnd = index > 0 ? parseTime(bandSchedule[index - 1].end) : null;
-              const currentBandStart = parseTime(band.start);
+              const currentBandStart = index
+                ? parseTime(bandSchedule[index].start)
+                : parseTime(bandSchedule[0].start);
               const gap = previousBandEnd !== null ? currentBandStart - previousBandEnd : 0;
 
               const isCurrentBand = bandSchedule.indexOf(band) === currentBandIndex;
               const isCurrentBreak =
                 previousBandEnd !== null &&
-                currentTime >= formatTime(previousBandEnd) &&
+                currentTime > formatTime(previousBandEnd) &&
                 currentTime < formatTime(currentBandStart);
 
               return (
                 <React.Fragment key={index}>
-                  {gap > 0 && (
+                  {gap > 0 && previousBandEnd && (
                     <tr className={`${isCurrentBreak ? "bg-yellow-100" : "bg-gray-100"}`}>
                       <td
                         colSpan={3}
                         className="py-2 px-4 border-b border-gray-200 text-center text-gray-600"
                       >
-                        休憩時間 ({formatTime(previousBandEnd!)} - {formatTime(currentBandStart)})
+                        休憩時間 ({formatTime(previousBandEnd)} - {formatTime(currentBandStart)})
                       </td>
                     </tr>
                   )}
-                  <tr className={`${isCurrentBand ? "bg-yellow-200" : "bg-white"}`}>
+                  <tr
+                    className={`${isCurrentBand && !isCurrentBreak ? "bg-yellow-200" : "bg-white"}`}
+                  >
                     <td className="py-2 px-4 border-b border-gray-200 text-black">{band.name}</td>
                     <td className="py-2 px-4 border-b border-gray-200 text-black">{band.start}</td>
                     <td className="py-2 px-4 border-b border-gray-200 text-black">{band.end}</td>

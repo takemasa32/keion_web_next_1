@@ -25,7 +25,8 @@ export const bandData = [
   {
     name: "JAY-RISYUMISS",
     copyFrom: "HEY-SMITH",
-    comment: "まだ",
+    comment:
+      "こんにちは！HEY-SMITHのコピーバンドJAY-RISYUMISSです。\nこのバンドはパンクにホーン隊を加えたパンクロックバンドです！\nみんな、履修ミスには気をつけろよ！\n俺たち最強バンド卍",
     photo: "/image/2024teien/jayA-sya.jpg",
     order: 1,
   },
@@ -41,15 +42,14 @@ export const bandData = [
     name: "クロレキシ団",
     copyFrom: "カゲロウプロジェクト/じん",
     comment:
-      "8バンドあたり3バンド目ってとこか。\nそれが俺たちが定演に出演できる順番だ。\n俺たちのレベルは78。HPは14500。 \nバトルヒーリングスキルによる自動回復が10秒で600ポイントある。\n 何時間攻撃しても俺は倒せないよ。",
-    photo: "/image/2024teien/kurorekishiA-sya.jpg",
+      "定演バンド？強いよね。序盤、中盤、終盤、隙がないと思うよ。だけど、おれはまけないよ。えー、こまたっ、こまたちが躍動する俺のバンドを、皆さんに見せたいね"  photo: "/image/2024teien/kurorekishiA-sya.jpg",
     order: 3,
   },
   {
     name: "いけだまん帝国",
     copyFrom: "きのこ帝国",
     comment:
-      "「音楽で一つになる!」僕たち「ike! ike! teruyasu」は、情熱とエネルギーをもって音楽の楽しさを全力で表現します!\nバンドメンバーの息を合わせ、観てくれるすべての人を巻き込むような熱いライブを届けることを目指します。\n音楽を通じて「ike! ike! teruyasu」らしい唯一無二のパフォーマンスを作り上げ、みんなで最高の瞬間を共有します!",
+      "いけだまん帝国です！！\nいよいよ定期演奏会ですね\n大きな舞台で演奏できることに感謝し\n積み上げてきたものを発揮して\nパワフルな演奏をお届けします！\nいけだまん帝国でした！！11081！",
     photo: "/image/2024teien/ikedamanA-sya.jpg",
     order: 4,
   },
@@ -65,14 +65,16 @@ export const bandData = [
   {
     name: "本当に変",
     copyFrom: "東京事変",
-    comment: "まだ",
+    comment:
+      "こんにちは！東京事変のコピーバンド、本当に変です！\n\n私たちは、9月のOS争奪ライブから、メンバーみんなで息を合わせながら練習に励んできました！\n定期演奏会では、我々の集大成となるような演奏目指して頑張ります✊🏻\n会場であるアルテピア大ホールの雰囲気にぴったりな、大人っぽく、余韻あるセトリを用意しているので、ぜひ聴きに来てください😌✨",
     photo: "/image/2024teien/hontounihenA-sya.jpg",
     order: 6,
   },
   {
     name: "ikelikelteruvasu",
     copyFrom: "go!go!vanillas",
-    comment: "まだ",
+    comment:
+      " 「音楽で一つになる!」僕たち「ike! ike! teruyasu」は、情熱とエネルギーをもって音楽の楽しさを全力で表現します!\nバンドメンバーの息を合わせ、観てくれるすべての人を巻き込むような熱いライブを届けることを目指します。\n音楽を通じて「ike! ike! teruyasu」らしい唯一無二のパフォーマンスを作り上げ、みんなで最高の瞬間を共有します!",
     photo: "/image/2024teien/ikeikeA-sya.jpg",
     order: 7,
   },

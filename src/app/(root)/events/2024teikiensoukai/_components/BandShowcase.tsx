@@ -70,10 +70,12 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
             <p className="text-sm text-gray-500 text-center font-bold mb-2">
               {selectedBand.copyFrom}
             </p>
-            <p
-              className="text-gray-500 text-center mb-4"
-              dangerouslySetInnerHTML={{ __html: selectedBand.comment.replace(/\n/g, "<br />") }}
-            ></p>
+            <div className="overflow-y-auto max-h-64 border-t border-b border-gray-300 my-4 p-4 bg-gray-100 rounded-lg shadow-inner">
+              <p
+                className="text-gray-700 text-center leading-relaxed whitespace-pre-wrap"
+                dangerouslySetInnerHTML={{ __html: selectedBand.comment.replace(/\n/g, "<br />") }}
+              ></p>
+            </div>
             <div className="flex items-center justify-center mb-4"></div>
             <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
               <div

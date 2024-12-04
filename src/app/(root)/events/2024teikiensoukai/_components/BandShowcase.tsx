@@ -39,7 +39,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
             <div
               key={index}
               className={`cursor-pointer transform transition duration-300 ${
-                flippingIndex === index ? "flip opacity-15" : ""
+                flippingIndex === index ? "flip opacity-15 " : ""
               }`}
               onClick={() => openModal(band, index)}
             >
@@ -63,11 +63,11 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
             isOpen={!!selectedBand}
             onRequestClose={closeModal}
             contentLabel="Band Details"
-            className="fixed mx-4 my-6 inset-0 flex max-h-lvh items-center justify-center z-50 transition-opacity duration-600"
+            className="fixed mx-4 my-6 inset-0 flex items-center justify-center z-50 transition-opacity duration-600"
             overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-600"
             ariaHideApp={false}
           >
-            <div className="bg-white rounded-lg p-6 max-w-lg mx-auto relative z-50 transform transition-transform duration-300 scale-100">
+            <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-auto relative z-50 transform transition-transform duration-300 scale-100">
               <button
                 onClick={closeModal}
                 className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-2xl"
@@ -80,8 +80,8 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
                   alt={selectedBand.name}
                   layout="fill"
                   objectFit="cover"
-                  className="w-full h-auto mb-4 rounded transition-opacity duration-500 ease-in-out bg-gray-400 animate-pulse"
-                  onLoadingComplete={(img) => img.classList.remove("bg-black", "animate-pulse")}
+                  className="w-full h-auto mb-4 rounded transition-opacity duration-500 ease-in-out bg-gray-200 animate-pulse"
+                  onLoadingComplete={(img) => img.classList.remove("bg-gray-200", "animate-pulse")}
                 />
               </div>
               <h2 className="text-2xl text-gray-700 text-center font-bold">{selectedBand.name}</h2>
@@ -96,7 +96,6 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
                   }}
                 ></p>
               </div>
-              <div className="flex items-center justify-center mb-4"></div>
               <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
                 <div
                   className="bg-gray-500 h-2.5 rounded-full"

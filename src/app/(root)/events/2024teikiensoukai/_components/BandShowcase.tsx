@@ -132,8 +132,8 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
                   fill
                   className="w-full h-auto mb-4 rounded transition-opacity duration-500 ease-in-out bg-gray-400 animate-pulse"
                   style={{ objectFit: "cover" }}
-                  onLoad={(e) => {
-                    e.currentTarget.classList.remove("bg-black", "animate-pulse");
+                  onLoad={(img) => {
+                    img.currentTarget.classList.remove("bg-black", "animate-pulse");
                     setLoading(false);
                   }}
                 />
@@ -167,6 +167,48 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
                   className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                 >
                   close
+                </button>
+              </div>
+              <div className="mt-40 absolute inset-y-0 left-0 flex items-center">
+                <button
+                  onClick={handleSwipeRight}
+                  className="p-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M15 19l-7-7 7-7"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+              <div className="mt-40 absolute inset-y-0 right-0 flex items-center">
+                <button
+                  onClick={handleSwipeLeft}
+                  className="p-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 5l7 7-7 7"
+                    ></path>
+                  </svg>
                 </button>
               </div>
             </div>

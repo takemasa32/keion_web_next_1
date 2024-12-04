@@ -16,7 +16,7 @@ const EventsPage = () => {
         <h1 className="text-3xl font-bold text-center text-black mb-8">イベント情報</h1>
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {events.map((event, index) => (
-            <Link href={event.link || "#"} key={index}>
+            <Link href={event.link || ""} key={index}>
               <div
                 className={`relative bg-gray-100 rounded-lg shadow-lg overflow-hidden cursor-pointer transition-transform transform  ${
                   event.link ? "hover:scale-105 hover:bg-gray-200" : ""

@@ -25,7 +25,7 @@ const EventList: React.FC<EventListProps> = ({ events }) => {
       </h1>
       <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {viewEvents.map((event, index) => (
-          <Link href={event.link || "#"} key={index}>
+          <Link href={event.link || ""} key={index}>
             <div
               className={`relative bg-gray-100 rounded-lg shadow-lg overflow-hidden cursor-pointer transition-transform transform  ${
                 event.link ? "hover:scale-105 hover:bg-gray-200" : ""

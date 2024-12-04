@@ -164,7 +164,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
               <div className="flex items-center justify-center mb-4">
                 <button
                   onClick={closeModal}
-                  className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                  className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
                 >
                   close
                 </button>

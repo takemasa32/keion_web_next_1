@@ -22,7 +22,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
         {data.map((band, index) => (
           <div
             key={index}
-            className="cursor-pointer transform transition duration-300 hover:scale-105"
+            className="cursor-pointer transform transition duration-300 "
             onClick={() => openModal(band)}
           >
             <div className="relative w-full h-0 pb-[100%]">

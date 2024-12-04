@@ -75,7 +75,7 @@ export const bandData = [
     name: "ikelikelteruvasu",
     copyFrom: "go!go!vanillas",
     comment:
-      " 「音楽で一つになる!」僕たち「ike! ike! teruyasu」は、情熱とエネルギーをもって音楽の楽しさを全力で表現します!\nバンドメンバーの息を合わせ、観てくれるすべての人を巻き込むような熱いライブを届けることを目指します。\n音楽を通じて「ike! ike! teruyasu」らしい唯一無二のパフォーマンスを作り上げ、みんなで最高の瞬間を共有します!",
+      " 「音楽で一つになる!」\n僕たち「ike! ike! teruyasu」は、情熱とエネルギーをもって音楽の楽しさを全力で表現します!\nバンドメンバーの息を合わせ、観てくれるすべての人を巻き込むような熱いライブを届けることを目指します。\n音楽を通じて「ike! ike! teruyasu」らしい唯一無二のパフォーマンスを作り上げ、みんなで最高の瞬間を共有します!",
     photo: "/image/2024teien/ikeikeA-sya.jpg",
     order: 7,
   },

@@ -110,7 +110,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
             isOpen={!!selectedBand}
             onRequestClose={closeModal}
             contentLabel="Band Details"
-            className="fixed mx-4 my-6 inset-0 flex max-h-lvh items-center justify-center z-50 transition-opacity duration-600"
+            className="fixed mx-4 my-6 inset-0 flex h-lvh items-center justify-center z-50 transition-opacity duration-600"
             overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-600"
             ariaHideApp={false}
           >
@@ -133,7 +133,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
                   className="w-full h-auto mb-4 rounded transition-opacity duration-500 ease-in-out bg-gray-400 animate-pulse"
                   style={{ objectFit: "cover" }}
                   onLoad={(img) => {
-                    img.currentTarget.classList.remove("bg-black", "animate-pulse");
+                    img.currentTarget.classList.remove("bg-gray-400", "animate-pulse");
                     setLoading(false);
                   }}
                 />
@@ -144,7 +144,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
               </p>
               <div className="overflow-y-auto max-h-40 border-t border-b border-gray-300 my-4 p-4 bg-gray-100 rounded-lg shadow-inner">
                 <p
-                  className="text-gray-700 text-center leading-relaxed whitespace-pre-wrap"
+                  className="text-gray-700 text-center m-auto leading-relaxed whitespace-pre-wrap"
                   dangerouslySetInnerHTML={{
                     __html: selectedBand.comment.replace(/\n/g, "<br />"),
                   }}

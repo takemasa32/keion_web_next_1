@@ -45,7 +45,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
           isOpen={!!selectedBand}
           onRequestClose={closeModal}
           contentLabel="Band Details"
-          className="fixed m-4 inset-0 flex items-center justify-center z-50 transition-opacity duration-600"
+          className="fixed mx-4 my-6 inset-0 flex max-h-lvh items-center justify-center z-50 transition-opacity duration-600"
           overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-600"
           ariaHideApp={false}
         >
@@ -70,7 +70,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
             <p className="text-sm text-gray-500 text-center font-bold mb-2">
               {selectedBand.copyFrom}
             </p>
-            <div className="overflow-y-auto max-h-64 border-t border-b border-gray-300 my-4 p-4 bg-gray-100 rounded-lg shadow-inner">
+            <div className="overflow-y-auto max-h-40 border-t border-b border-gray-300 my-4 p-4 bg-gray-100 rounded-lg shadow-inner">
               <p
                 className="text-gray-700 text-center leading-relaxed whitespace-pre-wrap"
                 dangerouslySetInnerHTML={{ __html: selectedBand.comment.replace(/\n/g, "<br />") }}

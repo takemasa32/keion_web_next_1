@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { FaExternalLinkAlt } from "react-icons/fa";
-import CustomImage from "./CustomImage"; // カスタムコンポーネントをインポート
+import CustomImage from "./CustomImage";
 
 import { events as tempEvents } from "@/app/data/events";
 interface Event {
@@ -25,33 +25,35 @@ const EventList: React.FC<EventListProps> = ({ events }) => {
       </h1>
       <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {viewEvents.map((event, index) => (
-          <Link href={event.link || ""} key={index}>
-            <div
-              className={`relative bg-gray-100 rounded-lg shadow-lg overflow-hidden cursor-pointer transition-transform transform  ${
-                event.link ? "hover:scale-105 hover:bg-gray-200" : ""
-              }`}
-            >
-              <CustomImage
-                src={event.image || "/image/keionMiniLogo.JPG"}
-                alt={event.title}
-                width={500}
-                height={300}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4 sm:p-6">
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2 break-words">
-                  {event.title}
-                </h2>
-                <p className="text-gray-600 mb-2 sm:mb-4 break-words">{event.date}</p>
-                <p className="text-gray-700 break-words">{event.description}</p>
-              </div>
-              {event.link && (
-                <div className="absolute top-2 right-2 bg-white p-1 rounded-full shadow-md">
-                  <FaExternalLinkAlt className="text-gray-800" />
+          <>
+            <Link href={event.link || ""} key={index}>
+              <div
+                className={`relative bg-gray-100 rounded-lg shadow-lg overflow-hidden cursor-pointer transition-transform transform  ${
+                  event.link ? "hover:scale-105 hover:bg-gray-200" : ""
+                }`}
+              >
+                <CustomImage
+                  src={event.image || "/image/keionMiniLogo.JPG"}
+                  alt={event.title}
+                  width={500}
+                  height={300}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4 sm:p-6">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2 break-words">
+                    {event.title}
+                  </h2>
+                  <p className="text-gray-600 mb-2 sm:mb-4 break-words">{event.date}</p>
+                  <p className="text-gray-700 break-words">{event.description}</p>
                 </div>
-              )}
-            </div>
-          </Link>
+                {event.link && (
+                  <div className="absolute top-2 right-2 bg-white p-1 rounded-full shadow-md">
+                    <FaExternalLinkAlt className="text-gray-800" />
+                  </div>
+                )}
+              </div>
+            </Link>
+          </>
         ))}
       </div>
     </div>

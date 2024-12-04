@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Modal from "react-modal";
+import { useSwipeable } from "react-swipeable";
 import { BandData } from "../data";
 
 // フリップアニメーションのためのCSSを追加
@@ -46,6 +47,27 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
     setFlippingIndex(null); // フリップインデックスをリセット
   };
 
+  const handleSwipeLeft = () => {
+    if (selectedBand) {
+      const currentIndex = data.findIndex((band) => band.name === selectedBand.name);
+      const nextIndex = (currentIndex + 1) % data.length;
+      setSelectedBand(data[nextIndex]);
+    }
+  };
+
+  const handleSwipeRight = () => {
+    if (selectedBand) {
+      const currentIndex = data.findIndex((band) => band.name === selectedBand.name);
+      const prevIndex = (currentIndex - 1 + data.length) % data.length;
+      setSelectedBand(data[prevIndex]);
+    }
+  };
+
+  const handlers = useSwipeable({
+    onSwipedLeft: handleSwipeLeft,
+    onSwipedRight: handleSwipeRight,
+  });
+
   return (
     <>
       <style>{styles}</style>
@@ -74,8 +96,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
                   className="rounded-lg shadow-md transition-opacity duration-500 ease-in-out opacity-0"
                   style={{ objectFit: "cover" }}
                   onLoad={(e) => {
-                    const img = e.currentTarget as HTMLImageElement;
-                    img.classList.remove("opacity-0");
+                    e.currentTarget.classList.remove("opacity-0");
                     setLoading(false);
                   }}
                 />
@@ -93,7 +114,10 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
             overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-600"
             ariaHideApp={false}
           >
-            <div className="bg-white rounded-lg p-6 max-w-lg mx-auto relative z-50 transform transition-transform duration-300 scale-100">
+            <div
+              {...handlers}
+              className="bg-white rounded-lg p-6 max-w-lg mx-auto relative z-50 transform transition-transform duration-300 scale-100"
+            >
               <button
                 onClick={closeModal}
                 className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-2xl"
@@ -108,11 +132,8 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
                   fill
                   className="w-full h-auto mb-4 rounded transition-opacity duration-500 ease-in-out bg-gray-400 animate-pulse"
                   style={{ objectFit: "cover" }}
-                  onLoad={(img) => {
-                    (img.currentTarget as HTMLImageElement).classList.remove(
-                      "bg-black",
-                      "animate-pulse"
-                    );
+                  onLoad={(e) => {
+                    e.currentTarget.classList.remove("bg-black", "animate-pulse");
                     setLoading(false);
                   }}
                 />

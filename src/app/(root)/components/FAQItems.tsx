@@ -3,9 +3,11 @@ import React from "react";
 const FAQItem = ({
   question,
   answer,
+  additional,
 }: {
   question: string;
   answer: string;
+  additional?: string;
 }) => (
   <div className="anm_mod right delay relative rounded-lg bg-gray-100 p-5 pt-8">
     <span className="absolute -top-4 left-4 inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500 text-white">
@@ -22,10 +24,12 @@ const FAQItem = ({
         />
       </svg>
     </span>
-    <h3 className="mb-3 text-gray-800 text-lg font-semibold md:text-xl">
-      {question}
-    </h3>
-    <p className="text-gray-500">{answer}</p>
+    <h3 className="mb-3 text-gray-800 text-lg font-semibold md:text-xl">{question}</h3>
+    <p
+      className="text-gray-500"
+      dangerouslySetInnerHTML={{ __html: answer.replace(/\n/g, "<br />") }}
+    />
+    {additional && <i className="text-gray-500 block text-sm mt-2">{additional}</i>}
   </div>
 );
 

@@ -10,6 +10,7 @@ const AudioPlayerPage: React.FC = () => {
   const router = useRouter();
 
   const [accessChecked, setAccessChecked] = React.useState(false);
+  const [tested, setTested] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
 
   const [accessCheckPass, setAccessCheckPass] = React.useState(false);
@@ -25,17 +26,18 @@ const AudioPlayerPage: React.FC = () => {
       setAccessCheckPass(false);
     }
 
-    console.log(new Date().getTime());
     if (setTime !== null) {
       if (
-        (accessAllowed == "true" && new Date().getTime() - parseInt(setTime) < 1000 * 5) ||
+        (accessAllowed == "true" && new Date().getTime() - parseInt(setTime) < 1000 * 6) ||
         firstAccessCheckPass == "true"
       ) {
         // フラグを削除して一度のアクセスのみ許可
         // sessionStorage.removeItem("accessAllowed");
         setAccessChecked(true);
+        setTested(true);
       } else {
         setAccessChecked(false);
+        setTested(true);
       }
     }
     setLoading(false);
@@ -47,15 +49,19 @@ const AudioPlayerPage: React.FC = () => {
         ? sessionStorage.setItem("accessCheckPass", "true")
         : sessionStorage.setItem("accessCheckPass", "false");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessCheckPass]);
 
+  if (tested && accessChecked == false) {
+    router.replace("/404");
+  }
   return (
     <>
-      {loading ? (
+      {loading || !accessChecked ? (
         <div>
           <h1 className="text-black">Loading...</h1>
         </div>
-      ) : accessChecked ? (
+      ) : (
         <>
           <Contents />
           <div className="flex">
@@ -69,8 +75,6 @@ const AudioPlayerPage: React.FC = () => {
             />
           </div>
         </>
-      ) : (
-        <NotFound />
       )}
     </>
   );

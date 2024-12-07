@@ -7,7 +7,26 @@ import ScrollReveal from "./components/ScrollReveal";
 import InfoBlock from "./components/InfoBlock";
 import { useRouter } from "next/navigation";
 import Modal from "react-modal";
-import { FaGuitar } from "react-icons/fa";
+import {
+  FaGuitar,
+  FaMoneyBillWave,
+  FaUsers,
+  FaMusic,
+  FaQuestionCircle,
+  FaTools,
+  FaCalendarAlt,
+  FaSmile,
+} from "react-icons/fa";
+import {
+  MdOutlineSchool,
+  MdOutlineSportsEsports,
+  MdOutlineMusicNote,
+  MdOutlineHelpOutline,
+  MdOutlineContactSupport,
+  MdOutlineEventNote,
+  MdOutlineThumbUp,
+  MdOutlineMusicVideo,
+} from "react-icons/md";
 
 // ポップアップモーダルコンポーネント
 const PopupModal = ({
@@ -216,28 +235,28 @@ const Home = () => {
               <div className="grid gap-4 sm:grid-cols-2 md:gap-8 xl:grid-cols-3">
                 <div className="divide-x rounded-lg border bg-gray-50">
                   <InfoBlock
-                    icon="pediatrics"
+                    icon={<MdOutlineSchool />}
                     title="初心者歓迎"
                     description="実際部員の中でもほぼ半数が初心者です．\n実際のバンド活動を通じて一緒に成長していきましょう！"
                   />
                 </div>
                 <div className="divide-x rounded-lg border bg-gray-50">
                   <InfoBlock
-                    icon="payments"
+                    icon={<FaTools />}
                     title="設備が充実"
                     description="大学内にアンプやドラムセットなど練習できる環境が揃っています．\nわざわざ外部のスタジオを借りなくても練習が可能です！"
                   />
                 </div>
                 <div className="divide-x rounded-lg border bg-gray-50">
                   <InfoBlock
-                    icon="hub"
+                    icon={<FaUsers />}
                     title="部員が多い"
                     description="”実際に活動をしている”部員数がとても多い部活です．\n各学部内外大学内で友達を作るならもってこいです！！"
                   />
                 </div>
                 <div className="divide-x rounded-lg border bg-gray-50">
                   <InfoBlock
-                    icon="discover_tune"
+                    icon={<FaMusic />}
                     title="様々なジャンル"
                     description="部員数が多いため，様々なジャンルの音楽に触れることができます．\n自分の知らないアーティストを見つける機会がたくさんあります．"
                   />
@@ -261,36 +280,42 @@ const Home = () => {
                     question="部費はありますか？"
                     answer="半年で6000円の部費を徴収しています.<br/>その中からイベントの運営や機材の購入に充てています．"
                     additional="※部Tの代金など,別途費用がかかることもあります．"
+                    icon={<FaMoneyBillWave />}
                   />
                 </div>
                 <div className=" relative rounded-lg bg-gray-100 p-5 pt-8">
                   <FAQItem
                     question="イベントはどんなものがありますか？"
                     answer="新歓ライブや学際でのライブ、定期演奏会など,年間を通して様々なイベントがあります．詳細はSNSなどをご覧ください．"
+                    icon={<FaCalendarAlt />}
                   />
                 </div>
                 <div className=" relative rounded-lg bg-gray-100 p-5 pt-8">
                   <FAQItem
                     question="初心者でも大丈夫ですか？"
                     answer="もちろんです！例年ほぼ半数が入部時は初心者です．<br/>初心者の方も大歓迎ですので、一緒に成長していきましょう！"
+                    icon={<FaSmile />}
                   />
                 </div>
                 <div className=" relative rounded-lg bg-gray-100 p-5 pt-8">
                   <FAQItem
                     question="楽器は自分で買わないといけない？"
                     answer="パートにもよりますが、家での練習のためにも、購入することをおすすめします。<br/>入部後に部や先輩から借りて体験などすることも可能ですので、気軽にご相談ください！"
+                    icon={<FaGuitar />}
                   />
                 </div>
                 <div className=" relative rounded-lg bg-gray-100 p-5 pt-8">
                   <FAQItem
                     question="続けられるか不安です..."
                     answer="物は試し、楽器の演奏は生活を豊かにする一生の趣味となると思います。<br/>まずは挑戦してみることをおすすめします！どの楽器も最初は大変ですが、こつこつ臆さずに練習し、ライブへの出演を続けることで"
+                    icon={<MdOutlineThumbUp />}
                   />
                 </div>
                 <div className=" relative rounded-lg bg-gray-100 p-5 pt-8">
                   <FAQItem
                     question="わからないことがあるのですが..."
                     answer="どんな些細なことでも結構です！SNSの方までご連絡ください！"
+                    icon={<MdOutlineContactSupport />}
                   />
                 </div>
               </div>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Modal from "react-modal";
 import Image from "next/image";
 import { useSwipeable } from "react-swipeable";
@@ -49,7 +49,7 @@ const applyStyles = (scrollPosition: number, apply: boolean): void => {
   });
 };
 
-// スクロール位置を元に戻す
+// スク���ール位置を元に戻す
 const restorePosition = (scrollPosition: number): void => {
   const options: ScrollToOptions = {
     behavior: "instant",
@@ -95,12 +95,15 @@ const ModalComponent: React.FC<ModalComponentProps> = ({
     onSwipedRight: handleSwipeRight,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectedBand) {
       backfaceFixed(true); // モーダルを開くときにスクロールを無効にする
     } else {
       backfaceFixed(false); // モーダルを閉じるときにスクロールを有効にする
     }
+    return () => {
+      backfaceFixed(false); // クリーンアップ時にスクロールを有効にする
+    };
   }, [selectedBand]);
 
   return (
@@ -151,13 +154,7 @@ const ModalComponent: React.FC<ModalComponentProps> = ({
         <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
           <div
             className="bg-gray-500 h-2.5 rounded-full"
-            style={{
-              width: `${
-                selectedBand && selectedBand.order
-                  ? Math.floor((selectedBand.order / totalBands) * 100)
-                  : 0
-              }%`,
-            }}
+            style={{ width: `${Math.floor(((selectedBand?.order ?? 0) / totalBands) * 100)}%` }}
           ></div>
         </div>
         <div className="flex justify-between text-gray-500 text-sm">

@@ -26,8 +26,7 @@ export const bandData = [
     name: "JAY-RISYUMISS",
     copyFrom: "HEY-SMITH",
     comment:
-      // "こんにちは！HEY-SMITHのコピーバンドJAY-RISYUMISSです。\nこのバンドはパンクにホーン隊を加えたパンクロックバンドです！\nみんな、履修ミスには気をつけろよ！\n俺たち最強バンド卍",
-      "",
+      "こんにちは！HEY-SMITHのコピーバンドJAY-RISYUMISSです。\nこのバンドはパンクにホーン隊を加えたパンクロックバンドです！\nみんな、履修ミスには気をつけろよ！\n俺たち最強バンド卍",
     photo: "/image/2024teien/jayA-sya.jpg",
     order: 1,
   },

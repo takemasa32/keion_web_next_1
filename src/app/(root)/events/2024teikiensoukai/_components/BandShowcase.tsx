@@ -110,13 +110,13 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
             isOpen={!!selectedBand}
             onRequestClose={closeModal}
             contentLabel="Band Details"
-            className="fixed mx-4 my-6 inset-0 flex h-lvh items-center justify-center z-50 transition-opacity duration-600"
-            overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-600"
+            className="fixed inset-0 flex items-center justify-center z-50 p-4"
+            overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40"
             ariaHideApp={false}
           >
             <div
               {...handlers}
-              className="bg-white rounded-lg p-6 max-w-lg mx-auto relative z-50 transform transition-transform duration-300 scale-100"
+              className="bg-white rounded-lg p-6 w-full max-w-lg mx-auto relative z-50 transform transition-transform duration-300"
             >
               <button
                 onClick={closeModal}
@@ -150,7 +150,6 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
                   }}
                 ></p>
               </div>
-              <div className="flex items-center justify-center mb-4"></div>
               <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
                 <div
                   className="bg-gray-500 h-2.5 rounded-full"
@@ -169,7 +168,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
                   close
                 </button>
               </div>
-              <div className="mt-40 absolute inset-y-0 left-0 flex items-center">
+              <div className="absolute inset-y-0 left-0 flex items-center">
                 <button
                   onClick={handleSwipeRight}
                   className="p-2 text-gray-500 hover:text-gray-700 focus:outline-none"
@@ -190,7 +189,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
                   </svg>
                 </button>
               </div>
-              <div className="mt-40 absolute inset-y-0 right-0 flex items-center">
+              <div className="absolute inset-y-0 right-0 flex items-center">
                 <button
                   onClick={handleSwipeLeft}
                   className="p-2 text-gray-500 hover:text-gray-700 focus:outline-none"

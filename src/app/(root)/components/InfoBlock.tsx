@@ -2,11 +2,12 @@
 import React from "react";
 
 interface InfoBlockProps {
-  icon: string;
+  icon: React.ReactNode;
+
   title: string;
+
   description: string;
 }
-
 const InfoBlock: React.FC<InfoBlockProps> = ({ icon, title, description }) => {
   const formattedDescription = description.split("\\n").map((line, index) => (
     <p key={index} className="text-gray-500">

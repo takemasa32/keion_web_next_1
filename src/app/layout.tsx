@@ -34,7 +34,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
           id="__next"
           className="flex flex-col min-h-screen bg-white"
           style={{
-            paddingTop: "env(safe-area-inset-top)",
+            paddingTop: "",
             // paddingBottom: "env(safe-area-inset-bottom)",
           }}
         >

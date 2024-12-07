@@ -36,7 +36,7 @@ export const bandData = [
     order: 4,
   },
   {
-    name: "マアイ feat.チンマンホウ",
+    name: "マアイ feat．チンマンホウ",
     copyFrom: "レキシ",
     comment: "",
     photo: "/image/2023teien/05.jpg",

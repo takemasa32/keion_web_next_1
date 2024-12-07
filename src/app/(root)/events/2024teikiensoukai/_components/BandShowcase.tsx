@@ -29,6 +29,73 @@ const styles = `
   }
 `;
 
+// ドキュメントの書字方向を取得し、縦書きかどうかを判定
+const isVerticalWritingMode = (): boolean => {
+  const writingMode = window.getComputedStyle(document.documentElement).writingMode;
+  return writingMode.includes("vertical");
+};
+
+// スクロールバーの幅を計算する
+const getScrollBarSize = (): number => {
+  const scrollBarXSize = window.innerHeight - document.body.clientHeight;
+  const scrollBarYSize = window.innerWidth - document.body.clientWidth;
+  return isVerticalWritingMode() ? scrollBarXSize : scrollBarYSize;
+};
+
+// スクロール位置を取得する
+const getScrollPosition = (fixed: boolean): number => {
+  if (fixed) {
+    return isVerticalWritingMode()
+      ? document.scrollingElement?.scrollLeft ?? 0
+      : document.scrollingElement?.scrollTop ?? 0;
+  }
+  return parseInt(document.body.style.insetBlockStart || "0", 10);
+};
+
+type AllowedStyles =
+  | "blockSize"
+  | "insetInlineStart"
+  | "position"
+  | "insetBlockStart"
+  | "inlineSize";
+
+// 背面固定のスタイルを適用する
+const applyStyles = (scrollPosition: number, apply: boolean): void => {
+  const styles: Partial<Record<AllowedStyles, string>> = {
+    blockSize: "100dvb",
+    insetInlineStart: "0",
+    position: "fixed",
+    insetBlockStart: isVerticalWritingMode() ? `${scrollPosition}px` : `${scrollPosition * -1}px`,
+    inlineSize: "100dvi",
+  };
+  Object.keys(styles).forEach((key) => {
+    const styleKey = key as AllowedStyles;
+    document.body.style[styleKey] = apply ? styles[styleKey]! : "";
+  });
+};
+
+// スクロール位置を元に戻す
+const restorePosition = (scrollPosition: number): void => {
+  const options: ScrollToOptions = {
+    behavior: "instant",
+    [isVerticalWritingMode() ? "left" : "top"]: isVerticalWritingMode()
+      ? scrollPosition
+      : scrollPosition * -1,
+  };
+  window.scrollTo(options);
+};
+
+// 背面を固定する
+const backfaceFixed = (fixed: boolean): void => {
+  const scrollBarWidth = getScrollBarSize();
+  const scrollPosition = getScrollPosition(fixed);
+  document.body.style.paddingInlineEnd = fixed ? `${scrollBarWidth}px` : "";
+  applyStyles(scrollPosition, fixed);
+  if (!fixed) {
+    restorePosition(scrollPosition);
+  }
+};
+
 export const BandShowcase = ({ data }: { data: BandData[] }) => {
   const [selectedBand, setSelectedBand] = useState<BandData | null>(null);
   const [flippingIndex, setFlippingIndex] = useState<number | null>(null);
@@ -39,12 +106,14 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
     setFlippingIndex(index);
     setTimeout(() => {
       setSelectedBand(band);
+      backfaceFixed(true); // モーダルを開くときにスクロールを無効にする
     }, 300); // フリップアニメーションの時間に合わせる
   };
 
   const closeModal = () => {
     setSelectedBand(null);
     setFlippingIndex(null); // フリップインデックスをリセット
+    backfaceFixed(false); // モーダルを閉じるときにスクロールを有効にする
   };
 
   const handleSwipeLeft = () => {
@@ -110,13 +179,14 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
             isOpen={!!selectedBand}
             onRequestClose={closeModal}
             contentLabel="Band Details"
-            className="fixed inset-0 flex items-center justify-center z-50 p-4"
-            overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40"
+            className="fixed mx-4 my-6 inset-0 flex items-center justify-center z-50 transition-opacity duration-600"
+            overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-600"
             ariaHideApp={false}
           >
             <div
               {...handlers}
-              className="bg-white rounded-lg p-6 w-full max-w-lg mx-auto relative z-50 transform transition-transform duration-300"
+              className="bg-white rounded-lg p-6 max-w-lg w-full mx-auto relative z-50 transform transition-transform duration-300 scale-100"
+              style={{ maxWidth: "90%", maxHeight: "90vh" }}
             >
               <button
                 onClick={closeModal}
@@ -133,7 +203,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
                   className="w-full h-auto mb-4 rounded transition-opacity duration-500 ease-in-out bg-gray-400 animate-pulse"
                   style={{ objectFit: "cover" }}
                   onLoad={(img) => {
-                    img.currentTarget.classList.remove("bg-gray-400", "animate-pulse");
+                    img.currentTarget.classList.remove("bg-black", "animate-pulse");
                     setLoading(false);
                   }}
                 />
@@ -144,12 +214,13 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
               </p>
               <div className="overflow-y-auto max-h-40 border-t border-b border-gray-300 my-4 p-4 bg-gray-100 rounded-lg shadow-inner">
                 <p
-                  className="text-gray-700 text-center m-auto leading-relaxed whitespace-pre-wrap"
+                  className="text-gray-700 text-center leading-relaxed whitespace-pre-wrap"
                   dangerouslySetInnerHTML={{
                     __html: selectedBand.comment.replace(/\n/g, "<br />"),
                   }}
                 ></p>
               </div>
+              <div className="flex items-center justify-center mb-4"></div>
               <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
                 <div
                   className="bg-gray-500 h-2.5 rounded-full"
@@ -163,12 +234,12 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
               <div className="flex items-center justify-center mb-4">
                 <button
                   onClick={closeModal}
-                  className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+                  className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                 >
                   close
                 </button>
               </div>
-              <div className="absolute inset-y-0 left-0 flex items-center">
+              <div className="mt-40 absolute inset-y-0 left-0 flex items-center">
                 <button
                   onClick={handleSwipeRight}
                   className="p-2 text-gray-500 hover:text-gray-700 focus:outline-none"
@@ -189,7 +260,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
                   </svg>
                 </button>
               </div>
-              <div className="absolute inset-y-0 right-0 flex items-center">
+              <div className="mt-40 absolute inset-y-0 right-0 flex items-center">
                 <button
                   onClick={handleSwipeLeft}
                   className="p-2 text-gray-500 hover:text-gray-700 focus:outline-none"

@@ -126,15 +126,14 @@ const ModalComponent: React.FC<ModalComponentProps> = ({
         >
           &times;
         </button>
-
-        <div className="relative w-full h-0 pb-[100%]">
+        <div className="relative w-full h-0 pb-[100%] bg-gray-200">
           {loading && <div className="loading-spinner"></div>}
           <Image
             src={selectedBand?.photo || ""}
             alt={selectedBand?.name || ""}
             fill
-            className="w-full h-auto mb-4 rounded transition-opacity duration-500 ease-in-out bg-gray-400 animate-pulse"
-            style={{ objectFit: "cover" }}
+            className="w-full h-auto mb-4 rounded transition-opacity duration-500 ease-in-out"
+            style={{ objectFit: "contain" }}
             onLoad={(img) => {
               img.currentTarget.classList.remove("bg-black", "animate-pulse");
               setLoading(false);

@@ -16,16 +16,16 @@ const EventsPage = () => {
           <div className="bg-black bg-opacity-50 p-4 rounded-lg mb-8 sm:mb-12">
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold text-center text-white break-words">
-                2024年
+                島根大学軽音楽部
                 <br />
-                定期演奏会
+                第58回定期演奏会
               </h1>
             </div>
-            <div className="pt-6 ">
+            <div className="pt-6">
               <p className="text-base sm:text-lg text-white text-center break-words">
-                島根大学軽音楽部は、
+                もう最高の定演はじまるからねー
                 <br />
-                今年も定期演奏会を行います！
+                〜ん、良き定演、心賑やかなり〜
               </p>
             </div>
           </div>

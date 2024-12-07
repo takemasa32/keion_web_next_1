@@ -1,5 +1,3 @@
-import { GrOrderedList } from "react-icons/gr";
-
 export const bandScheduleData = [
   { date: "2024-12-21", name: "部長挨拶", start: "15:30", end: "15:35" },
   { date: "2024-12-21", name: "JAY-RISYUMISS", start: "15:35", end: "16:00" },

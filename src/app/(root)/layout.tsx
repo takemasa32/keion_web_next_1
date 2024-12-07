@@ -34,10 +34,12 @@ const SubLayout = ({ children }: { children: ReactNode }) => {
       <div
         id="__next"
         className="flex flex-col min-h-screen bg-white"
-        style={{
-          paddingTop: "env(safe-area-inset-top)",
-          // paddingBottom: "env(safe-area-inset-bottom)",
-        }}
+        style={
+          {
+            // paddingTop: "env(safe-area-inset-top)",
+            // paddingBottom: "env(safe-area-inset-bottom)",
+          }
+        }
       >
         <Header />
         <SpeedInsights />

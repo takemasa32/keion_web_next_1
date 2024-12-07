@@ -18,23 +18,13 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
         <title>{metadata.title}</title>
         <meta name="description" content={metadata.description} />
         <meta name="viewport" content={metadata.content} />
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-        <link
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-          rel="stylesheet"
-        />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-        />
-        <link rel="icon" href="./../favicon.ico" />
       </Head>
       <body>
         <div
           id="__next"
           className="flex flex-col min-h-screen bg-white"
           style={{
-            paddingTop: "env(safe-area-inset-top)",
+            paddingTop: "",
             // paddingBottom: "env(safe-area-inset-bottom)",
           }}
         >

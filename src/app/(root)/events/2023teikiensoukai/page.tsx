@@ -3,10 +3,9 @@ import Link from "next/link";
 import { events } from "../../../data/events";
 import CustomImage from "../Components/CustomImage";
 import EventList from "../Components/EventList";
-import BandSchedule from "../Components/BandSchedule";
 import EventSection from "../Components/EventSection";
-import { bandData, bandScheduleData } from "./data";
-import BandShowcase from "./_components/BandShowcase";
+import { bandData } from "./data";
+import BandShowcase from "../2024teikiensoukai/_components/BandShowcase";
 
 const EventsPage = () => {
   return (
@@ -18,46 +17,38 @@ const EventsPage = () => {
               <h1 className="text-3xl sm:text-4xl font-bold text-center text-white break-words">
                 島根大学軽音楽部
                 <br />
-                第58回定期演奏会
+                第57回定期演奏会
               </h1>
             </div>
             <div className="pt-6">
               <p className="text-base sm:text-lg text-white text-center break-words">
-                もう最高の定演はじまるからねー
+                〜定期演奏会？じゃあ何？みんなこの日のために頑張ってきたってこと？
                 <br />
-                〜ん、良き定演、心賑やかなり〜
+                全員で協力して、それで今年の定演も大成功しちゃえばいいんだ？〜
               </p>
             </div>
           </div>
           {/* イベント紹介 */}
           <EventSection
-            title="2024年度 定期演奏会"
-            dates={["2024-12-21"]}
+            title="2023年度 定期演奏会"
+            dates={["2024-12-16"]}
             location="安来市総合文化ホール アルテピア"
             description="島根大学軽音部 年に一度の集大成となるライブです。入場無料です。ぜひご観覧に来てください。"
             mapSrc="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13005.069972902245!2d133.226691039205!3d35.423403150290596!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3556fc17460f8a8b%3A0x876867d7ff94bba3!2z5a6J5p2l5biC57eP5ZCI5paH5YyW44Ob44O844OrIOOCouODq-ODhuODlOOCog!5e0!3m2!1sja!2sjp!4v1731082476456!5m2!1sja!2sjp"
           />
           {/* バンド紹介 */}
           <BandShowcase data={bandData} />
-          {/* スケジュール */}
-          <BandSchedule
-            eventName="2024年度定期演奏会"
-            eventDate="2024-12-21"
-            bandSchedule={bandScheduleData}
-            isDebugMode={process.env.NODE_ENV === "development"}
-            viewSetting="close"
-            BandScheduleLink="/events/2024teikiensoukai/schedule"
-          />
+
           <div className="mt-8 sm:mt-12 bg-white bg-opacity-80 p-6 rounded-lg shadow-lg">
             <h2 className="text-2xl sm:text-2xl font-bold text-center text-black mb-6 sm:mb-8 break-words">
-              今年の部Tが完成しました！
+              2023年の部Tが完成しました！
             </h2>
-            <Link href="/events/2024BukatuT">
+            <Link href="/events/2023BukatuT">
               <div className="flex justify-center space-x-8 cursor-pointer">
                 <div className="flex flex-col items-center">
                   <CustomImage
-                    src="/image/keionBackImage.JPG"
-                    alt="今年のTシャツ背面デザイン"
+                    src="/image/2023T/2023TシャツMain.jpg"
+                    alt="2023のTシャツ背面デザイン"
                     width={400}
                     height={400}
                     className="rounded-lg shadow-lg object-cover"
@@ -68,7 +59,7 @@ const EventsPage = () => {
                 </div>
                 <div className="flex flex-col items-center">
                   <CustomImage
-                    src="/image/2024keionMiniLogo.JPG"
+                    src="/image/2023T/2023Tシャツ.jpg"
                     alt="今年のTシャツワンポイントデザイン"
                     width={400}
                     height={400}

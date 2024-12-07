@@ -1,11 +1,10 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
-import Modal from "react-modal";
-import { useSwipeable } from "react-swipeable";
 import { BandData } from "../data";
+import ModalComponent from "../../Components/ModalComponent";
 
-// フリップアニメーションのためのCSSを追加
+// フリップアニメーション
 const styles = `
   .flip {
     transform: rotateY(180deg);
@@ -63,11 +62,6 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
     }
   };
 
-  const handlers = useSwipeable({
-    onSwipedLeft: handleSwipeLeft,
-    onSwipedRight: handleSwipeRight,
-  });
-
   return (
     <>
       <style>{styles}</style>
@@ -80,7 +74,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
           {data.map((band, index) => (
             <div
-              key={band.name}
+              key={band.name} // 一意のkeyプロパティを追加
               className={`cursor-pointer transform transition duration-300 ${
                 flippingIndex === index ? "flip opacity-15 " : ""
               }`}
@@ -106,112 +100,15 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
         </div>
 
         {selectedBand && (
-          <Modal
-            isOpen={!!selectedBand}
-            onRequestClose={closeModal}
-            contentLabel="Band Details"
-            className="fixed inset-0 flex items-center justify-center z-50 p-4"
-            overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40"
-            ariaHideApp={false}
-          >
-            <div
-              {...handlers}
-              className="bg-white rounded-lg p-6 w-full max-w-lg mx-auto relative z-50 transform transition-transform duration-300"
-            >
-              <button
-                onClick={closeModal}
-                className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-2xl"
-              >
-                &times;
-              </button>
-              <div className="relative w-full h-0 pb-[100%]">
-                {loading && <div className="loading-spinner"></div>}
-                <Image
-                  src={selectedBand.photo}
-                  alt={selectedBand.name}
-                  fill
-                  className="w-full h-auto mb-4 rounded transition-opacity duration-500 ease-in-out bg-gray-400 animate-pulse"
-                  style={{ objectFit: "cover" }}
-                  onLoad={(img) => {
-                    img.currentTarget.classList.remove("bg-gray-400", "animate-pulse");
-                    setLoading(false);
-                  }}
-                />
-              </div>
-              <h2 className="text-2xl text-gray-700 text-center font-bold">{selectedBand.name}</h2>
-              <p className="text-sm text-gray-500 text-center font-bold mb-2">
-                {selectedBand.copyFrom}
-              </p>
-              <div className="overflow-y-auto max-h-40 border-t border-b border-gray-300 my-4 p-4 bg-gray-100 rounded-lg shadow-inner">
-                <p
-                  className="text-gray-700 text-center m-auto leading-relaxed whitespace-pre-wrap"
-                  dangerouslySetInnerHTML={{
-                    __html: selectedBand.comment.replace(/\n/g, "<br />"),
-                  }}
-                ></p>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
-                <div
-                  className="bg-gray-500 h-2.5 rounded-full"
-                  style={{ width: `${Math.floor((selectedBand.order / totalBands) * 100)}%` }}
-                ></div>
-              </div>
-              <div className="flex justify-between text-gray-500 text-sm">
-                <span>開演</span>
-                <span>終演</span>
-              </div>
-              <div className="flex items-center justify-center mb-4">
-                <button
-                  onClick={closeModal}
-                  className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
-                >
-                  close
-                </button>
-              </div>
-              <div className="absolute inset-y-0 left-0 flex items-center">
-                <button
-                  onClick={handleSwipeRight}
-                  className="p-2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M15 19l-7-7 7-7"
-                    ></path>
-                  </svg>
-                </button>
-              </div>
-              <div className="absolute inset-y-0 right-0 flex items-center">
-                <button
-                  onClick={handleSwipeLeft}
-                  className="p-2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M9 5l7 7-7 7"
-                    ></path>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </Modal>
+          <ModalComponent
+            selectedBand={selectedBand}
+            closeModal={closeModal}
+            handleSwipeLeft={handleSwipeLeft}
+            handleSwipeRight={handleSwipeRight}
+            loading={loading}
+            setLoading={setLoading}
+            totalBands={totalBands}
+          />
         )}
       </div>
     </>

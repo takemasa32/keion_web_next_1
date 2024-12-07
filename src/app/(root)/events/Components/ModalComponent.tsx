@@ -49,7 +49,7 @@ const applyStyles = (scrollPosition: number, apply: boolean): void => {
   });
 };
 
-// スク���ール位置を元に戻す
+// スクロール位置を元に戻す
 const restorePosition = (scrollPosition: number): void => {
   const options: ScrollToOptions = {
     behavior: "instant",
@@ -126,6 +126,7 @@ const ModalComponent: React.FC<ModalComponentProps> = ({
         >
           &times;
         </button>
+
         <div className="relative w-full h-0 pb-[100%]">
           {loading && <div className="loading-spinner"></div>}
           <Image

@@ -1,8 +1,6 @@
 import "./globals.css";
 import { ReactNode } from "react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import Header from "@/app/(root)/components/Header";
-import Footer from "@/app/(root)/components/Footer";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import Head from "next/head";
 

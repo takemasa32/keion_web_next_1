@@ -78,6 +78,14 @@ export const events: Event[] = [
     image: "/image/2024keionMiniLogo.JPG",
   },
   {
+    title: "2023年度 定期演奏会",
+    date: "2023年12月16日",
+    description:
+      "2023年年度の12月16日はぜひアルテピアへ!年に一度、選りすぐりのバンドが集う島大軽音最大のイベントへ是非お越しください.詳細はこちらから",
+    image: "/image/2023T/2023Tシャツ.jpg",
+    link: "/events/2023teikiensoukai",
+  },
+  {
     title: "2023年 部T",
     date: "2023年10月",
     description: "島根大学軽音部2023年度の部Tが完成しました！。詳細はこちらから",

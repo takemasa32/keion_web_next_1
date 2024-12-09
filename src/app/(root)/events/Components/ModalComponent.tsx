@@ -143,7 +143,7 @@ const ModalComponent: React.FC<ModalComponentProps> = ({
         </div>
         <h2 className="text-2xl text-gray-700 text-center font-bold">{selectedBand?.name}</h2>
         <p className="text-sm text-gray-500 text-center font-bold mb-2">{selectedBand?.copyFrom}</p>
-        <div className="overflow-y-auto max-h-40 border-t border-b border-gray-300 my-4 p-4 bg-gray-100 rounded-lg shadow-inner">
+        <div className="overflow-y-auto h-30 border-t border-b border-gray-300 my-4 p-4 bg-gray-100 rounded-lg shadow-inner">
           <p
             className="text-gray-700 text-center leading-relaxed whitespace-pre-wrap"
             dangerouslySetInnerHTML={{

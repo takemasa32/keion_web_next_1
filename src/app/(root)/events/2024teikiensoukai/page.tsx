@@ -1,4 +1,5 @@
 import React from "react";
+import Head from "next/head";
 import Link from "next/link";
 import { events } from "../../../data/events";
 import CustomImage from "../Components/CustomImage";
@@ -11,6 +12,25 @@ import BandShowcase from "./_components/BandShowcase";
 const EventsPage = () => {
   return (
     <>
+      <Head>
+        <title>島根大学軽音楽部 第58回定期演奏会</title>
+        <meta name="description" content="島根大学軽音楽部 第58回定期演奏会の紹介ページです。" />
+        <meta name="keywords" content="島根大学, 軽音楽部, 定期演奏会, 音楽, ライブ" />
+        <meta property="og:title" content="島根大学軽音楽部 第58回定期演奏会" />
+        <meta
+          property="og:description"
+          content="島根大学軽音楽部 第58回定期演奏会の紹介ページです。"
+        />
+        <meta property="og:image" content="/image/keionBackImage.JPG" />
+        <meta property="og:url" content="https://shimadaikeion.com/events/2024teikiensoukai" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="島根大学軽音楽部 第58回定期演奏会" />
+        <meta
+          name="twitter:description"
+          content="島根大学軽音楽部 第58回定期演奏会の紹介ページです。"
+        />
+        <meta name="twitter:image" content="/image/keionBackImage.JPG" />
+      </Head>
       <div className="relative bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-400 min-h-screen py-6 sm:py-8 lg:py-12">
         <div className="container relative z-10 mx-auto px-4">
           <div className="bg-black bg-opacity-50 p-4 rounded-lg mb-8 sm:mb-12">

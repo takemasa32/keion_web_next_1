@@ -258,7 +258,7 @@ const ModalComponent: React.FC<ModalComponentProps> = ({
               <div className="md:w-1/2 p-6">
                 <h2 className="text-2xl text-gray-700 font-bold">{selectedBand?.name}</h2>
                 <p className="text-sm text-gray-500 font-bold mb-2">{selectedBand?.copyFrom}</p>
-                <div className="overflow-y-auto max-h-40 border-t border-b border-gray-300 my-4 p-4 bg-gray-100 rounded-lg shadow-inner">
+                <div className="overflow-y-auto max-h-28 border-t border-b border-gray-300 my-4 p-4 bg-gray-100 rounded-lg shadow-inner">
                   <p
                     className="text-gray-700 leading-relaxed whitespace-pre-wrap"
                     dangerouslySetInnerHTML={{
@@ -281,7 +281,7 @@ const ModalComponent: React.FC<ModalComponentProps> = ({
                 <div className="flex items-center justify-center mb-4">
                   <button
                     onClick={closeModal}
-                    className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                    className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
                   >
                     close
                   </button>

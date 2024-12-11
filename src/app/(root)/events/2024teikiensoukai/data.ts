@@ -56,8 +56,7 @@ export const bandData = [
     name: "🎱s",
     copyFrom: "ZAZEN BOYS",
     comment:
-      // "快活CLUBからやって参りました🎱sです。\n1つになった私たちの音, kimochiあなたに伝えたい。\nアルテピアでずっとずっとずっとずっと待ってます。\n快活CLUBからやって参りました🎱sでした。",
-      "",
+      "快活CLUBからやって参りました🎱sです。\nビリヤードメンバーを紹介します。\nguitar 岸本琉鳩\nbass 太田圭駿\non the drums 元ビリヤードキング 川端颯太\nそして私がThis is 宮原和志。\n過去の幾度とない努力、ビリヤード、飲みに遊び\nそして1つになった私たちの音, kimochiあなたに伝えたい。\nアルテピアでずっとずっとずっとずっと待ってます。\n快活CLUBからやって参りました🎱sでした。",
     photo: "/image/2024teien/8sA-sya.jpg",
     order: 5,
   },

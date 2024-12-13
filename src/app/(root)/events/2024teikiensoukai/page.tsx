@@ -49,6 +49,7 @@ const EventsPage = () => {
               </p>
             </div>
           </div>
+
           {/* イベント紹介 */}
           <EventSection
             title="2024年度 定期演奏会"
@@ -57,6 +58,21 @@ const EventsPage = () => {
             description="島根大学軽音部 年に一度の集大成となるライブです。入場無料です。ぜひご観覧に来てください。"
             mapSrc="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13005.069972902245!2d133.226691039205!3d35.423403150290596!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3556fc17460f8a8b%3A0x876867d7ff94bba3!2z5a6J5p2l5biC57eP5ZCI5paH5YyW44Ob44O844OrIOOCouODq-ODhuODlOOCog!5e0!3m2!1sja!2sjp!4v1731082476456!5m2!1sja!2sjp"
           />
+          {/* ポスター紹介 */}
+          <div className="bg-white bg-opacity-80 p-6 rounded-lg shadow-lg mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold text-center text-black mb-6 sm:mb-8 break-words">
+              定期演奏会ポスター
+            </h2>
+            <div className="flex justify-center">
+              <CustomImage
+                src="/image/2024teien/2024poster.jpg"
+                alt="定期演奏会ポスター"
+                width={600}
+                height={800}
+                className="rounded-lg shadow-lg object-cover"
+              />
+            </div>
+          </div>
           {/* バンド紹介 */}
           <BandShowcase data={bandData} />
           {/* スケジュール */}

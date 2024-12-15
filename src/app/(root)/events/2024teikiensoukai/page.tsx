@@ -50,6 +50,47 @@ const EventsPage = () => {
             </div>
           </div>
 
+          {/* 内容一覧セクションの追加 */}
+          <div className="content-list bg-white bg-opacity-80 p-6 rounded-lg shadow-lg mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold text-center text-black mb-6 sm:mb-8 break-words">
+              目次
+            </h2>
+            <ul className="list-none text-lg text-gray-700 space-y-4">
+              <li>
+                <a
+                  href="#poster"
+                  className="block bg-gray-700 text-white text-center py-2 px-4 rounded-lg hover:bg-gray-600 transition duration-300"
+                >
+                  定期演奏会ポスター
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#band-showcase"
+                  className="block bg-gray-700 text-white text-center py-2 px-4 rounded-lg hover:bg-gray-600 transition duration-300"
+                >
+                  出演バンド一覧
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#band-schedule"
+                  className="block bg-gray-700 text-white text-center py-2 px-4 rounded-lg hover:bg-gray-600 transition duration-300"
+                >
+                  スケジュール
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#sns"
+                  className="block bg-gray-700 text-white text-center py-2 px-4 rounded-lg hover:bg-gray-600 transition duration-300"
+                >
+                  SNS
+                </a>
+              </li>
+            </ul>
+          </div>
+
           {/* イベント紹介 */}
           <EventSection
             title="2024年度 定期演奏会"
@@ -60,30 +101,57 @@ const EventsPage = () => {
           />
           {/* ポスター紹介 */}
           <div className="bg-white bg-opacity-80 p-6 rounded-lg shadow-lg mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl font-bold text-center text-black mb-6 sm:mb-8 break-words">
+            <h2
+              id="poster"
+              className="text-2xl sm:text-3xl font-bold text-center text-black mb-6 sm:mb-8 break-words"
+            >
               定期演奏会ポスター
             </h2>
-            <div className="flex justify-center">
-              <CustomImage
-                src="/image/2024teien/2024poster.jpg"
-                alt="定期演奏会ポスター"
-                width={600}
-                height={800}
-                className="rounded-lg shadow-lg object-cover"
-              />
+            <div className="flex flex-col sm:flex-row justify-center space-y-6 sm:space-y-0 sm:space-x-8">
+              <div className="flex flex-col items-center">
+                <p className="text-base sm:text-lg text-center text-gray-700 mt-4 break-words">
+                  ポスター
+                </p>
+                <CustomImage
+                  src="/image/2024teien/2024poster.jpg"
+                  alt="定期演奏会ポスター"
+                  width={600}
+                  height={800}
+                  className="rounded-lg shadow-lg object-cover"
+                />
+              </div>
+              <div className="flex flex-col items-center">
+                <p
+                  id="key-visual"
+                  className="text-base sm:text-lg text-center text-gray-700 mt-4 break-words"
+                >
+                  キービジュアル
+                </p>
+                <CustomImage
+                  src="/image/2024teien/2024mainPhoto.jpg"
+                  alt="定期演奏会キービジュアル"
+                  width={600}
+                  height={800}
+                  className="rounded-lg shadow-lg object-cover"
+                />
+              </div>
             </div>
           </div>
           {/* バンド紹介 */}
-          <BandShowcase data={bandData} />
+          <div id="band-showcase">
+            <BandShowcase data={bandData} />
+          </div>
           {/* スケジュール */}
-          <BandSchedule
-            eventName="2024年度定期演奏会"
-            eventDate="2024-12-21"
-            bandSchedule={bandScheduleData}
-            isDebugMode={process.env.NODE_ENV === "development"}
-            viewSetting="close"
-            BandScheduleLink="/events/2024teikiensoukai/schedule"
-          />
+          <div id="band-schedule">
+            <BandSchedule
+              eventName="2024年度定期演奏会"
+              eventDate="2024-12-21"
+              bandSchedule={bandScheduleData}
+              isDebugMode={process.env.NODE_ENV === "development"}
+              viewSetting="close"
+              BandScheduleLink="/events/2024teikiensoukai/schedule"
+            />
+          </div>
           <div className="mt-8 sm:mt-12 bg-white bg-opacity-80 p-6 rounded-lg shadow-lg">
             <h2 className="text-2xl sm:text-2xl font-bold text-center text-black mb-6 sm:mb-8 break-words">
               今年の部Tが完成しました！

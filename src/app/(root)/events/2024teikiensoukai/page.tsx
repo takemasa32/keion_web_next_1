@@ -31,6 +31,7 @@ const EventsPage = () => {
         />
         <meta name="twitter:image" content="/image/keionBackImage.JPG" />
       </Head>
+
       <div className="relative bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-400 min-h-screen py-6 sm:py-8 lg:py-12">
         <div className="container relative z-10 mx-auto px-4">
           <div className="bg-black bg-opacity-50 p-4 rounded-lg mb-8 sm:mb-12">
@@ -145,6 +146,9 @@ const EventsPage = () => {
                   className="rounded-lg shadow-lg object-cover"
                 />
               </div>
+              <a href="#" className="text-black text-right">
+                Topへ移動
+              </a>
             </div>
           </div>
           {/* バンド紹介 */}

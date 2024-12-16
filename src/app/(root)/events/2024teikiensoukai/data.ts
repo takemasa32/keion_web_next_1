@@ -1,4 +1,5 @@
 export const bandScheduleData = [
+  { date: "2024-12-21", name: "開場", start: "15:10", end: "15:10" },
   { date: "2024-12-21", name: "部長挨拶", start: "15:30", end: "15:35" },
   { date: "2024-12-21", name: "JAY-RISYUMISS", start: "15:35", end: "16:00" },
   { date: "2024-12-21", name: "Wii", start: "16:10", end: "16:35" },
@@ -10,6 +11,7 @@ export const bandScheduleData = [
   { date: "2024-12-21", name: "なでたいコーギー", start: "19:40", end: "20:05" },
   { date: "2024-12-21", name: "1回生オールスターズ", start: "20:15", end: "20:25" },
   { date: "2024-12-21", name: "副部長挨拶", start: "20:25", end: "20:30" },
+  { date: "2024-12-21", name: "閉演", start: "20:30", end: "20:30" },
 ];
 
 export type BandData = {

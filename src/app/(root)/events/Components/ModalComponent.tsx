@@ -242,7 +242,7 @@ const ModalComponent: React.FC<ModalComponentProps> = ({
               &times;
             </button>
             <div className="flex flex-col md:flex-row">
-              <div className="relative w-full md:w-1/2 h-64 md:h-auto bg-gray-200">
+              <div className="relative w-64 md:w-1/2 h-64 md:h-auto bg-gray-200">
                 {loading && <div className="loading-spinner"></div>}
                 <Image
                   src={selectedBand?.photo || ""}

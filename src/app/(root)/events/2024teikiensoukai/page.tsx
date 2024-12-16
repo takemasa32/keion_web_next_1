@@ -146,9 +146,6 @@ const EventsPage = () => {
                   className="rounded-lg shadow-lg object-cover"
                 />
               </div>
-              <a href="#" className="text-black text-right">
-                Topへ移動
-              </a>
             </div>
           </div>
           {/* バンド紹介 */}

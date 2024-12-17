@@ -129,7 +129,7 @@ const ModalComponent: React.FC<ModalComponentProps> = ({
             >
               &times;
             </button>
-            <div className="flex flex-col md:flex-row">
+            <div className="flex flex-col md:flex-row items-center md:items-stretch">
               <div className="relative w-72 h-72 md:h-auto bg-gray-200">
                 {loading && <div className="loading-spinner"></div>}
                 <Image

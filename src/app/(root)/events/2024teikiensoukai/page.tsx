@@ -9,18 +9,16 @@ import EventSection from "../Components/EventSection";
 import { bandData, bandScheduleData } from "./data";
 import BandShowcase from "./_components/BandShowcase";
 
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "2024年度 定期演奏会 | 島根大学軽音楽部",
+  description: "島根大学軽音楽部 第58回定期演奏会紹介ページ。",
+};
+
 const EventsPage = () => {
   return (
     <>
       <Head>
-        <title>島根大学軽音楽部 第58回定期演奏会</title>
-        <meta name="description" content="島根大学軽音楽部 第58回定期演奏会の紹介ページです。" />
-        <meta name="keywords" content="島根大学, 軽音楽部, 定期演奏会, 音楽, ライブ" />
-        <meta property="og:title" content="島根大学軽音楽部 第58回定期演奏会" />
-        <meta
-          property="og:description"
-          content="島根大学軽音楽部 第58回定期演奏会の紹介ページです。"
-        />
         <meta property="og:image" content="/image/keionBackImage.JPG" />
         <meta property="og:url" content="https://shimadaikeion.com/events/2024teikiensoukai" />
         <meta name="twitter:card" content="summary_large_image" />

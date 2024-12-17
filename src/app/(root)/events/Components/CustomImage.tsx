@@ -7,7 +7,7 @@ const CustomImage = (props: ImageProps) => {
     event.currentTarget.src = "/image/keionMiniLogo.JPG"; // デフォルトのロゴ画像のパス
   };
 
-  return <Image {...props} onError={handleImageError} />;
+  return <Image {...props} alt={props.alt || ""} onError={handleImageError} />;
 };
 
 export default CustomImage;

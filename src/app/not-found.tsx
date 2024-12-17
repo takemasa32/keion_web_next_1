@@ -1,6 +1,11 @@
 import Link from "next/link";
+import { Metadata } from "next/types";
 import { FaGuitar } from "react-icons/fa";
 
+export const metadata: Metadata = {
+  title: "404 - ページが見つかりません",
+  description: "お探しのページが見つかりません",
+};
 const NotFoundPage = () => {
   return (
     <>
@@ -10,7 +15,7 @@ const NotFoundPage = () => {
         <p className="text-lg mb-8 text-center">
           お探しのページは存在しないか、移動された可能性があります。
           <br />
-          代わりに、音楽を楽しみましょう！
+          代わりに、曲を演奏しましょう！
         </p>
         <Link href="/">
           <p className="px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200">

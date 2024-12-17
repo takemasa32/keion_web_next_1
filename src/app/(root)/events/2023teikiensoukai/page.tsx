@@ -7,6 +7,11 @@ import EventSection from "../Components/EventSection";
 import { bandData } from "./data";
 import BandShowcase from "../2024teikiensoukai/_components/BandShowcase";
 
+import { Metadata } from "next/dist/lib/metadata/types/metadata-interface";
+export const metadata: Metadata = {
+  title: "2023年度 定期演奏会 | 島根大学軽音楽部",
+  description: "島根大学軽音楽部の2023年度の定期演奏会についての情報です。",
+};
 const EventsPage = () => {
   return (
     <>

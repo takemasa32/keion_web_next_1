@@ -1,7 +1,11 @@
 import React from "react";
 import Image from "next/image";
 import EventList from "../Components/EventList";
-
+import { Metadata } from "next/dist/lib/metadata/types/metadata-interface";
+export const metadata: Metadata = {
+  title: "2023年部T紹介 | 島根大学軽音楽部",
+  description: "島根大学軽音楽部の2023年の部Tについての情報です。",
+};
 const BukatuTPage = () => {
   return (
     <div className="relative bg-gradient-to-r from-teal-400 via-cyan-500 to-green-500 min-h-screen py-6 sm:py-8 lg:py-12">

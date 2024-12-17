@@ -4,7 +4,11 @@ import BandSchedule from "../../Components/BandSchedule";
 import { bandScheduleData } from "../data";
 import { events } from "@/app/data/events";
 import EventList from "../../Components/EventList";
-
+import { Metadata } from "next/dist/lib/metadata/types/metadata-interface";
+export const metadata: Metadata = {
+  title: "2024年度定期演奏会 日程 | 島根大学軽音楽部",
+  description: "2024年度の島根大学軽音部定期演奏会のスケジュールです。",
+};
 const EventsPage = () => {
   return (
     <div className="relative bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-400 min-h-screen py-6 sm:py-8 lg:py-12">

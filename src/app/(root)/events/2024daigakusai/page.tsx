@@ -3,7 +3,11 @@ import Link from "next/link";
 import { events } from "../../../data/events"; // イベントデータをインポート
 import CustomImage from "../Components/CustomImage";
 import EventList from "../Components/EventList";
-
+import { Metadata } from "next/dist/lib/metadata/types/metadata-interface";
+export const metadata: Metadata = {
+  title: "2024年大学祭 | 島根大学軽音楽部",
+  description: "島根大学軽音楽部の大学祭でのイベント情報を紹介します。",
+};
 const bandSchedule = [
   { date: "2024-10-13", name: "珍満boys", start: "13:10", end: "13:25" },
   { date: "2024-10-13", name: "ムラムラオカズ", start: "13:30", end: "13:45" },

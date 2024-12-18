@@ -23,6 +23,9 @@ export const viewport = {
 };
 
 const SubLayout = ({ children }: { children: ReactNode }) => {
+if (window.navigator.userAgent.includes("Instagram") || window.navigator.userAgent.includes("Twitter")) {
+  alert("標準ブラウザでリンクを開いてください。");
+}
   return (
     <div
       id="__next"

@@ -23,9 +23,6 @@ export const viewport = {
 };
 
 const SubLayout = ({ children }: { children: ReactNode }) => {
-if (window.navigator.userAgent.includes("Instagram") || window.navigator.userAgent.includes("Twitter")) {
-  alert("標準ブラウザでの閲覧をおすすめします！iPhoneの場合はSafari�をご利用ください、");
-}
   return (
     <div
       id="__next"

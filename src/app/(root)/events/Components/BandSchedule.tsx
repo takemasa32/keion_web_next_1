@@ -118,7 +118,13 @@ const BandSchedule: React.FC<BandScheduleProps> = ({
       <div className="flex flex-col items-center">
         {currentDate < eventDate && (
           <p className="text-lg text-gray-700 mb-4">
-            イベントは {eventDate} に開催されます。お楽しみに！
+            イベントは{" "}
+            {new Date(eventDate).toLocaleDateString("ja-JP", {
+              month: "long",
+              day: "numeric",
+              hour: "numeric",
+            })}{" "}
+            に開催されます。お楽しみに！
           </p>
         )}
         {currentDate > eventDate && (

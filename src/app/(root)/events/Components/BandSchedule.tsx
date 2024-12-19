@@ -28,6 +28,7 @@ const getCurrentBandIndex = (bandSchedule: Band[], virtualDateTime: Date | null)
   const currentTime = `${jstNow.getHours()}:${jstNow.getMinutes().toString().padStart(2, "0")}`;
 
   let currentBandIndex = -1;
+  let nextBandIndex = null;
 
   for (let i = 0; i < bandSchedule.length; i++) {
     const band = bandSchedule[i];
@@ -38,10 +39,13 @@ const getCurrentBandIndex = (bandSchedule: Band[], virtualDateTime: Date | null)
     ) {
       currentBandIndex = i;
       break;
+    } else if (band.date === currentDate && parseTime(currentTime) < parseTime(band.start)) {
+      nextBandIndex = i;
+      break;
     }
   }
 
-  return { currentBandIndex, currentDate, currentTime };
+  return { currentBandIndex, currentDate, currentTime, nextBandIndex };
 };
 
 type BandScheduleProps = {
@@ -75,7 +79,7 @@ const BandSchedule: React.FC<BandScheduleProps> = ({
     }
   };
 
-  const { currentBandIndex, currentDate, currentTime } = getCurrentBandIndex(
+  const { currentBandIndex, currentDate, currentTime, nextBandIndex } = getCurrentBandIndex(
     bandSchedule,
     isDebugMode ? virtualDateTime : null
   );
@@ -85,9 +89,14 @@ const BandSchedule: React.FC<BandScheduleProps> = ({
 
   const bandsToShow = showAll
     ? bandSchedule
-    : bandSchedule.slice(
+    : nextBandIndex === null
+    ? bandSchedule.slice(
         Math.max(0, currentBandIndex - 1),
-        Math.min(bandSchedule.length, currentBandIndex + 2)
+        Math.min(bandSchedule.length, currentBandIndex + 5)
+      )
+    : bandSchedule.slice(
+        Math.max(0, nextBandIndex - 1),
+        Math.min(bandSchedule.length, nextBandIndex + 5)
       );
 
   return (

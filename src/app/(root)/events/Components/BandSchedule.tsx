@@ -153,7 +153,13 @@ const BandSchedule: React.FC<BandScheduleProps> = ({
                 現在は休憩時間です。次に演奏するバンド:{" "}
                 <strong>
                   {bandSchedule.find((band) => parseTime(currentTime) < parseTime(band.start))
-                    ?.name || "なし"}
+                    ?.name +
+                    ":" +
+                    bandSchedule.find((band) => parseTime(currentTime) < parseTime(band.start))
+                      ?.start +
+                    "-" +
+                    bandSchedule.find((band) => parseTime(currentTime) < parseTime(band.start))
+                      ?.end || "なし"}
                 </strong>
               </p>
             </div>

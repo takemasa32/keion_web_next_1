@@ -28,6 +28,7 @@ const getCurrentBandIndex = (bandSchedule: Band[], virtualDateTime: Date | null)
   const currentTime = `${jstNow.getHours()}:${jstNow.getMinutes().toString().padStart(2, "0")}`;
 
   let currentBandIndex = -1;
+  let nextBandIndex = null;
 
   for (let i = 0; i < bandSchedule.length; i++) {
     const band = bandSchedule[i];
@@ -38,10 +39,13 @@ const getCurrentBandIndex = (bandSchedule: Band[], virtualDateTime: Date | null)
     ) {
       currentBandIndex = i;
       break;
+    } else if (band.date === currentDate && parseTime(currentTime) < parseTime(band.start)) {
+      nextBandIndex = i;
+      break;
     }
   }
 
-  return { currentBandIndex, currentDate, currentTime };
+  return { currentBandIndex, currentDate, currentTime, nextBandIndex };
 };
 
 type BandScheduleProps = {
@@ -75,7 +79,7 @@ const BandSchedule: React.FC<BandScheduleProps> = ({
     }
   };
 
-  const { currentBandIndex, currentDate, currentTime } = getCurrentBandIndex(
+  const { currentBandIndex, currentDate, currentTime, nextBandIndex } = getCurrentBandIndex(
     bandSchedule,
     isDebugMode ? virtualDateTime : null
   );
@@ -85,9 +89,14 @@ const BandSchedule: React.FC<BandScheduleProps> = ({
 
   const bandsToShow = showAll
     ? bandSchedule
-    : bandSchedule.slice(
+    : nextBandIndex === null
+    ? bandSchedule.slice(
         Math.max(0, currentBandIndex - 1),
-        Math.min(bandSchedule.length, currentBandIndex + 2)
+        Math.min(bandSchedule.length, currentBandIndex + 5)
+      )
+    : bandSchedule.slice(
+        Math.max(0, nextBandIndex - 1),
+        Math.min(bandSchedule.length, nextBandIndex + 5)
       );
 
   return (
@@ -109,7 +118,13 @@ const BandSchedule: React.FC<BandScheduleProps> = ({
       <div className="flex flex-col items-center">
         {currentDate < eventDate && (
           <p className="text-lg text-gray-700 mb-4">
-            イベントは {eventDate} に開催されます。お楽しみに！
+            イベントは{" "}
+            {new Date(eventDate).toLocaleDateString("ja-JP", {
+              month: "long",
+              day: "numeric",
+              hour: "numeric",
+            })}{" "}
+            に開催されます。お楽しみに！
           </p>
         )}
         {currentDate > eventDate && (
@@ -144,7 +159,13 @@ const BandSchedule: React.FC<BandScheduleProps> = ({
                 現在は休憩時間です。次に演奏するバンド:{" "}
                 <strong>
                   {bandSchedule.find((band) => parseTime(currentTime) < parseTime(band.start))
-                    ?.name || "なし"}
+                    ?.name +
+                    ":" +
+                    bandSchedule.find((band) => parseTime(currentTime) < parseTime(band.start))
+                      ?.start +
+                    "-" +
+                    bandSchedule.find((band) => parseTime(currentTime) < parseTime(band.start))
+                      ?.end || "なし"}
                 </strong>
               </p>
             </div>

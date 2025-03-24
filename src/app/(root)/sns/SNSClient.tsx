@@ -254,9 +254,23 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
                 <div className="rounded-full bg-gray-100 w-16 h-16 flex items-center justify-center mx-auto mb-4">
                   <FaMusic className="text-2xl text-gray-900" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3 text-gray-900">演奏会</h3>
+                <h3 className="text-xl font-semibold mb-3 text-gray-900">ライブ</h3>
                 <p className="text-gray-600 mb-4">
                   学内の演奏会や各種イベント時に直接お声がけください。部員が対応します。
+                </p>
+              </motion.div>
+
+              <motion.div
+                className="bg-white rounded-lg p-6 text-center shadow-lg border border-gray-100 hover:shadow-xl transition-shadow"
+                variants={itemVariants}
+                whileHover={{ y: -5 }}
+              >
+                <div className="rounded-full bg-gray-100 w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                  <FaHandshake className="text-2xl text-gray-900" />
+                </div>
+                <h3 className="text-xl font-semibold mb-3 text-gray-900">知り合い・友達</h3>
+                <p className="text-gray-600 mb-4">
+                  部員の友人や知り合いを通じて連絡をとることもできます。気軽に紹介してもらってください。
                 </p>
               </motion.div>
             </div>

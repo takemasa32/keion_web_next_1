@@ -1,35 +1,88 @@
+"use client";
 import React from "react";
+import { motion } from "framer-motion";
+import { FaTwitter, FaInstagram, FaYoutube } from "react-icons/fa";
 
 export default function SNSButton() {
+  // アニメーションコントロール用の変数設定
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 },
+  };
+
   return (
     <div className="mx-auto max-w-screen-lg px-4 md:px-8">
-      <div className="mb-8 text-center">
+      <motion.div
+        className="mb-8 text-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
         <h2 className="text-3xl font-bold text-gray-800 mb-4">SNS</h2>
         <p className="text-lg text-gray-500">
           質問や入部希望、部室見学などは以下のSNSからお願いします。
         </p>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <a
+      </motion.div>
+
+      <motion.div
+        className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+        variants={container}
+        initial="hidden"
+        animate="show"
+      >
+        <motion.a
           href="https://twitter.com/shimaneU_keion"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center p-6 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600 transition duration-300"
+          className="flex items-center justify-center p-6 bg-gradient-to-r from-blue-400 to-blue-600 text-white rounded-lg shadow-lg"
+          variants={item}
+          whileHover={{
+            scale: 1.03,
+            boxShadow: "0 10px 25px -5px rgba(59, 130, 246, 0.5)",
+            y: -5,
+          }}
+          whileTap={{ scale: 0.97 }}
         >
-          <i className="fab fa-twitter fa-3x"></i>
+          <FaTwitter className="text-4xl" />
           <span className="ml-4 text-xl font-semibold">Twitter</span>
-        </a>
-        <a
+        </motion.a>
+
+        <motion.a
           href="https://www.instagram.com/shimadai_keion/"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center p-6 bg-pink-500 text-white rounded-lg shadow-lg hover:bg-pink-600 transition duration-300"
+          className="flex items-center justify-center p-6 bg-gradient-to-r from-pink-400 via-pink-500 to-purple-500 text-white rounded-lg shadow-lg"
+          variants={item}
+          whileHover={{
+            scale: 1.03,
+            boxShadow: "0 10px 25px -5px rgba(236, 72, 153, 0.5)",
+            y: -5,
+          }}
+          whileTap={{ scale: 0.97 }}
         >
-          <i className="fab fa-instagram fa-3x"></i>
+          <FaInstagram className="text-4xl" />
           <span className="ml-4 text-xl font-semibold">Instagram</span>
-        </a>
-      </div>
-      <p className="mt-8 text-center text-gray-500">↑各アイコンをクリックで、SNSに飛べます。</p>
+        </motion.a>
+      </motion.div>
+
+      <motion.p
+        className="mt-8 text-center text-gray-500"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.7, duration: 0.5 }}
+      >
+        ↑各アイコンをクリックで、SNSに飛べます。
+      </motion.p>
     </div>
   );
 }

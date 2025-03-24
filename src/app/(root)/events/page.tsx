@@ -1,16 +1,18 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { events } from "@/app/data/events";
+import { events, getAllTags } from "@/app/data/events";
 import EventCard from "./Components/EventCard";
 import { motion } from "framer-motion";
 import FilterBar from "./Components/FilterBar";
 import FloatingButton from "./Components/FloatingButton";
-import { useInView } from "react-intersection-observer";
 
 const EventsPage = () => {
   const [filteredEvents, setFilteredEvents] = useState(events);
-  const [activeFilter, setActiveFilter] = useState("all");
+  const [activeTag, setActiveTag] = useState("all");
   const [scrolled, setScrolled] = useState(false);
+
+  // 全タグを取得
+  const allTags = getAllTags();
 
   // スクロール検出
   useEffect(() => {
@@ -25,28 +27,14 @@ const EventsPage = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [scrolled]);
 
-  // フィルタリング関数
-  const filterEvents = (filter: string) => {
-    setActiveFilter(filter);
+  // タグフィルタリング処理
+  const filterEventsByTag = (tag: string) => {
+    setActiveTag(tag);
 
-    if (filter === "all") {
+    if (tag === "all") {
       setFilteredEvents(events);
-    } else if (filter === "upcoming") {
-      const now = new Date();
-      setFilteredEvents(
-        events.filter((event) => {
-          const eventDate = new Date(event.date);
-          return eventDate >= now;
-        })
-      );
-    } else if (filter === "past") {
-      const now = new Date();
-      setFilteredEvents(
-        events.filter((event) => {
-          const eventDate = new Date(event.date);
-          return eventDate < now;
-        })
-      );
+    } else {
+      setFilteredEvents(events.filter((event) => event.tags.includes(tag)));
     }
   };
 
@@ -69,7 +57,7 @@ const EventsPage = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
           className={`sticky top-0 z-10 transition-all duration-300 ${
-            scrolled ? "bg-white shadow-md py-3" : "py-6"
+            scrolled ? "bg-white/95 backdrop-blur-sm shadow-md py-3" : "py-6"
           }`}
         >
           <h1
@@ -80,8 +68,8 @@ const EventsPage = () => {
             イベント情報
           </h1>
 
-          {/* フィルターバー */}
-          <FilterBar activeFilter={activeFilter} onFilterChange={filterEvents} />
+          {/* タグフィルターバー */}
+          <FilterBar tags={allTags} activeTag={activeTag} onTagChange={filterEventsByTag} />
         </motion.div>
 
         <motion.div
@@ -101,7 +89,13 @@ const EventsPage = () => {
             animate={{ opacity: 1 }}
             className="text-center py-12"
           >
-            <p className="text-gray-500 text-xl">イベントが見つかりませんでした</p>
+            <p className="text-gray-500 text-xl">「{activeTag}」のイベントはありません</p>
+            <button
+              onClick={() => filterEventsByTag("all")}
+              className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-colors"
+            >
+              すべてのイベントを表示
+            </button>
           </motion.div>
         )}
       </div>

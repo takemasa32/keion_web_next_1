@@ -348,23 +348,23 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
         </div>
       </section>
 
-      {/* スクロール連動フローティングナビゲーション */}
+      {/* スクロール連動フローティングナビゲーション - 位置とスタイルを変更 */}
       <motion.div
-        className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50"
-        initial={{ y: 100, opacity: 0 }}
+        className="fixed right-6 top-1/2 transform -translate-y-1/2 z-30"
+        initial={{ x: 100, opacity: 0 }}
         animate={{
-          y: scrolled ? 0 : 100,
+          x: scrolled ? 0 : 100,
           opacity: scrolled ? 1 : 0,
         }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
-        <div className="bg-white/90 backdrop-blur-md rounded-full shadow-lg px-4 py-2 flex space-x-4">
+        <div className="bg-indigo-600/90 backdrop-blur-md rounded-lg shadow-lg py-4 px-2 flex flex-col space-y-4">
           <a
             href="#main"
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+            className={`p-2 rounded-md text-center transition-colors ${
               activeSection === "main"
-                ? "bg-indigo-600 text-white"
-                : "text-gray-600 hover:bg-gray-100"
+                ? "bg-white text-indigo-600"
+                : "text-white/80 hover:text-white hover:bg-indigo-500"
             }`}
             onClick={(e) => {
               e.preventDefault();
@@ -372,15 +372,30 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
                 behavior: "smooth",
               });
             }}
+            aria-label="トップへスクロール"
+            title="トップへスクロール"
           >
-            トップ
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 mx-auto"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 10l7-7m0 0l7 7m-7-7v18"
+              />
+            </svg>
           </a>
           <a
             href="#contact-info"
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+            className={`p-2 rounded-md text-center transition-colors ${
               activeSection === "contact-info"
-                ? "bg-indigo-600 text-white"
-                : "text-gray-600 hover:bg-gray-100"
+                ? "bg-white text-indigo-600"
+                : "text-white/80 hover:text-white hover:bg-indigo-500"
             }`}
             onClick={(e) => {
               e.preventDefault();
@@ -388,15 +403,30 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
                 behavior: "smooth",
               });
             }}
+            aria-label="お問い合わせセクションへ"
+            title="お問い合わせセクションへ"
           >
-            お問い合わせ
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 mx-auto"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
           </a>
           <a
             href="#faq"
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+            className={`p-2 rounded-md text-center transition-colors ${
               activeSection === "faq"
-                ? "bg-indigo-600 text-white"
-                : "text-gray-600 hover:bg-gray-100"
+                ? "bg-white text-indigo-600"
+                : "text-white/80 hover:text-white hover:bg-indigo-500"
             }`}
             onClick={(e) => {
               e.preventDefault();
@@ -404,8 +434,23 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
                 behavior: "smooth",
               });
             }}
+            aria-label="FAQセクションへ"
+            title="FAQセクションへ"
           >
-            FAQ
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 mx-auto"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
           </a>
         </div>
       </motion.div>

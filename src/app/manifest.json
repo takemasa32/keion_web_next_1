@@ -1,13 +1,54 @@
 {
   "name": "島根大学 軽音楽部",
   "short_name": "島大軽音",
-  "description": "ようこそ島根大学軽音楽部へ！島根大学軽音楽部のサイトです。イベント情報や活動内容を気分でお届けします。",
+  "description": "ようこそ島根大学軽音楽部へ！島根大学軽音楽部の公式サイトです。イベント情報や活動内容を定期的にお届けします。",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#4A90E2",
   "theme_color": "#4A90E2",
+  "lang": "ja",
+  "dir": "ltr",
+  "categories": ["education", "music", "entertainment"],
   "icons": [
-    { "src": "/icons/icon-192x192.png", "type": "image/png", "sizes": "192x192" },
-    { "src": "/icons/icon-512x512.png", "type": "image/png", "sizes": "512x512" }
-  ]
+    {
+      "src": "/icons/icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable-icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/maskable-icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "イベント情報",
+      "url": "/events",
+      "description": "近日開催のライブやイベント情報"
+    },
+    {
+      "name": "お問い合わせ",
+      "url": "/sns",
+      "description": "軽音楽部への連絡方法"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
 }

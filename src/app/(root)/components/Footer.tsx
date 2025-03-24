@@ -103,7 +103,7 @@ const Footer = () => {
           transition={{ duration: 0.8, delay: 0.6 }}
           viewport={{ once: true }}
         >
-          <p className="text-sm">© 2023-2024 島根大学 軽音楽部 - All Rights Reserved</p>
+          <p className="text-sm">© 2023-2024 島根大学 軽音楽部</p>
         </motion.div>
       </div>
     </footer>

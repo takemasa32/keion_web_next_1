@@ -46,6 +46,69 @@ body {
   animation: hoverAnimation 0.3s ease-in-out;
 }
 
+/* シークレットモードのエフェクト */
+.secret-first-completed {
+  position: relative;
+}
+
+.secret-first-completed::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 165, 0, 0.05), rgba(255, 105, 180, 0.05));
+  pointer-events: none;
+  z-index: 10;
+  animation: secretPulse 2s infinite alternate;
+}
+
+.secret-all-completed {
+  position: relative;
+}
+
+.secret-all-completed::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 105, 180, 0.05),
+    rgba(255, 215, 0, 0.05),
+    rgba(100, 149, 237, 0.05),
+    rgba(50, 205, 50, 0.05)
+  );
+  background-size: 400% 400%;
+  pointer-events: none;
+  z-index: 10;
+  animation: secretRainbow 10s ease infinite;
+}
+
+@keyframes secretPulse {
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes secretRainbow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

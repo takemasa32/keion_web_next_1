@@ -133,6 +133,10 @@ const Home = () => {
   const initialLoadingText = "ようこそ軽音楽部へ";
   const loadingTime = 2000; // ローディング時間を設定
 
+  const eventListLink = "/events";
+  const navigateToEventListPage = () => {
+    router.push(eventListLink);
+  };
   // スムーズスクロールとアニメーション効果を初期化
   useAnimations();
 
@@ -352,56 +356,131 @@ const Home = () => {
               <h2 className="mb-8 text-center text-2xl font-bold text-gray-800 md:mb-12 lg:text-3xl">
                 活動の様子
               </h2>
+              <p className="mx-auto max-w-3xl text-center text-gray-600 mb-12">
+                島根大学軽音楽部では、練習からライブまで様々な活動を行っています。
+                先輩後輩の垣根を越えて、音楽を通じた絆を深めています。
+              </p>
             </FadeInSection>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 fade-up">
-              {/* プレースホルダーを使用 */}
-              <div className="overflow-hidden rounded-lg shadow-md">
-                <div className="relative h-64 w-full bg-gradient-to-br from-indigo-200 to-indigo-400">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center px-4">
-                      <FaGuitar className="text-5xl text-white mx-auto mb-2" />
-                      <h4 className="text-white font-medium">バンド練習風景</h4>
-                    </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 fade-up">
+              {/* バンド練習カード */}
+              <motion.div
+                className="overflow-hidden rounded-xl shadow-lg bg-white"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+              >
+                <div className="relative aspect-[4/3] w-full overflow-hidden group">
+                  <Image
+                    src="/image/root/band-practice.jpg"
+                    alt="バンドメンバーが練習室で演奏している様子"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                    priority
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                    <p className="text-white text-sm font-medium">
+                      部内バンドの練習風景。初心者も経験者も一緒に音を重ねます。
+                    </p>
                   </div>
                 </div>
-                <div className="p-4 bg-white">
-                  <h3 className="text-lg font-semibold">バンド練習</h3>
-                  <p className="text-sm text-gray-500 mt-1">実際の演奏の様子を体験できます</p>
-                </div>
-              </div>
-
-              <div className="overflow-hidden rounded-lg shadow-md">
-                <div className="relative h-64 w-full bg-gradient-to-br from-pink-200 to-pink-400">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center px-4">
-                      <FaMusic className="text-5xl text-white mx-auto mb-2" />
-                      <h4 className="text-white font-medium">ライブ演奏</h4>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4 bg-white">
-                  <h3 className="text-lg font-semibold">ライブパフォーマンス</h3>
-                  <p className="text-sm text-gray-500 mt-1">
-                    多くの観客の前で演奏する機会があります
+                <div className="p-5">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">日々の練習風景</h3>
+                  <p className="text-gray-600">
+                    大学内の部室で日々練習に励んでいます。部内では様々な話題が飛び交います。
                   </p>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="overflow-hidden rounded-lg shadow-md">
-                <div className="relative h-64 w-full bg-gradient-to-br from-purple-200 to-purple-400">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center px-4">
-                      <FaCalendarAlt className="text-5xl text-white mx-auto mb-2" />
-                      <h4 className="text-white font-medium">定期演奏会</h4>
-                    </div>
+              {/* ライブパフォーマンスカード */}
+              <motion.div
+                className="overflow-hidden rounded-xl shadow-lg bg-white"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                viewport={{ once: true }}
+              >
+                <div className="relative aspect-[4/3] w-full overflow-hidden group">
+                  <Image
+                    src="/image/root/live-performance.jpg"
+                    alt="部員がステージでライブ演奏をしている様子"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                    <p className="text-white text-sm font-medium">
+                      実際のステージでの熱いパフォーマンスは一生の思い出になります。
+                    </p>
                   </div>
                 </div>
-                <div className="p-4 bg-white">
-                  <h3 className="text-lg font-semibold">定期演奏会</h3>
-                  <p className="text-sm text-gray-500 mt-1">年に一度の大イベントです</p>
+                <div className="p-5">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">ライブパフォーマンス</h3>
+                  <p className="text-gray-600">
+                    学内外の様々なイベントで演奏する機会があります。人前での演奏経験を積むことができます。
+                  </p>
                 </div>
-              </div>
+              </motion.div>
+
+              {/* 定期演奏会カード */}
+              <motion.div
+                className="overflow-hidden rounded-xl shadow-lg bg-white"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                viewport={{ once: true }}
+              >
+                <div className="relative aspect-[4/3] w-full overflow-hidden group">
+                  <Image
+                    src="/image/root/concert.jpg"
+                    alt="定期演奏会での集合写真"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                    <p className="text-white text-sm font-medium">
+                      部員全員で作り上げる年に一度の大イベントです。
+                    </p>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">定期演奏会</h3>
+                  <p className="text-gray-600">
+                    毎年12月に開催される最大のイベント。多くの観客の前で日頃の練習の成果を披露します。
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* 写真ギャラリーリンクボタン */}
+            <div className="text-center mt-12">
+              <motion.button
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={navigateToEventListPage}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium rounded-full shadow-lg hover:shadow-xl transition-all"
+              >
+                <span>もっと活動を見る</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </motion.button>
             </div>
           </div>
         </section>

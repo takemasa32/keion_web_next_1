@@ -25,7 +25,7 @@ const Footer = () => {
           >
             <h3 className="text-xl font-bold mb-4 border-b border-white pb-2">島根大学 軽音楽部</h3>
             <p className="mb-4">
-              音楽を通じて仲間と一緒に成長しましょう！初心者からベテランまで、すべての音楽愛好家を歓迎します。
+              音楽を通じて仲間と一緒に成長しましょう！初心者からベテランまで、すべての音楽愛好家を歓迎しています。
             </p>
           </motion.div>
 
@@ -103,7 +103,7 @@ const Footer = () => {
           transition={{ duration: 0.8, delay: 0.6 }}
           viewport={{ once: true }}
         >
-          <p className="text-sm">© 2023-2024 島根大学 軽音楽部</p>
+          <p className="text-sm">© 2023-2025 島根大学 軽音楽部</p>
         </motion.div>
       </div>
     </footer>

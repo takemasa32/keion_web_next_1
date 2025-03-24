@@ -1,8 +1,8 @@
-import { ReactNode } from "react";
-import Header from "@/app/(root)/components/Header";
-import Footer from "@/app/(root)/components/Footer";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+import React, { ReactNode } from "react";
 import { Metadata } from "next";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import FloatingNav from "./components/FloatingNav";
 
 export const metadata: Metadata = {
   title: "島根大学 軽音楽部",
@@ -19,25 +19,17 @@ export const metadata: Metadata = {
 };
 
 export const viewport = {
-  viewport: "viewport-fit=cover",
+  viewport: "width=device-width, initial-scale=1, viewport-fit=cover",
+  themeColor: "#4f46e5",
 };
 
 const SubLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <div
-      id="__next"
-      className="flex flex-col min-h-screen bg-white"
-      style={
-        {
-          // paddingTop: "env(safe-area-inset-top)",
-          // paddingBottom: "env(safe-area-inset-bottom)",
-        }
-      }
-    >
+    <div className="flex flex-col min-h-screen">
       <Header />
-      <SpeedInsights />
-      {children}
+      <main className="flex-grow pt-16 md:pt-20">{children}</main>
       <Footer />
+      <FloatingNav />
     </div>
   );
 };

@@ -65,10 +65,10 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
       {/* メインビジュアルセクション - インラインSVG背景パターン */}
       <section
         id="main"
-        className="relative min-h-[50vh] flex items-center justify-center bg-gradient-to-b from-indigo-600 to-purple-700 overflow-hidden"
+        className="relative min-h-[50vh] flex items-center justify-center bg-gradient-to-b from-gray-100 to-gray-200 overflow-hidden"
       >
         {/* 直接SVGを埋め込み */}
-        <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0 opacity-10">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="100%"
@@ -83,7 +83,7 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
                 height="200"
                 patternTransform="rotate(10)"
               >
-                <g fill="white">
+                <g fill="#444">
                   {/* 音符パターン1 */}
                   <path d="M40,30 L40,80 C40,88 32,94 24,90 C16,86 16,74 24,70 C28,68 34,70 36,72 L36,30 L60,20 L60,70 C60,78 52,84 44,80 C36,76 36,64 44,60 C48,58 54,60 56,62 L56,20 L40,30" />
 
@@ -98,8 +98,8 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
                   <circle cx="180" cy="40" r="5" />
                   <circle cx="160" cy="60" r="5" />
                   <circle cx="180" cy="60" r="5" />
-                  <line x1="165" y1="40" x2="195" y2="40" stroke="white" strokeWidth="2" />
-                  <line x1="165" y1="60" x2="195" y2="60" stroke="white" strokeWidth="2" />
+                  <line x1="165" y1="40" x2="195" y2="40" stroke="#444" strokeWidth="2" />
+                  <line x1="165" y1="60" x2="195" y2="60" stroke="#444" strokeWidth="2" />
 
                   {/* 譜線 */}
                   <line
@@ -107,7 +107,7 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
                     y1="130"
                     x2="200"
                     y2="130"
-                    stroke="white"
+                    stroke="#444"
                     strokeWidth="1"
                     strokeOpacity="0.3"
                   />
@@ -116,7 +116,7 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
                     y1="140"
                     x2="200"
                     y2="140"
-                    stroke="white"
+                    stroke="#444"
                     strokeWidth="1"
                     strokeOpacity="0.3"
                   />
@@ -125,7 +125,7 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
                     y1="150"
                     x2="200"
                     y2="150"
-                    stroke="white"
+                    stroke="#444"
                     strokeWidth="1"
                     strokeOpacity="0.3"
                   />
@@ -134,7 +134,7 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
                     y1="160"
                     x2="200"
                     y2="160"
-                    stroke="white"
+                    stroke="#444"
                     strokeWidth="1"
                     strokeOpacity="0.3"
                   />
@@ -143,7 +143,7 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
                     y1="170"
                     x2="200"
                     y2="170"
-                    stroke="white"
+                    stroke="#444"
                     strokeWidth="1"
                     strokeOpacity="0.3"
                   />
@@ -151,7 +151,7 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
                   {/* 装飾 */}
                   <path
                     d="M10,110 Q30,70 50,110 Q70,150 90,110 Q110,70 130,110 Q150,150 170,110 Q190,70 210,110"
-                    stroke="white"
+                    stroke="#444"
                     strokeWidth="1"
                     fill="none"
                     strokeOpacity="0.2"
@@ -165,7 +165,7 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
 
         {/* コンテンツ */}
         <motion.div
-          className="container relative z-10 mx-auto px-6 py-12 text-center text-white"
+          className="container relative z-10 mx-auto px-6 py-12 text-center text-gray-900"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -209,7 +209,7 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
               ease: "easeInOut",
             }}
           >
-            <FaComments className="text-white text-3xl opacity-70" />
+            <FaComments className="text-gray-900 text-3xl opacity-70" />
           </motion.div>
         </motion.div>
       </section>
@@ -224,7 +224,10 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
           >
-            <motion.h2 className="text-3xl font-bold text-center mb-12" variants={itemVariants}>
+            <motion.h2
+              className="text-3xl font-bold text-center text-gray-900 mb-12"
+              variants={itemVariants}
+            >
               お問い合わせ方法
             </motion.h2>
 
@@ -234,10 +237,10 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
                 variants={itemVariants}
                 whileHover={{ y: -5 }}
               >
-                <div className="rounded-full bg-indigo-100 w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <FaEnvelope className="text-2xl text-indigo-600" />
+                <div className="rounded-full bg-gray-100 w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                  <FaEnvelope className="text-2xl text-gray-900" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">SNS</h3>
+                <h3 className="text-xl font-semibold mb-3 text-gray-900">SNS</h3>
                 <p className="text-gray-600 mb-4">
                   各種SNSのDMからお気軽にご連絡ください。最も早く返信が可能です。
                 </p>
@@ -248,10 +251,10 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
                 variants={itemVariants}
                 whileHover={{ y: -5 }}
               >
-                <div className="rounded-full bg-indigo-100 w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <FaMusic className="text-2xl text-indigo-600" />
+                <div className="rounded-full bg-gray-100 w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                  <FaMusic className="text-2xl text-gray-900" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">演奏会</h3>
+                <h3 className="text-xl font-semibold mb-3 text-gray-900">演奏会</h3>
                 <p className="text-gray-600 mb-4">
                   学内の演奏会や各種イベント時に直接お声がけください。部員が対応します。
                 </p>
@@ -308,8 +311,8 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
                   <details className="group">
                     <summary className="flex items-center justify-between p-6 cursor-pointer">
                       <div className="flex items-center gap-4">
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
-                          <FaQuestion className="text-indigo-600 text-sm" />
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                          <FaQuestion className="text-gray-900 text-sm" />
                         </div>
                         <h3 className="text-lg font-medium text-gray-900">{item.question}</h3>
                       </div>
@@ -320,10 +323,10 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
                           closed: { rotate: 0 },
                         }}
                         transition={{ duration: 0.2 }}
-                        className="ml-6 flex items-center border border-indigo-200 rounded-full w-6 h-6 justify-center"
+                        className="ml-6 flex items-center border border-gray-300 rounded-full w-6 h-6 justify-center"
                       >
                         <svg
-                          className="w-3 h-3 text-indigo-600 group-open:rotate-180 transition-transform duration-300"
+                          className="w-3 h-3 text-gray-900 group-open:rotate-180 transition-transform duration-300"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -358,13 +361,13 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
         }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
-        <div className="bg-indigo-600/90 backdrop-blur-md rounded-lg shadow-lg py-4 px-2 flex flex-col space-y-4">
+        <div className="bg-gray-300/90 backdrop-blur-md rounded-lg shadow-lg py-4 px-2 flex flex-col space-y-4">
           <a
             href="#main"
             className={`p-2 rounded-md text-center transition-colors ${
               activeSection === "main"
-                ? "bg-white text-indigo-600"
-                : "text-white/80 hover:text-white hover:bg-indigo-500"
+                ? "bg-gray-100 text-gray-900"
+                : "text-gray-900/80 hover:text-gray-900 hover:bg-gray-200"
             }`}
             onClick={(e) => {
               e.preventDefault();
@@ -377,7 +380,7 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mx-auto"
+              className="h-5 w-5 mx-auto text-gray-900"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -394,8 +397,8 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
             href="#contact-info"
             className={`p-2 rounded-md text-center transition-colors ${
               activeSection === "contact-info"
-                ? "bg-white text-indigo-600"
-                : "text-white/80 hover:text-white hover:bg-indigo-500"
+                ? "bg-gray-100 text-gray-900"
+                : "text-gray-900/80 hover:text-gray-900 hover:bg-gray-200"
             }`}
             onClick={(e) => {
               e.preventDefault();
@@ -408,7 +411,7 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mx-auto"
+              className="h-5 w-5 mx-auto text-gray-900"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -425,8 +428,8 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
             href="#faq"
             className={`p-2 rounded-md text-center transition-colors ${
               activeSection === "faq"
-                ? "bg-white text-indigo-600"
-                : "text-white/80 hover:text-white hover:bg-indigo-500"
+                ? "bg-gray-100 text-gray-900"
+                : "text-gray-900/80 hover:text-gray-900 hover:bg-gray-200"
             }`}
             onClick={(e) => {
               e.preventDefault();
@@ -439,7 +442,7 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mx-auto"
+              className="h-5 w-5 mx-auto text-gray-900"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

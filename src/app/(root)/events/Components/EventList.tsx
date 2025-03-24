@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { events as tempEvents } from "@/app/data/events";
 import EventCard from "./EventCard";
 import { motion } from "framer-motion";
@@ -10,6 +10,7 @@ interface Event {
   description: string;
   image?: string;
   link?: string;
+  tags: string[];
 }
 
 interface EventListProps {
@@ -23,15 +24,33 @@ const EventList: React.FC<EventListProps> = ({
   title = "イベント情報 一覧",
   showFilter = false,
 }) => {
-  const [filter, setFilter] = useState("all");
+  const [activeTag, setActiveTag] = useState("all");
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const viewEvents = events || tempEvents;
 
-  const filteredEvents =
-    filter === "all"
-      ? viewEvents
-      : filter === "upcoming"
-      ? viewEvents.filter((event) => new Date(event.date) >= new Date())
-      : viewEvents.filter((event) => new Date(event.date) < new Date());
+  // 利用可能なタグの抽出
+  const availableTags = React.useMemo(() => {
+    const tags = new Set<string>();
+    viewEvents.forEach((event) => {
+      event.tags.forEach((tag) => tags.add(tag));
+    });
+    return Array.from(tags);
+  }, [viewEvents]);
+
+  // 初回レンダリング時と events 変更時にイベントを設定
+  useEffect(() => {
+    setFilteredEvents(viewEvents);
+  }, [viewEvents]);
+
+  // タグによるフィルタリング
+  const handleTagChange = (tag: string) => {
+    setActiveTag(tag);
+    if (tag === "all") {
+      setFilteredEvents(viewEvents);
+    } else {
+      setFilteredEvents(viewEvents.filter((event) => event.tags.includes(tag)));
+    }
+  };
 
   return (
     <motion.div
@@ -44,24 +63,31 @@ const EventList: React.FC<EventListProps> = ({
         {title}
       </h1>
 
-      {showFilter && (
+      {showFilter && availableTags.length > 0 && (
         <div className="flex justify-center mb-6 pb-2 border-b border-gray-200">
-          <div className="flex space-x-2 overflow-x-auto py-1 no-scrollbar">
-            {["all", "upcoming", "past"].map((option) => (
+          <div className="flex flex-wrap justify-center gap-2 py-1">
+            <button
+              onClick={() => handleTagChange("all")}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                activeTag === "all"
+                  ? "bg-indigo-600 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              すべて
+            </button>
+
+            {availableTags.map((tag) => (
               <button
-                key={option}
-                onClick={() => setFilter(option)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
-                  filter === option
+                key={tag}
+                onClick={() => handleTagChange(tag)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  activeTag === tag
                     ? "bg-indigo-600 text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
-                {option === "all"
-                  ? "すべて"
-                  : option === "upcoming"
-                  ? "今後のイベント"
-                  : "過去のイベント"}
+                {tag}
               </button>
             ))}
           </div>
@@ -76,7 +102,13 @@ const EventList: React.FC<EventListProps> = ({
         </div>
       ) : (
         <div className="text-center py-12">
-          <p className="text-gray-500">イベントが見つかりません</p>
+          <p className="text-gray-500">「{activeTag}」のイベントはありません</p>
+          <button
+            onClick={() => handleTagChange("all")}
+            className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-colors"
+          >
+            すべて表示
+          </button>
         </div>
       )}
     </motion.div>

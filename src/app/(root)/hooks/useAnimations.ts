@@ -44,12 +44,69 @@ export const useAnimations = () => {
     fadeUpElements.forEach((el) => observer.observe(el));
     staggerElements.forEach((el) => observer.observe(el));
 
+    // スムーズスクロールを実装
+    const handleSmoothScroll = (e: Event) => {
+      e.preventDefault();
+      const href = (e.currentTarget as HTMLAnchorElement).getAttribute("href");
+      if (!href?.startsWith("#")) return;
+
+      const targetId = href.replace("#", "");
+      const element = document.getElementById(targetId);
+
+      if (element) {
+        // モバイルデバイスの最適化
+        const isMobile = window.innerWidth < 768;
+        const offset = isMobile ? 70 : 100; // ヘッダー高さの差を考慮
+
+        const topPos = element.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({
+          top: topPos,
+          behavior: "smooth",
+        });
+      }
+    };
+
+    // イベントリスナーの設定
+    const anchorLinks = document.querySelectorAll('a[href^="#"]');
+    anchorLinks.forEach((anchor) => {
+      anchor.addEventListener("click", handleSmoothScroll);
+    });
+
+    // スクロールアニメーションの最適化
+    const fadeElems = document.querySelectorAll(".fade-up");
+
+    // IntersectionObserverの設定
+    const fadeObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // モバイルでは軽量なアニメーションを使用
+            const isMobile = window.innerWidth < 768;
+            entry.target.classList.add(isMobile ? "optimize-scroll" : "animate-fade-up");
+            fadeObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    fadeElems.forEach((elem) => {
+      fadeObserver.observe(elem);
+    });
+
     // クリーンアップ
     return () => {
       gsap.ticker.remove(() => {
         lenisRef.current?.destroy();
       });
       observer.disconnect();
+      anchorLinks.forEach((anchor) => {
+        anchor.removeEventListener("click", handleSmoothScroll);
+      });
+
+      fadeElems.forEach((elem) => {
+        fadeObserver.unobserve(elem);
+      });
     };
   }, []);
 

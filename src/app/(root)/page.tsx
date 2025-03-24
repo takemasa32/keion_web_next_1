@@ -24,6 +24,7 @@ import {
   FaSmile,
 } from "react-icons/fa";
 import { MdOutlineSchool, MdOutlineContactSupport, MdOutlineThumbUp } from "react-icons/md";
+import ActivityCard from "./events/Components/ActivityCard";
 
 // ポップアップモーダルコンポーネント
 const PopupModal = ({
@@ -366,98 +367,34 @@ const Home = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 fade-up">
               {/* バンド練習カード */}
-              <motion.div
-                className="overflow-hidden rounded-xl shadow-lg bg-white"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-              >
-                <div className="relative aspect-[4/3] w-full overflow-hidden group">
-                  <Image
-                    src="/image/root/band-practice.jpg"
-                    alt="バンドメンバーが練習室で演奏している様子"
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
-                    priority
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-                    <p className="text-white text-sm font-medium">
-                      部内バンドの練習風景。初心者も経験者も一緒に音を重ねます。
-                    </p>
-                  </div>
-                </div>
-                <div className="p-5">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">日々の練習風景</h3>
-                  <p className="text-gray-600">
-                    大学内の部室で日々練習に励んでいます。部内では様々な話題が飛び交います。
-                  </p>
-                </div>
-              </motion.div>
+              <ActivityCard
+                imageUrl="/image/root/band-practice.jpg"
+                imageAlt="バンドメンバーが練習室で演奏している様子"
+                title="日々の練習"
+                description="大学内の部室で日々練習に励んでいます。部内では様々な話題も飛び交います。"
+                hoverText="部内バンドの練習風景。初心者も経験者も一緒に音を重ねます。"
+                delay={0}
+              />
 
               {/* ライブパフォーマンスカード */}
-              <motion.div
-                className="overflow-hidden rounded-xl shadow-lg bg-white"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                viewport={{ once: true }}
-              >
-                <div className="relative aspect-[4/3] w-full overflow-hidden group">
-                  <Image
-                    src="/image/root/live-performance.jpg"
-                    alt="部員がステージでライブ演奏をしている様子"
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-                    <p className="text-white text-sm font-medium">
-                      実際のステージでの熱いパフォーマンスは一生の思い出になります。
-                    </p>
-                  </div>
-                </div>
-                <div className="p-5">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">ライブパフォーマンス</h3>
-                  <p className="text-gray-600">
-                    学内外の様々なイベントで演奏する機会があります。人前での演奏経験を積むことができます。
-                  </p>
-                </div>
-              </motion.div>
+              <ActivityCard
+                imageUrl="/image/root/live-performance.jpg"
+                imageAlt="部員がステージでライブ演奏をしている様子"
+                title="ライブパフォーマンス"
+                description="学内外の様々なイベントで演奏する機会があります。人前での演奏経験を積むことができます。"
+                hoverText="実際のステージでの熱いパフォーマンスは一生の思い出になります。"
+                delay={0.2}
+              />
 
               {/* 定期演奏会カード */}
-              <motion.div
-                className="overflow-hidden rounded-xl shadow-lg bg-white"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                viewport={{ once: true }}
-              >
-                <div className="relative aspect-[4/3] w-full overflow-hidden group">
-                  <Image
-                    src="/image/root/concert.jpg"
-                    alt="定期演奏会での集合写真"
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-                    <p className="text-white text-sm font-medium">
-                      部員全員で作り上げる年に一度の大イベントです。
-                    </p>
-                  </div>
-                </div>
-                <div className="p-5">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">定期演奏会</h3>
-                  <p className="text-gray-600">
-                    毎年12月に開催される最大のイベント。多くの観客の前で日頃の練習の成果を披露します。
-                  </p>
-                </div>
-              </motion.div>
+              <ActivityCard
+                imageUrl="/image/root/concert.jpg"
+                imageAlt="定期演奏会での集合写真"
+                title="定期演奏会"
+                description="毎年12月に開催される最大のイベント。多くの観客の前で日頃の練習の成果を披露します。"
+                hoverText="部員全員で作り上げる年に一度の大イベントです。"
+                delay={0.4}
+              />
             </div>
 
             {/* 写真ギャラリーリンクボタン */}

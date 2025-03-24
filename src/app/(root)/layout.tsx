@@ -1,8 +1,7 @@
-import { ReactNode } from "react";
-import Header from "@/app/(root)/components/Header";
-import Footer from "@/app/(root)/components/Footer";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+import React, { ReactNode } from "react";
 import { Metadata } from "next";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 export const metadata: Metadata = {
   title: "島根大学 軽音楽部",
@@ -24,19 +23,9 @@ export const viewport = {
 
 const SubLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <div
-      id="__next"
-      className="flex flex-col min-h-screen bg-white"
-      style={
-        {
-          // paddingTop: "env(safe-area-inset-top)",
-          // paddingBottom: "env(safe-area-inset-bottom)",
-        }
-      }
-    >
+    <div className="flex flex-col min-h-screen">
       <Header />
-      <SpeedInsights />
-      {children}
+      <main className="flex-grow pt-20">{children}</main>
       <Footer />
     </div>
   );

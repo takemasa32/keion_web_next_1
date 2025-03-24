@@ -46,8 +46,422 @@ body {
   animation: hoverAnimation 0.3s ease-in-out;
 }
 
+/* シークレットモードのエフェクト */
+.secret-first-completed {
+  position: relative;
+}
+
+.secret-first-completed::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 165, 0, 0.05), rgba(255, 105, 180, 0.05));
+  pointer-events: none;
+  z-index: 10;
+  animation: secretPulse 2s infinite alternate;
+}
+
+.secret-all-completed {
+  position: relative;
+}
+
+.secret-all-completed::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 105, 180, 0.05),
+    rgba(255, 215, 0, 0.05),
+    rgba(100, 149, 237, 0.05),
+    rgba(50, 205, 50, 0.05)
+  );
+  background-size: 400% 400%;
+  pointer-events: none;
+  z-index: 10;
+  animation: secretRainbow 10s ease infinite;
+}
+
+@keyframes secretPulse {
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes secretRainbow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+/* Apple風スクロールエフェクト */
+.apple-section {
+  position: relative;
+  overflow: hidden;
+  padding: 60px 0;
+}
+
+@media (min-width: 768px) {
+  .apple-section {
+    padding: 80px 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .apple-section {
+    padding: 100px 0;
+  }
+}
+
+.sticky-section {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.parallax {
+  will-change: transform;
+}
+
+/* テキストアニメーション */
+.split-text {
+  overflow: hidden;
+  display: inline-block;
+}
+
+.split-text-inner {
+  display: inline-block;
+  transform: translateY(100%);
+  transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.revealed .split-text-inner {
+  transform: translateY(0%);
+}
+
+/* アニメーションの遷移設定 */
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-up.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.stagger-fade > * {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.stagger-fade.in-view > *:nth-child(1) {
+  transition-delay: 0.1s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.stagger-fade.in-view > *:nth-child(2) {
+  transition-delay: 0.2s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.stagger-fade.in-view > *:nth-child(3) {
+  transition-delay: 0.3s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.stagger-fade.in-view > *:nth-child(4) {
+  transition-delay: 0.4s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.stagger-fade.in-view > *:nth-child(5) {
+  transition-delay: 0.5s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.stagger-fade.in-view > *:nth-child(6) {
+  transition-delay: 0.6s;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Apple風の3Dホバーエフェクト */
+.hover-3d {
+  transition: transform 0.3s ease;
+  transform-style: preserve-3d;
+}
+
+.hover-3d:hover {
+  transform: translateY(-5px) scale(1.02);
+}
+
+/* イメージ表示エフェクト */
+.image-reveal {
+  clip-path: inset(0% 0% 100% 0%);
+  transition: clip-path 1s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.image-reveal.revealed {
+  clip-path: inset(0% 0% 0% 0%);
+}
+
+/* ヘッダーのスクロール挙動 */
+header {
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+/* ヘッダーリンクのホバーエフェクト */
+header a:hover {
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+/* スクロールしたときのヘッダー */
+header.scrolled {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* スクロールアニメーションの指示アイコン */
+.scroll-indicator {
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* ヘッダーのスクロール変化アニメーション */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ヘッダー最上部のロゴ強調 */
+.top-logo {
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.3));
+  transition: all 0.3s ease;
+}
+
+.top-logo:hover {
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.5));
+}
+
+/* ヘッダーテキストの視認性を高める */
+header .text-white {
+  text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+/* ヘッダー背景のグラデーション効果 */
+header.at-top {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.2) 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+/* イメージギャラリー用の拡張スタイル */
+.image-card {
+  isolation: isolate;
+}
+
+/* ホバーエフェクト用のスタイル */
+.image-hover-effect {
+  overflow: hidden;
+}
+
+.image-hover-effect img {
+  transition: transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+  will-change: transform;
+}
+
+.image-hover-effect:hover img {
+  transform: scale(1.08);
+}
+
+/* キャプションオーバーレイ */
+.caption-overlay {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.image-card:hover .caption-overlay {
+  opacity: 1;
+}
+
+/* モバイル向けスクロール最適化 */
+@media (max-width: 767px) {
+  html {
+    scroll-padding-top: 70px; /* ヘッダーの高さ分をスクロール位置から調整 */
+  }
+
+  /* より大きなタッチターゲット */
+  button,
+  a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* スマホでもスムーズなアニメーション */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* スクロール中のコンテンツをより軽量化 */
+  .optimize-scroll {
+    will-change: transform;
+    transform: translateZ(0);
+  }
+
+  /* スマホでの視認性向上のためのテキスト調整 */
+  h1 {
+    font-size: clamp(1.75rem, 8vw, 2.5rem);
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 6vw, 2rem);
+  }
+
+  p {
+    font-size: clamp(0.875rem, 4vw, 1rem);
+  }
+
+  /* スクロールバー非表示 */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  /* タッチ操作の最適化 */
+  .touch-optimized {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+}
+
+/* イベントカードのアニメーション */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* スピナーローディングアニメーション */
+.loading-spinner {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 4px solid #e2e8f0;
+  border-top-color: #4f46e5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 行の高さを制限するためのユーティリティ */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ヘッダーのスクロール挙動 */
+header {
+  transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ヘッダー背景のぼかし最適化 */
+@supports (backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px)) {
+  .backdrop-blur-md {
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+}
+
+/* タッチデバイスでのホバーエフェクト調整 */
+@media (hover: hover) {
+  .hover-effect:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* フローティングナビゲーションのスタイル */
+.floating-nav {
+  filter: drop-shadow(0 -2px 10px rgba(0, 0, 0, 0.1));
 }

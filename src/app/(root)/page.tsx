@@ -27,6 +27,8 @@ import {
   MdOutlineThumbUp,
   MdOutlineMusicVideo,
 } from "react-icons/md";
+import { useSecretFeature } from "./toSecrets/useSecretFeature";
+import SecretEffectWrapper from "./toSecrets/SecretEffectWrapper";
 
 // ポップアップモーダルコンポーネント
 const PopupModal = ({
@@ -123,12 +125,15 @@ const calculateDaysUntil = (targetDate: Date): number => {
 
 const Home = () => {
   const router = useRouter();
-  const [secretPass, setSecretPass] = useState(0);
-  const [secretPass2, setSecretPass2] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const initialLoadingText = "ようこそ軽音楽部へ";
-  const keyNum = 7;
   const loadingTime = 2000; // ローディング時間を設定
+
+  // シークレット機能のカスタムフックを使用
+  const secret = useSecretFeature({
+    keyNumber: 7,
+    redirectPath: "/secret",
+  });
 
   useEffect(() => {
     const appElement = document.getElementById("__next");
@@ -157,7 +162,7 @@ const Home = () => {
   const daysUntilDate = calculateDaysUntil(eventDate);
 
   return (
-    <>
+    <SecretEffectWrapper secretClassName={secret.getSecretClassNames()}>
       {/* ポップアップモーダル */}
       <PopupModal
         isOpen={isModalOpen}
@@ -181,14 +186,13 @@ const Home = () => {
           特設ページに移動しますか？
         </p>
       </PopupModal>
-      <div
-        onClick={() => {
-          setSecretPass(secretPass + 1);
-        }}
-      >
-        <TopLoading time={loadingTime} text={secretPass == keyNum ? "" : initialLoadingText} />
+      <div onClick={secret.incrementFirstCounter}>
+        <TopLoading
+          time={loadingTime}
+          text={secret.firstStageCompleted ? "" : initialLoadingText}
+        />
       </div>
-      <div className={secretPass == keyNum && secretPass2 < keyNum ? " animate-pulse" : ""}>
+      <div>
         <div className="bg-white py-6 sm:py-8 lg:py-12">
           <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
             <div className="mx-auto flex max-w-xl flex-col items-center text-center">
@@ -197,14 +201,8 @@ const Home = () => {
               </p>
 
               <div
-                onClick={() => {
-                  if (secretPass === keyNum && secretPass2 === keyNum) {
-                    sessionStorage.setItem("accessAllowed", "true");
-                    sessionStorage.setItem("setTime", new Date().getTime().toString());
-                    router.push("/secret");
-                  }
-                }}
-                className={secretPass2 === keyNum ? " animate-bounce" : ""}
+                onClick={secret.activateSecretFeature}
+                className={secret.secondStageCompleted ? "animate-bounce" : ""}
               >
                 <h1 className="mb-8 text-3xl font-bold text-black sm:text-4xl md:mb-12 md:text-5xl">
                   共に音楽を
@@ -215,11 +213,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <div
-          onClick={() => {
-            setSecretPass2(secretPass2 + 1);
-          }}
-        >
+        <div onClick={secret.incrementSecondCounter}>
           <div className="bg-white py-6 sm:py-8 lg:py-12">
             <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
               <div className="mb-10 md:mb-16">
@@ -329,7 +323,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-    </>
+    </SecretEffectWrapper>
   );
 };
 

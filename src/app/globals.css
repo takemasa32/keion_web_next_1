@@ -306,3 +306,33 @@ header.at-top {
     rgba(0, 0, 0, 0) 100%
   );
 }
+
+/* イメージギャラリー用の拡張スタイル */
+.image-card {
+  isolation: isolate;
+}
+
+/* ホバーエフェクト用のスタイル */
+.image-hover-effect {
+  overflow: hidden;
+}
+
+.image-hover-effect img {
+  transition: transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+  will-change: transform;
+}
+
+.image-hover-effect:hover img {
+  transform: scale(1.08);
+}
+
+/* キャプションオーバーレイ */
+.caption-overlay {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.image-card:hover .caption-overlay {
+  opacity: 1;
+}

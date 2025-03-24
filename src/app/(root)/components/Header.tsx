@@ -65,7 +65,7 @@ const Header = () => {
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
       <AnimatePresence mode="wait">
-        {/* 最上部にいるとき - 中央揃えの大きなロゴとメニュー */}
+        {/* 最上部にいるとき - タイトルとアイコンのみ表示 */}
         {atTop && !scrolled ? (
           <motion.div
             key="top-header"
@@ -76,45 +76,21 @@ const Header = () => {
             transition={{ duration: 0.3 }}
           >
             <Link href="/">
-              <motion.div className="flex flex-col items-center mb-4" whileHover={{ scale: 1.05 }}>
+              <motion.div className="flex flex-col items-center" whileHover={{ scale: 1.05 }}>
                 <Image
                   src={IMAGES.logo.path}
                   alt={IMAGES.logo.alt}
-                  width={60}
-                  height={60}
+                  width={80}
+                  height={80}
                   className="rounded-full shadow-lg mb-3 top-logo"
                 />
-                <h1 className="text-2xl font-bold text-white drop-shadow-xl">{SITE_INFO.title}</h1>
+                <h1 className="text-3xl font-bold text-white drop-shadow-xl">{SITE_INFO.title}</h1>
               </motion.div>
             </Link>
-
-            {/* 中央揃えのナビゲーション - テキストに強いシャドウを追加 */}
-            <motion.nav
-              className="flex justify-center space-x-8 mt-2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-            >
-              {SITE_INFO.navLinks.map((link, index) => (
-                <Link href={link.href} key={index}>
-                  <motion.span
-                    className="text-white hover:text-indigo-200 transition-all duration-300 font-medium drop-shadow-lg"
-                    whileHover={{
-                      scale: 1.1,
-                      textShadow: "0 0 8px rgba(255, 255, 255, 0.7)",
-                    }}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3 + index * 0.1 }}
-                  >
-                    {link.label}
-                  </motion.span>
-                </Link>
-              ))}
-            </motion.nav>
+            {/* 最上部ではナビゲーションリンクは非表示 */}
           </motion.div>
         ) : (
-          // スクロールしたとき - 左右分割レイアウト
+          // スクロールしたとき - 左右分割レイアウトでナビゲーション表示
           <motion.div
             key="scrolled-header"
             className="container mx-auto flex flex-wrap p-4 flex-col md:flex-row items-center justify-between"
@@ -150,6 +126,7 @@ const Header = () => {
               </Link>
             </motion.div>
 
+            {/* スクロールしたときだけナビゲーションを表示 */}
             <nav className="flex flex-col md:flex-row md:items-center md:ml-auto w-full md:w-auto md:justify-end">
               <div className="flex flex-row justify-center w-full md:w-auto">
                 {SITE_INFO.navLinks.map((link, index) => (
@@ -172,6 +149,37 @@ const Header = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* アテンションインジケーター - スクロールを促すアニメーション */}
+      {atTop && !scrolled && (
+        <motion.div
+          className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-8"
+          initial={{ opacity: 0 }}
+          animate={{
+            opacity: [0, 1, 0],
+            y: [-5, 5, -5],
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 2,
+          }}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-white drop-shadow-md"
+          >
+            <path d="M12 5v14M5 12l7 7 7-7" />
+          </svg>
+        </motion.div>
+      )}
     </motion.header>
   );
 };

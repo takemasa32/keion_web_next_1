@@ -251,10 +251,12 @@ const Home = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-indigo-600 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:bg-indigo-700 transition-all"
+                  className="bg-indigo-600 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:bg-indigo-700 transition-all md:py-4 touch-manipulate" // タッチ最適化クラスを追加
                   onClick={() => {
-                    // スムーズスクロール
-                    document.getElementById("features")?.scrollIntoView({ behavior: "smooth" });
+                    document.getElementById("features")?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    });
                   }}
                 >
                   詳しく見る

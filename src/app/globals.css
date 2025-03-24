@@ -336,3 +336,66 @@ header.at-top {
 .image-card:hover .caption-overlay {
   opacity: 1;
 }
+
+/* モバイル向けスクロール最適化 */
+@media (max-width: 767px) {
+  html {
+    scroll-padding-top: 70px; /* ヘッダーの高さ分をスクロール位置から調整 */
+  }
+
+  /* より大きなタッチターゲット */
+  button,
+  a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* スマホでもスムーズなアニメーション */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* スクロール中のコンテンツをより軽量化 */
+  .optimize-scroll {
+    will-change: transform;
+    transform: translateZ(0);
+  }
+
+  /* スマホでの視認性向上のためのテキスト調整 */
+  h1 {
+    font-size: clamp(1.75rem, 8vw, 2.5rem);
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 6vw, 2rem);
+  }
+
+  p {
+    font-size: clamp(0.875rem, 4vw, 1rem);
+  }
+}
+
+/* ヘッダーのスクロール挙動 */
+header {
+  transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ヘッダー背景のぼかし最適化 */
+@supports (backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px)) {
+  .backdrop-blur-md {
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+}
+
+/* タッチデバイスでのホバーエフェクト調整 */
+@media (hover: hover) {
+  .hover-effect:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* フローティングナビゲーションのスタイル */
+.floating-nav {
+  filter: drop-shadow(0 -2px 10px rgba(0, 0, 0, 0.1));
+}

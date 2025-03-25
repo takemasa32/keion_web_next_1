@@ -1,6 +1,6 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import SNSButton from "./components/SNSButton";
 import FAQItem from "./components/FAQItems";
 import TopLoading from "./components/TopLoading";
@@ -22,6 +22,7 @@ import {
   FaTools,
   FaCalendarAlt,
   FaSmile,
+  FaChevronDown,
 } from "react-icons/fa";
 import { MdOutlineSchool, MdOutlineContactSupport, MdOutlineThumbUp } from "react-icons/md";
 import ActivityCard from "./events/Components/ActivityCard";
@@ -128,16 +129,143 @@ const calculateDaysUntil = (targetDate: Date): number => {
   return daysDifference;
 };
 
+const MusicWave = () => {
+  return (
+    <div className="absolute top-0 left-0 w-full h-full z-0 overflow-hidden opacity-80">
+      <svg viewBox="0 0 1440 320" className="absolute bottom-0 left-0">
+        <motion.path
+          fill="#4F46E5"
+          fillOpacity="0.3"
+          initial={{
+            d: "M0,160L48,186.7C96,213,192,267,288,266.7C384,267,480,213,576,186.7C672,160,768,160,864,181.3C960,203,1056,245,1152,250.7C1248,256,1344,224,1392,208L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
+          }}
+          animate={{
+            d: [
+              "M0,160L48,186.7C96,213,192,267,288,266.7C384,267,480,213,576,186.7C672,160,768,160,864,181.3C960,203,1056,245,1152,250.7C1248,256,1344,224,1392,208L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
+              "M0,96L48,128C96,160,192,224,288,234.7C384,245,480,203,576,160C672,117,768,75,864,69.3C960,64,1056,96,1152,133.3C1248,171,1344,213,1392,234.7L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
+              "M0,160L48,186.7C96,213,192,267,288,266.7C384,267,480,213,576,186.7C672,160,768,160,864,181.3C960,203,1056,245,1152,250.7C1248,256,1344,224,1392,208L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
+            ],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <motion.path
+          fill="#6366F1"
+          fillOpacity="0.4"
+          initial={{
+            d: "M0,224L48,208C96,192,192,160,288,170.7C384,181,480,235,576,218.7C672,203,768,117,864,80C960,43,1056,53,1152,74.7C1248,96,1344,128,1392,144L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
+          }}
+          animate={{
+            d: [
+              "M0,224L48,208C96,192,192,160,288,170.7C384,181,480,235,576,218.7C672,203,768,117,864,80C960,43,1056,53,1152,74.7C1248,96,1344,128,1392,144L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
+              "M0,128L48,154.7C96,181,192,235,288,218.7C384,203,480,117,576,85.3C672,53,768,75,864,106.7C960,139,1056,181,1152,170.7C1248,160,1344,96,1392,64L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
+              "M0,224L48,208C96,192,192,160,288,170.7C384,181,480,235,576,218.7C672,203,768,117,864,80C960,43,1056,53,1152,74.7C1248,96,1344,128,1392,144L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
+            ],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 0.5,
+          }}
+        />
+        {/* 追加の波形レイヤー */}
+        <motion.path
+          fill="#818CF8"
+          fillOpacity="0.15"
+          initial={{
+            d: "M0,320L48,304C96,288,192,256,288,240C384,224,480,224,576,240C672,256,768,288,864,282.7C960,277,1056,235,1152,208C1248,181,1344,171,1392,165.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
+          }}
+          animate={{
+            d: [
+              "M0,320L48,304C96,288,192,256,288,240C384,224,480,224,576,240C672,256,768,288,864,282.7C960,277,1056,235,1152,208C1248,181,1344,171,1392,165.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
+              "M0,320L48,298.7C96,277,192,235,288,224C384,213,480,235,576,250.7C672,267,768,277,864,272C960,267,1056,245,1152,229.3C1248,213,1344,203,1392,197.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
+              "M0,320L48,304C96,288,192,256,288,240C384,224,480,224,576,240C672,256,768,288,864,282.7C960,277,1056,235,1152,208C1248,181,1344,171,1392,165.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
+            ],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1,
+          }}
+        />
+      </svg>
+    </div>
+  );
+};
+
+// 浮遊する音符コンポーネント
+const FloatingNotes = () => {
+  const notes = [
+    { delay: 0, x: "10%", y: "20%", size: 1.2 },
+    { delay: 2, x: "25%", y: "15%", size: 1 },
+    { delay: 1, x: "75%", y: "25%", size: 1.5 },
+    { delay: 3, x: "85%", y: "15%", size: 0.8 },
+    { delay: 2.5, x: "65%", y: "60%", size: 1.3 },
+    { delay: 1.5, x: "35%", y: "70%", size: 0.9 },
+    { delay: 4, x: "15%", y: "40%", size: 1.1 },
+    { delay: 3.5, x: "90%", y: "50%", size: 1 },
+  ];
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {notes.map((note, index) => (
+        <motion.div
+          key={index}
+          className="absolute text-white/70"
+          initial={{ opacity: 0, x: note.x, y: -20 }}
+          animate={{
+            opacity: [0, 0.7, 0],
+            y: ["-10%", note.y],
+            rotate: [0, 10, -10, 5, 0],
+            filter: [
+              "drop-shadow(0px 0px 0px rgba(255,255,255,0))",
+              "drop-shadow(0px 0px 5px rgba(255,255,255,0.5))",
+              "drop-shadow(0px 0px 0px rgba(255,255,255,0))",
+            ],
+          }}
+          transition={{
+            duration: 15 + Math.random() * 5,
+            repeat: Infinity,
+            delay: note.delay,
+            ease: "easeInOut",
+          }}
+          style={{
+            left: note.x,
+            fontSize: `${(24 + Math.random() * 16) * note.size}px`,
+          }}
+        >
+          {index % 4 === 0 ? "♪" : index % 4 === 1 ? "♫" : index % 4 === 2 ? "♩" : "♬"}
+        </motion.div>
+      ))}
+    </div>
+  );
+};
+
 const Home = () => {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const initialLoadingText = "ようこそ軽音楽部へ";
   const loadingTime = 2000; // ローディング時間を設定
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+
+  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.8]);
 
   const eventListLink = "/events";
   const navigateToEventListPage = () => {
     router.push(eventListLink);
   };
+
   // スムーズスクロールとアニメーション効果を初期化
   useAnimations();
 
@@ -170,7 +298,6 @@ const Home = () => {
   };
 
   const eventDate = new Date(Date.UTC(2024, 11, 21)); // 2024/12/21
-
   const daysUntilDate = calculateDaysUntil(eventDate);
 
   return (
@@ -218,68 +345,144 @@ const Home = () => {
         />
       </div>
 
-      {/* ヒーローセクション */}
-      <section className="apple-section bg-white">
-        <ParallaxSection speed={0.2} className="relative">
-          <div className="mx-auto max-w-screen-2xl px-4 md:px-8 pt-12 pb-24">
-            <div className="mx-auto flex max-w-xl flex-col items-center text-center">
-              <FadeInSection delay={0.2}>
-                <p className="mb-4 font-semibold text-indigo-500 md:mb-6 md:text-lg xl:text-xl">
-                  はじめまして！こんにちは！島根大学 軽音楽部です！
-                </p>
-              </FadeInSection>
+      {/* 新しいヒーローセクション */}
+      <motion.section
+        ref={heroRef}
+        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-indigo-900 via-indigo-800 to-indigo-900"
+        style={{ opacity, scale }}
+      >
+        {/* 背景レイヤー - より多層的な表現 */}
+        <div className="absolute inset-0 bg-[url('/image/texture-overlay.png')] opacity-10 mix-blend-overlay"></div>
+        <MusicWave />
+        <FloatingNotes />
 
-              <motion.div
-                onClick={secret.activateSecretFeature}
-                className={`mt-4 ${secret.secondStageCompleted ? "animate-bounce" : ""}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.8 }}
-              >
-                <h1 className="mb-8 text-3xl font-bold text-black sm:text-4xl md:mb-12 md:text-5xl">
-                  共に音楽を
-                  <br />
-                  楽しみましょう！
-                </h1>
-              </motion.div>
+        {/* 追加の装飾要素 */}
+        <motion.div
+          className="absolute top-[20%] left-[15%] w-32 h-32 bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-full blur-2xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.6, 0.3],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute bottom-[25%] right-[10%] w-40 h-40 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-full blur-2xl"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            opacity: [0.2, 0.5, 0.2],
+          }}
+          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+        />
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8, duration: 1 }}
-                className="mt-6"
-              >
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-indigo-600 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:bg-indigo-700 transition-all md:py-4 touch-manipulate" // タッチ最適化クラスを追加
-                  onClick={() => {
-                    document.getElementById("features")?.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    });
-                  }}
-                >
-                  詳しく見る
-                </motion.button>
-              </motion.div>
-            </div>
-          </div>
-        </ParallaxSection>
-
-        <div className="relative -mt-16">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 1440 320"
-            className="fill-current text-indigo-50"
+        {/* 中央のコンテンツ */}
+        <div className="container relative z-10 mx-auto px-4 py-24 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+            className="mb-6"
           >
-            <path
-              fillOpacity="1"
-              d="M0,128L48,112C96,96,192,64,288,64C384,64,480,96,576,122.7C672,149,768,171,864,165.3C960,160,1056,128,1152,112C1248,96,1344,96,1392,96L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-            ></path>
-          </svg>
+            <span className="inline-block px-4 py-1 rounded-full bg-white/20 backdrop-blur-md text-white font-medium mb-6 border border-white/10">
+              島根大学 軽音楽部
+            </span>
+          </motion.div>
+
+          <motion.h1
+            className="text-5xl md:text-7xl font-bold text-white mb-8 leading-tight"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.8 }}
+          >
+            <span className="block mb-2">共に音楽を</span>
+            <motion.span
+              className="relative inline-block"
+              animate={{
+                color: ["#ffffff", "#a3e635", "#ffffff"],
+                textShadow: [
+                  "0 0 7px rgba(255,255,255,0.3)",
+                  "0 0 15px rgba(163,230,53,0.7)",
+                  "0 0 7px rgba(255,255,255,0.3)",
+                ],
+              }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            >
+              楽しみましょう！
+            </motion.span>
+          </motion.h1>
+
+          <motion.p
+            className="max-w-lg mx-auto text-xl text-indigo-100 mb-12"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2, duration: 0.8 }}
+          >
+            初心者から経験者まで、音楽を通じて繋がるコミュニティ。
+            <br />
+            <span className="font-medium text-white">あなたの大学生活を彩る最高の仲間</span>
+            がここにいます。
+          </motion.p>
+
+          <motion.div
+            className="flex flex-col sm:flex-row gap-4 justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.6, duration: 0.8 }}
+          >
+            <motion.button
+              whileHover={{ scale: 1.05, boxShadow: "0 15px 30px -5px rgba(79, 70, 229, 0.5)" }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-4 bg-gradient-to-r from-white to-indigo-50 text-indigo-900 font-bold rounded-full transform transition-all shadow-xl hover:shadow-2xl"
+              onClick={() => {
+                document.getElementById("features")?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
+              }}
+            >
+              部活について知る
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(255, 255, 255, 0.3)" }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-4 bg-transparent border-2 border-white text-white font-bold rounded-full backdrop-blur-sm transform transition-all"
+              onClick={navigateToEventListPage}
+            >
+              活動を見る
+            </motion.button>
+          </motion.div>
         </div>
-      </section>
+
+        {/* 装飾的な要素をより強化 */}
+        <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-indigo-500/30 backdrop-blur-xl"></div>
+        <div className="absolute top-16 -right-8 w-40 h-40 rounded-full bg-indigo-300/20 backdrop-blur-lg"></div>
+
+        <motion.div
+          className="absolute bottom-32 right-10 w-16 h-16"
+          initial={{ rotate: 0 }}
+          animate={{ rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        >
+          <motion.div
+            animate={{
+              boxShadow: [
+                "0px 0px 0px rgba(255,255,255,0.2)",
+                "0px 0px 20px rgba(255,255,255,0.6)",
+                "0px 0px 0px rgba(255,255,255,0.2)",
+              ],
+            }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            className="w-full h-full rounded-full"
+          >
+            <Image
+              src="/icons/icon-192x192.png"
+              alt="Logo"
+              width={64}
+              height={64}
+              className="rounded-full shadow-lg opacity-80"
+            />
+          </motion.div>
+        </motion.div>
+      </motion.section>
 
       {/* 特徴紹介セクション - シークレット機能のトリガー2つ目 */}
       <div onClick={secret.incrementSecondCounter} id="features">
@@ -338,7 +541,7 @@ const Home = () => {
               </div>
 
               <div className="flex flex-col h-full rounded-lg border bg-white shadow-md overflow-hidden transform hover:scale-105 transition-all duration-300">
-                <div className="bg-indigo-500 text-white p-6 flex items-center justify-center">
+                <div className="bg-indigo-500 text-white p-6 flex items中心にしている">
                   <FaMusic className="text-4xl" />
                 </div>
                 <div className="p-6">
@@ -473,7 +676,7 @@ const Home = () => {
               </FadeInSection>
 
               <FadeInSection delay={0.4} className="h-full">
-                <div className="relative rounded-lg bg-white p-5 pt-8 shadow-md h-full">
+                <div className="relative rounded-lg bg白 p-5 pt-8 shadow-md h-full">
                   <FAQItem
                     question="楽器は自分で買わないといけない？"
                     answer="パートにもよりますが、家での練習のためにも、購入することをおすすめします。<br/>入部後に部や先輩から借りて体験などすることも可能ですので、気軽にご相談ください！"

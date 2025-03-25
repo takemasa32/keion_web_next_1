@@ -450,30 +450,6 @@ const Home = () => {
               活動を見る
             </motion.button>
           </motion.div>
-
-          {/* スクロールダウンインジケーター追加 */}
-          <motion.div
-            className="absolute bottom-10 left-1/2 transform -translate-x-1/2 cursor-pointer"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, y: [0, 10, 0] }}
-            transition={{ delay: 2, duration: 1.5, repeat: Infinity }}
-            onClick={() => {
-              document.getElementById("features")?.scrollIntoView({
-                behavior: "smooth",
-                block: "start",
-              });
-            }}
-          >
-            <div className="flex flex-col items-center">
-              <span className="text-white/70 text-sm mb-2">詳しく見る</span>
-              <motion.div
-                animate={{ y: [0, 5, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <FaChevronDown className="text-white/70 text-2xl" />
-              </motion.div>
-            </div>
-          </motion.div>
         </div>
 
         {/* 装飾的な要素をより強化 */}

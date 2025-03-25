@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 // 画像パスを定数として管理
 const IMAGES = {
   logo: {
-    path: "/icons/icon512_rounded.png",
+    path: "/icons/icon-512x512.png",
     alt: "軽音楽部ロゴ",
   },
 };
@@ -110,13 +110,24 @@ const Header = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Image
-                  src={IMAGES.logo.path}
-                  alt={IMAGES.logo.alt}
-                  width={isMobile ? 60 : 80}
-                  height={isMobile ? 60 : 80}
-                  className="rounded-full shadow-lg mb-2 md:mb-3 top-logo"
-                />
+                <motion.div
+                  animate={{
+                    boxShadow: [
+                      "0px 0px 0px rgba(79, 70, 229, 0.2)",
+                      "0px 0px 20px rgba(79, 70, 229, 0.7)",
+                      "0px 0px 0px rgba(79, 70, 229, 0.2)",
+                    ],
+                  }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <Image
+                    src={IMAGES.logo.path}
+                    alt={IMAGES.logo.alt}
+                    width={isMobile ? 60 : 80}
+                    height={isMobile ? 60 : 80}
+                    className="rounded-lg shadow-lg mb-2 md:mb-3 top-logo"
+                  />
+                </motion.div>
                 <h1 className={`text-2xl md:text-3xl font-bold text-white drop-shadow-xl`}>
                   {SITE_INFO.title}
                 </h1>
@@ -273,37 +284,6 @@ const Header = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* スクロール促進インジケーター */}
-      {atTop && !scrolled && (
-        <motion.div
-          className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-8"
-          initial={{ opacity: 0 }}
-          animate={{
-            opacity: [0, 1, 0],
-            y: [-5, 5, -5],
-          }}
-          transition={{
-            repeat: Infinity,
-            duration: 2,
-          }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-white drop-shadow-md"
-          >
-            <path d="M12 5v14M5 12l7 7 7-7" />
-          </svg>
-        </motion.div>
-      )}
     </motion.header>
   );
 };

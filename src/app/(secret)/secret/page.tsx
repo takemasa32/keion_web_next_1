@@ -1,83 +1,51 @@
 "use client";
-import Head from "next/head";
-import React, { useEffect } from "react";
-import NotFound from "./components/NotFound";
-import Contents from "./components/Contents";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Switch } from "@tremor/react";
+import Contents from "./components/Contents";
+import NotFound from "./components/NotFound";
 
-const AudioPlayerPage: React.FC = () => {
+const SecretPage: React.FC = () => {
   const router = useRouter();
-
-  const [accessChecked, setAccessChecked] = React.useState(false);
-  const [tested, setTested] = React.useState(false);
-  const [loading, setLoading] = React.useState(true);
-
-  const [accessCheckPass, setAccessCheckPass] = React.useState(false);
+  const [hasAccess, setHasAccess] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const accessAllowed = sessionStorage.getItem("accessAllowed");
-    const setTime = sessionStorage.getItem("setTime");
+    // クライアントサイドでのみ実行
+    const checkAccess = () => {
+      try {
+        const accessAllowed = sessionStorage.getItem("accessAllowed");
+        const accessTime = sessionStorage.getItem("secretAccessTime");
 
-    const firstAccessCheckPass = sessionStorage.getItem("accessCheckPass");
-    if (firstAccessCheckPass == "true") {
-      setAccessCheckPass(true);
-    } else {
-      setAccessCheckPass(false);
-    }
-
-    if (setTime !== null) {
-      if (
-        (accessAllowed == "true" && new Date().getTime() - parseInt(setTime) < 1000 * 6) ||
-        firstAccessCheckPass == "true"
-      ) {
-        // フラグを削除して一度のアクセスのみ許可
-        // sessionStorage.removeItem("accessAllowed");
-        setAccessChecked(true);
-        setTested(true);
-      } else {
-        setAccessChecked(false);
-        setTested(true);
+        // アクセス許可があるか確認
+        if (accessAllowed === "true" && accessTime) {
+          const timestamp = parseInt(accessTime);
+          const currentTime = new Date().getTime();
+          // 60分以内のアクセスであれば許可
+          if (currentTime - timestamp < 60 * 60 * 1000) {
+            setHasAccess(true);
+          }
+        }
+      } catch (e) {
+        console.error("セッションストレージへのアクセスエラー", e);
       }
-    }
-    setLoading(false);
+
+      setLoading(false);
+    };
+
+    // 少し遅延させて検証（よりスムーズな体験のため）
+    setTimeout(checkAccess, 300);
   }, []);
 
-  useEffect(() => {
-    if (!loading) {
-      accessCheckPass == true
-        ? sessionStorage.setItem("accessCheckPass", "true")
-        : sessionStorage.setItem("accessCheckPass", "false");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accessCheckPass]);
-
-  if (tested && accessChecked == false) {
-    router.replace("/404");
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black">
+        <div className="w-12 h-12 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
+      </div>
+    );
   }
-  return (
-    <>
-      {loading || !accessChecked ? (
-        <div>
-          <h1 className="text-black">Loading...</h1>
-        </div>
-      ) : (
-        <>
-          <Contents />
-          <div className="flex">
-            <Switch
-              checked={accessCheckPass}
-              onChange={(value) => {
-                setAccessCheckPass(value);
-              }}
-              className="justify-center"
-              color="gray"
-            />
-          </div>
-        </>
-      )}
-    </>
-  );
+
+  // アクセス権があればコンテンツを表示、なければNotFoundを表示
+  return hasAccess ? <Contents /> : <NotFound />;
 };
 
-export default AudioPlayerPage;
+export default SecretPage;

@@ -11,9 +11,13 @@ import {
   FaSlidersH,
   FaTools,
   FaTimes,
+  FaArrowUp,
+  FaArrowDown,
+  FaArrowLeft,
+  FaArrowRight,
 } from "react-icons/fa";
 
-// ピアノキーの配置データ
+// ピアノキーの配置データ型定義
 type PianoKey = {
   note: string;
   color: "white" | "black";
@@ -21,22 +25,6 @@ type PianoKey = {
   frequency: number;
   keyboardKey?: string; // キーボードショートカット
 };
-
-// キーボードレイアウト定義
-const keyboardLayout: PianoKey[] = [
-  { note: "C4", color: "white", label: "ド", frequency: 261.63, keyboardKey: "a" },
-  { note: "C#4", color: "black", label: "ド#", frequency: 277.18, keyboardKey: "w" },
-  { note: "D4", color: "white", label: "レ", frequency: 293.66, keyboardKey: "s" },
-  { note: "D#4", color: "black", label: "レ#", frequency: 311.13, keyboardKey: "e" },
-  { note: "E4", color: "white", label: "ミ", frequency: 329.63, keyboardKey: "d" },
-  { note: "F4", color: "white", label: "ファ", frequency: 349.23, keyboardKey: "f" },
-  { note: "F#4", color: "black", label: "ファ#", frequency: 369.99, keyboardKey: "t" },
-  { note: "G4", color: "white", label: "ソ", frequency: 392.0, keyboardKey: "g" },
-  { note: "G#4", color: "black", label: "ソ#", frequency: 415.3, keyboardKey: "y" },
-  { note: "A4", color: "white", label: "ラ", frequency: 440.0, keyboardKey: "h" },
-  { note: "A#4", color: "black", label: "ラ#", frequency: 466.16, keyboardKey: "u" },
-  { note: "B4", color: "white", label: "シ", frequency: 493.88, keyboardKey: "j" },
-];
 
 // 再生モードを定義
 type PlayMode = "combined" | "effectOnly" | "pianoOnly";
@@ -66,6 +54,89 @@ interface WaveformParams {
   vibratoDepth: number; // ビブラート深さ (0-50セント)
 }
 
+// 音名とオクターブを取得する関数
+const getNoteAndOctave = (fullNote: string): { note: string; octave: number } => {
+  const noteMatch = fullNote.match(/^([A-G][#]?)(\d+)$/);
+  if (noteMatch) {
+    return { note: noteMatch[1], octave: parseInt(noteMatch[2]) };
+  }
+  return { note: "", octave: 4 };
+};
+
+// 基準の周波数マッピング（オクターブ4の周波数）
+const baseFrequencies: { [key: string]: number } = {
+  C: 261.63,
+  "C#": 277.18,
+  D: 293.66,
+  "D#": 311.13,
+  E: 329.63,
+  F: 349.23,
+  "F#": 369.99,
+  G: 392.0,
+  "G#": 415.3,
+  A: 440.0,
+  "A#": 466.16,
+  B: 493.88,
+};
+
+// オクターブに基づいて周波数を計算する関数
+const calculateFrequency = (note: string, octave: number): number => {
+  const { note: noteName } = getNoteAndOctave(`${note}4`);
+  if (!noteName || !baseFrequencies[noteName]) return 440;
+
+  const baseFreq = baseFrequencies[noteName];
+  const octaveDiff = octave - 4;
+  return baseFreq * Math.pow(2, octaveDiff);
+};
+
+// 鍵盤レイアウトを動的に生成する関数
+const generateKeyboardLayout = (
+  baseOctave: number,
+  keyboardMapping: boolean = true
+): PianoKey[] => {
+  const notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+  const keyLabels = [
+    "ド",
+    "ド#",
+    "レ",
+    "レ#",
+    "ミ",
+    "ファ",
+    "ファ#",
+    "ソ",
+    "ソ#",
+    "ラ",
+    "ラ#",
+    "シ",
+  ];
+
+  // コンピューターキーボードのマッピング
+  const keyboardKeys = keyboardMapping
+    ? ["a", "w", "s", "e", "d", "f", "t", "g", "y", "h", "u", "j"]
+    : [];
+
+  // 低いオクターブから高いオクターブまでの音を生成
+  const layout: PianoKey[] = [];
+
+  // 2つのオクターブ分の鍵盤を生成
+  [baseOctave, baseOctave + 1].forEach((octave, octaveIndex) => {
+    notes.forEach((note, index) => {
+      const fullNote = `${note}${octave}`;
+      const frequency = calculateFrequency(note, octave);
+      layout.push({
+        note: fullNote,
+        color: note.includes("#") ? "black" : "white",
+        label: `${keyLabels[index]}${octave}`,
+        frequency,
+        keyboardKey:
+          octaveIndex === 0 && index < keyboardKeys.length ? keyboardKeys[index] : undefined,
+      });
+    });
+  });
+
+  return layout;
+};
+
 interface VirtualKeyboardProps {
   currentSoundId?: string;
 }
@@ -75,7 +146,8 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
   const [playMode, setPlayMode] = useState<PlayMode>("combined"); // 再生モード
   const [waveformType, setWaveformType] = useState<WaveformType>("sine"); // 波形タイプ
   const [showWaveformMenu, setShowWaveformMenu] = useState(false); // 波形メニューの表示状態
-  const [showEditor, setShowEditor] = useState(false);
+  const [showEditor, setShowEditor] = useState(false); // エディター表示状態
+  const [baseOctave, setBaseOctave] = useState(3); // 基本オクターブ（C3〜B4を表示）
   const [waveformParams, setWaveformParams] = useState<WaveformParams>({
     attack: 0.01,
     decay: 0.1,
@@ -88,21 +160,34 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
     vibratoRate: 5,
     vibratoDepth: 10,
   });
+
+  // キーボードレイアウトの状態
+  const [keyboardLayout, setKeyboardLayout] = useState<PianoKey[]>([]);
+
+  // スクロール操作に関する状態
+  const [isScrolling, setIsScrolling] = useState(false);
+  const [scrollStartX, setScrollStartX] = useState(0);
+  const keyboardContainerRef = useRef<HTMLDivElement>(null);
+
   const audioBufferRef = useRef<AudioBuffer | null>(null);
   const soundBuffersRef = useRef<Record<string, AudioBuffer>>({});
   const keyMappingRef = useRef<Map<string, PianoKey>>(new Map());
   const waveformMenuRef = useRef<HTMLDivElement>(null);
 
-  // キーボードマッピングを設定
+  // オクターブに基づいてキーボードレイアウトを更新
   useEffect(() => {
+    const newLayout = generateKeyboardLayout(baseOctave);
+    setKeyboardLayout(newLayout);
+
+    // キーマッピングを更新
     const mapping = new Map<string, PianoKey>();
-    keyboardLayout.forEach((key) => {
+    newLayout.forEach((key) => {
       if (key.keyboardKey) {
         mapping.set(key.keyboardKey, key);
       }
     });
     keyMappingRef.current = mapping;
-  }, []);
+  }, [baseOctave]);
 
   // 現在選択されているサウンドIDが変更されたときにバッファをロード
   useEffect(() => {
@@ -159,6 +244,10 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
       const key = keyMappingRef.current.get(e.key.toLowerCase());
       if (key) {
         playNote(key);
+      } else if (e.key === "ArrowUp") {
+        handleOctaveChange(1);
+      } else if (e.key === "ArrowDown") {
+        handleOctaveChange(-1);
       }
     };
 
@@ -166,7 +255,16 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [currentSoundId, playMode, waveformType]); // waveformTypeの変更もトラッキング
+  }, [baseOctave, currentSoundId, playMode, waveformType]); // オクターブの変更もトラッキング
+
+  // オクターブを変更する関数
+  const handleOctaveChange = (change: number) => {
+    setBaseOctave((prev) => {
+      const newOctave = prev + change;
+      // オクターブの範囲を1〜7に制限
+      return Math.max(0, Math.min(7, newOctave));
+    });
+  };
 
   // モードを切り替える関数
   const toggleMode = () => {
@@ -200,6 +298,35 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
       ...prev,
       [param]: value,
     }));
+  };
+
+  // スクロール開始の処理
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsScrolling(true);
+    setScrollStartX(e.touches[0].clientX);
+  };
+
+  // スクロール中の処理
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isScrolling || !keyboardContainerRef.current) return;
+
+    const touchDeltaX = e.touches[0].clientX - scrollStartX;
+    if (Math.abs(touchDeltaX) > 50) {
+      // 左にスワイプ: オクターブアップ
+      if (touchDeltaX < 0) {
+        handleOctaveChange(1);
+      }
+      // 右にスワイプ: オクターブダウン
+      else {
+        handleOctaveChange(-1);
+      }
+      setIsScrolling(false);
+    }
+  };
+
+  // スクロール終了の処理
+  const handleTouchEnd = () => {
+    setIsScrolling(false);
   };
 
   const playNote = (key: PianoKey) => {
@@ -293,10 +420,12 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
         sampleSource.buffer = audioBufferRef.current;
 
         // ピッチをキーボードの音に合わせて調整
-        const noteIndex = keyboardLayout.findIndex((k) => k.note === key.note);
-        // ミドルCを基準にピッチを変える
-        const pitchOffset = (noteIndex - 0) / 12; // 0はC4を基準とする
-        sampleSource.playbackRate.value = Math.pow(2, pitchOffset);
+        // ピッチ計算の基準を変更
+        const basePitch = calculateFrequency("C", 4);
+        const targetPitch = key.frequency;
+        const pitchRatio = targetPitch / basePitch;
+
+        sampleSource.playbackRate.value = pitchRatio;
 
         // 音量調整と接続
         const sampleGain = ctx.createGain();
@@ -644,6 +773,47 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
         </motion.div>
       )}
 
+      {/* オクターブ切り替えコントロール */}
+      <div className="flex justify-between items-center mb-2">
+        <div className="flex items-center gap-2">
+          <motion.button
+            onClick={() => handleOctaveChange(-1)}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            disabled={baseOctave <= 0}
+            className={`p-2 rounded-md ${
+              baseOctave <= 0 ? "bg-gray-700 text-gray-500" : "bg-indigo-700 text-white"
+            }`}
+          >
+            <FaArrowDown className="text-sm" />
+          </motion.button>
+
+          <div className="bg-black/30 px-3 py-1 rounded-md">
+            <span className="text-white text-xs">
+              オクターブ: {baseOctave}-{baseOctave + 1}
+            </span>
+          </div>
+
+          <motion.button
+            onClick={() => handleOctaveChange(1)}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            disabled={baseOctave >= 7}
+            className={`p-2 rounded-md ${
+              baseOctave >= 7 ? "bg-gray-700 text-gray-500" : "bg-indigo-700 text-white"
+            }`}
+          >
+            <FaArrowUp className="text-sm" />
+          </motion.button>
+        </div>
+
+        <div className="text-white/50 text-xs hidden sm:flex items-center">
+          <FaArrowLeft className="mr-1" />
+          <span>スワイプで音域変更</span>
+          <FaArrowRight className="ml-1" />
+        </div>
+      </div>
+
       <p className="text-white/60 text-xs mb-4 text-center">
         {currentSoundId && playMode !== "pianoOnly"
           ? `現在の音源: ${
@@ -653,12 +823,19 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
         {showEditor && " - 波形エディターモード"}
       </p>
 
-      {/* キーボード - タッチ操作向けに最適化 */}
-      <div className="touch-manipulation overflow-x-auto pb-2">
+      {/* キーボード - タッチ操作とスワイプ向けに最適化 */}
+      <div
+        className="touch-manipulation overflow-x-auto pb-2"
+        ref={keyboardContainerRef}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         <div className="flex min-w-[600px] relative h-32 sm:h-40 md:h-48 rounded-md overflow-hidden">
           {keyboardLayout.map((key) => {
             const isActive = activeKey === key.note;
             const isWhiteKey = key.color === "white";
+            const { note, octave } = getNoteAndOctave(key.note);
 
             return (
               <motion.div
@@ -696,7 +873,8 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
                       isWhiteKey ? "text-gray-500" : "text-gray-300"
                     }`}
                   >
-                    {key.label}
+                    {note}
+                    <sub className="text-[0.6em]">{octave}</sub>
                   </span>
                   {key.keyboardKey && (
                     <span
@@ -712,10 +890,20 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
           })}
         </div>
       </div>
+      <div className="sm:hidden flex justify-center mt-3 bg-black/30 py-2 rounded-md">
+        {/* スマホ向けスワイプガイド */}
+        <div className="sm:hidden flex justify-center mt-3 bg-black/30 py-2 rounded-md">
+          <div className="flex items-center text-white/50 text-xs">
+            <FaArrowLeft className="mr-2 text-white/50" />
+            <span>左右にスワイプして音域を変更</span>
+            <FaArrowRight className="ml-2 text-white/50" />
+          </div>
+        </div>
 
-      <p className="text-center text-white/40 text-xs mt-4">
-        {showEditor ? "波形パラメータを調整して独自の音色を作成してください" : getModeHelpText()}
-      </p>
+        <p className="text-center text-white/40 text-xs mt-4">
+          {showEditor ? "波形パラメータを調整して独自の音色を作成してください" : getModeHelpText()}
+        </p>
+      </div>
     </div>
   );
 };

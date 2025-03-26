@@ -19,7 +19,7 @@ export const useSecretFeature = ({
   const router = useRouter();
 
   // 第一段階のカウンターの状態
-  const firstStageCompleted = firstCounter == keyNumber;
+  const firstStageCompleted = firstCounter >= keyNumber;
 
   // 第二段階のカウンターの状態
   const secondStageCompleted = secondCounter >= keyNumber;
@@ -32,7 +32,7 @@ export const useSecretFeature = ({
     if (allStagesCompleted) {
       // セッションストレージにアクセス許可を保存
       sessionStorage.setItem(sessionKey, "true");
-      sessionStorage.setItem("setTime", new Date().getTime().toString());
+      sessionStorage.setItem("secretAccessTime", new Date().getTime().toString());
 
       // 指定されたパスにリダイレクト
       router.push(redirectPath);
@@ -45,11 +45,14 @@ export const useSecretFeature = ({
   };
 
   const incrementSecondCounter = () => {
+    // 第一段階が完了していない場合は何もしない
+    if (!firstStageCompleted) return;
+
     setSecondCounter((prev) => {
       const newValue = prev + 1;
-      // 第二段階が完了して、第一段階も完了している場合、自動的に機能をアクティベート
-      if (newValue >= keyNumber && firstStageCompleted) {
-        setTimeout(() => activateSecretFeature(), 500); // 視覚効果を確認できるよう少し遅延
+      // 第二段階が完了したら、自動的に機能をアクティベート
+      if (newValue >= keyNumber) {
+        setTimeout(() => activateSecretFeature(), 300);
       }
       return newValue;
     });
@@ -65,22 +68,6 @@ export const useSecretFeature = ({
     return "";
   };
 
-  // 進行状況の表示用データを提供
-  const getProgress = () => {
-    return {
-      firstStage: {
-        current: firstCounter,
-        max: keyNumber,
-        percent: Math.min(100, Math.round((firstCounter / keyNumber) * 100)),
-      },
-      secondStage: {
-        current: secondCounter,
-        max: keyNumber,
-        percent: Math.min(100, Math.round((secondCounter / keyNumber) * 100)),
-      },
-    };
-  };
-
   return {
     firstStageCompleted,
     secondStageCompleted,
@@ -89,8 +76,5 @@ export const useSecretFeature = ({
     incrementSecondCounter,
     activateSecretFeature,
     getSecretClassNames,
-    getProgress, // 進行状況を追加
-    firstCounter, // 現在値も返す
-    secondCounter,
   };
 };

@@ -1,35 +1,48 @@
+"use client";
 import React from "react";
-import Head from "next/head";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { FaLock, FaHome } from "react-icons/fa";
 
 const NotFoundPage: React.FC = () => {
   const router = useRouter();
 
   return (
-    <div className="bg-black bg-cover">
-      <Head>
-        <title>404 Not Found</title>
-        <meta name="robots" content="noindex" />
-      </Head>
-      <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
-        <div className="mx-auto max-w-screen-sm text-center">
-          <h1 className="mb-4 text-7xl tracking-tight font-extrabold lg:text-9xl text-primary-600 dark:text-primary-500">
-            404
-          </h1>
-          <p className="mb-4 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white">
-            なんか違うかも...
-          </p>
-          <p className="mb-4 text-lg font-light text-gray-500 dark:text-gray-400">
-            ごめん！ページを表示できません！！ 他の方法も試してみてください！
-          </p>
-          <button
-            onClick={() => router.push("/")}
-            className="inline-flex items-center justify-center text-white bg-primary-600 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-primary-900 my-4"
-          >
-            ホームへ
-          </button>
-        </div>
-      </div>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 to-black text-white p-4">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex items-center mb-6"
+      >
+        <FaLock className="text-red-500 text-3xl mr-3" />
+        <h1 className="text-3xl font-bold">アクセス制限</h1>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+        className="max-w-md text-center mb-8"
+      >
+        <p className="text-gray-300 mb-4">このページへのアクセス権限がありません。</p>
+        <p className="text-gray-400 text-sm">
+          このコンテンツにアクセスするには、特別な方法でシークレットモードを有効にする必要があります。
+        </p>
+      </motion.div>
+
+      <motion.button
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6, duration: 0.5 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => router.push("/")}
+        className="flex items-center gap-2 px-5 py-3 bg-gray-800 hover:bg-gray-700 rounded-full text-white transition-colors"
+      >
+        <FaHome />
+        <span>トップページに戻る</span>
+      </motion.button>
     </div>
   );
 };

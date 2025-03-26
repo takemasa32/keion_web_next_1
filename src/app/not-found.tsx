@@ -1,29 +1,55 @@
-import Link from "next/link";
-import { Metadata } from "next/types";
-import { FaGuitar } from "react-icons/fa";
+"use client";
+import React from "react";
+import { motion } from "framer-motion";
+import { FaRegSadTear, FaHome } from "react-icons/fa";
 
-export const metadata: Metadata = {
-  title: "404 - ページが見つかりません",
-  description: "お探しのページが見つかりません",
-};
-const NotFoundPage = () => {
+const NotFoundPage: React.FC = () => {
   return (
-    <>
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white">
-        <FaGuitar className="text-6xl mb-4 animate-bounce" />
-        <h1 className="text-5xl font-bold mb-4">404 - ページが見つかりません</h1>
-        <p className="text-lg mb-8 text-center">
-          お探しのページは存在しないか、移動された可能性があります。
-          <br />
-          代わりに、曲を演奏しましょう！
-        </p>
-        <Link href="/">
-          <p className="px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200">
-            ホームに戻る
-          </p>
-        </Link>
-      </div>
-    </>
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-md w-full text-center"
+      >
+        <motion.div
+          animate={{ rotate: [0, 5, -5, 0] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          className="mb-8"
+        >
+          <FaRegSadTear className="text-6xl mx-auto text-blue-400 opacity-80" />
+        </motion.div>
+
+        <motion.h1
+          initial={{ scale: 0.8 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="text-5xl font-bold text-white mb-4"
+        >
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+            404
+          </span>
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="mb-6 text-xl font-semibold text-white"
+        >
+          ページが見つかりません
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+          className="mb-8 text-gray-400"
+        >
+          お探しのページは存在しないか、アクセス権がありません。
+        </motion.p>
+      </motion.div>
+    </div>
   );
 };
 

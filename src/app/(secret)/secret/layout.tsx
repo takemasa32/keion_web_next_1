@@ -1,42 +1,11 @@
-import "./../../globals.css";
-import { ReactNode } from "react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import React from "react";
+import { Metadata } from "next";
 
-export const metadata = {
-  title: "お楽しみコンテンツ",
-  description: "お楽しみコンテンツ",
-  name: "お楽しみコンテンツ",
-  content: " viewport-fit=cover",
+export const metadata: Metadata = {
+  title: "🎵 | 島根大学軽音楽部",
+  description: "特別なコンテンツページ",
 };
 
-const RootLayout = ({ children }: { children: ReactNode }) => {
-  return (
-    <html lang="ja">
-      <head>
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-        <link
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-          rel="stylesheet"
-        />
-        {/* ICON */}
-        <link rel="icon" href="./../favicon.ico" />
-        <GoogleAnalytics gaId={process.env.GA_ID ?? ""} />
-      </head>
-      <body>
-        <div
-          className="flex flex-col min-h-screen bg-white"
-          style={{
-            paddingTop: "env(safe-area-inset-top)",
-            // paddingBottom: "env(safe-area-inset-bottom)",
-          }}
-        >
-          <SpeedInsights />
-          {children}
-        </div>
-      </body>
-    </html>
-  );
-};
-
-export default RootLayout;
+export default function SecretLayout({ children }: { children: React.ReactNode }) {
+  return <div className="min-h-screen bg-black">{children}</div>;
+}

@@ -338,7 +338,10 @@ const Home = () => {
       </PopupModal>
 
       {/* ローディング画面 - シークレット機能のトリガー1つ目 */}
-      <div onClick={secret.incrementFirstCounter}>
+      <div
+        onClick={secret.incrementFirstCounter}
+        className={`${secret.firstStageCompleted ? "pulse-effect" : ""}`}
+      >
         <TopLoading
           time={loadingTime}
           text={secret.firstStageCompleted ? "" : initialLoadingText}
@@ -485,7 +488,13 @@ const Home = () => {
       </motion.section>
 
       {/* 特徴紹介セクション - シークレット機能のトリガー2つ目 */}
-      <div onClick={secret.incrementSecondCounter} id="features">
+      <div
+        onClick={secret.incrementSecondCounter}
+        id="features"
+        className={`${
+          secret.firstStageCompleted && !secret.secondStageCompleted ? "cursor-pointer" : ""
+        }`}
+      >
         <section className="apple-section bg-indigo-50 py-24">
           <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
             <div className="mb-10 md:mb-16 text-center">
@@ -541,7 +550,7 @@ const Home = () => {
               </div>
 
               <div className="flex flex-col h-full rounded-lg border bg-white shadow-md overflow-hidden transform hover:scale-105 transition-all duration-300">
-                <div className="bg-indigo-500 text-white p-6 flex items-center justify-center">
+                <div className="bg-indigo-500 text-white p-6 flex items-center">
                   <FaMusic className="text-4xl" />
                 </div>
                 <div className="p-6">
@@ -676,7 +685,7 @@ const Home = () => {
               </FadeInSection>
 
               <FadeInSection delay={0.4} className="h-full">
-                <div className="relative rounded-lg bg白 p-5 pt-8 shadow-md h-full">
+                <div className="relative rounded-lg bg-white p-5 pt-8 shadow-md h-full">
                   <FAQItem
                     question="楽器は自分で買わないといけない？"
                     answer="パートにもよりますが、家での練習のためにも、購入することをおすすめします。<br/>入部後に部や先輩から借りて体験などすることも可能ですので、気軽にご相談ください！"

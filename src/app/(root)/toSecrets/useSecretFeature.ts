@@ -27,25 +27,35 @@ export const useSecretFeature = ({
   // 全段階完了の状態
   const allStagesCompleted = firstStageCompleted && secondStageCompleted;
 
+  // シークレット機能をアクティベートする関数
+  const activateSecretFeature = () => {
+    if (allStagesCompleted) {
+      // セッションストレージにアクセス許可を保存
+      sessionStorage.setItem(sessionKey, "true");
+      sessionStorage.setItem("secretAccessTime", new Date().getTime().toString());
+
+      // 指定されたパスにリダイレクト
+      router.push(redirectPath);
+    }
+  };
+
   // カウンターをインクリメントする関数
   const incrementFirstCounter = () => {
     setFirstCounter((prev) => prev + 1);
   };
 
   const incrementSecondCounter = () => {
-    setSecondCounter((prev) => prev + 1);
-  };
+    // 第一段階が完了していない場合は何もしない
+    if (!firstStageCompleted) return;
 
-  // シークレット機能をアクティベートする関数
-  const activateSecretFeature = () => {
-    if (allStagesCompleted) {
-      // セッションストレージにアクセス許可を保存
-      sessionStorage.setItem(sessionKey, "true");
-      sessionStorage.setItem("setTime", new Date().getTime().toString());
-
-      // 指定されたパスにリダイレクト
-      router.push(redirectPath);
-    }
+    setSecondCounter((prev) => {
+      const newValue = prev + 1;
+      // 第二段階が完了したら、自動的に機能をアクティベート
+      if (newValue >= keyNumber) {
+        setTimeout(() => activateSecretFeature(), 300);
+      }
+      return newValue;
+    });
   };
 
   // 現在の状態に基づくクラス名を計算

@@ -592,7 +592,7 @@ const Home = () => {
               <ActivityCard
                 imageUrl="/image/root/live-performance.jpg"
                 imageAlt="部員がステージでライブ演奏をしている様子"
-                title="ライブパフォーマンス"
+                title="ライブ演奏"
                 description="学内外の様々なイベントで演奏する機会があります。人前での演奏経験を積むことができます。"
                 hoverText="実際のステージでの熱いパフォーマンスは一生の思い出になります。"
                 delay={0.2}

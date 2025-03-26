@@ -465,3 +465,54 @@ header {
 .floating-nav {
   filter: drop-shadow(0 -2px 10px rgba(0, 0, 0, 0.1));
 }
+
+/* シークレット機能用の追加スタイル */
+.pulse-effect {
+  animation: pulse 2s infinite;
+  position: relative;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(147, 51, 234, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(147, 51, 234, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(147, 51, 234, 0);
+  }
+}
+
+/* シークレットモード エフェクト強化 */
+.secret-first-completed::after {
+  content: "✨";
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  font-size: 24px;
+  animation: float 3s ease-in-out infinite;
+  z-index: 100;
+}
+
+.secret-all-completed::after {
+  content: "🎵✨🎸";
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  font-size: 24px;
+  animation: float 3s ease-in-out infinite;
+  z-index: 100;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}

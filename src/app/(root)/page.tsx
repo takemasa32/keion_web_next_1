@@ -550,7 +550,7 @@ const Home = () => {
               </div>
 
               <div className="flex flex-col h-full rounded-lg border bg-white shadow-md overflow-hidden transform hover:scale-105 transition-all duration-300">
-                <div className="bg-indigo-500 text-white p-6 flex items-center">
+                <div className="bg-indigo-500 text-white p-6 flex items-center justify-center">
                   <FaMusic className="text-4xl" />
                 </div>
                 <div className="p-6">

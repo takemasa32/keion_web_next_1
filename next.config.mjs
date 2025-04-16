@@ -11,10 +11,8 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
     // CDNからの画像読み込みを許可するドメイン（必要に応じて追加）
     domains: [],
-    // 画像の最適化の品質（0-100）- 低いと軽量だがやや荒い
+    // 画像の最適化の品質設定
     minimumCacheTTL: 60,
-    // 画像の品質（低いとファイルサイズが小さくなる）
-    quality: 75,
   },
 
   // セキュリティ強化
@@ -24,8 +22,6 @@ const nextConfig = {
   experimental: {
     // ブラウザでのメモリ使用を最適化
     optimizeCss: true,
-    // サーバーコンポーネントの強化
-    serverComponents: true,
     // 高度なキャッシュ戦略（ハードリフレッシュ時もキャッシュを保持）
     // nextScriptWorkers: true,
   },

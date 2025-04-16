@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import { Metadata } from "next";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import FloatingNav from "./components/FloatingNav";
+// FloatingNavのインポートを削除
 
 export const metadata: Metadata = {
   title: "島根大学 軽音楽部",
@@ -29,7 +29,7 @@ const SubLayout = ({ children }: { children: ReactNode }) => {
       <Header />
       <main className="flex-grow pt-16 md:pt-20">{children}</main>
       <Footer />
-      <FloatingNav />
+      {/* FloatingNavコンポーネントを削除 */}
     </div>
   );
 };

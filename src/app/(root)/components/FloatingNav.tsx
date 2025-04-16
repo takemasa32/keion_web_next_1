@@ -84,7 +84,7 @@ const FloatingNav = () => {
                 href="/"
                 className="text-xl font-bold text-indigo-700 dark:text-indigo-400 hover:text-indigo-500 transition-colors"
               >
-                慶應義塾大学軽音楽研究会
+                島根大学 軽音楽部
               </Link>
 
               {/* モバイルメニュー切り替えボタン */}

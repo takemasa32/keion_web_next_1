@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import ThemeToggle from "../../components/ThemeToggle";
 
 // 画像パスを定数として管理
 const IMAGES = {
@@ -186,79 +187,84 @@ const Header = () => {
                 </motion.div>
               </Link>
 
-              {/* モバイルメニューボタン */}
-              {isMobile ? (
-                <motion.button
-                  className={`p-2 rounded-md ${scrolled ? "text-gray-800" : "text-white"}`}
-                  onClick={toggleMenu}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  {isMenuOpen ? (
-                    <motion.svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      initial={{ rotate: 0 }}
-                      animate={{ rotate: 90 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <path d="M18 6L6 18M6 6l12 12" />
-                    </motion.svg>
-                  ) : (
-                    <motion.svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      initial={{ rotate: 0 }}
-                      animate={{ rotate: 0 }}
-                    >
-                      <path d="M3 12h18M3 6h18M3 18h18" />
-                    </motion.svg>
-                  )}
-                </motion.button>
-              ) : (
-                // デスクトップナビゲーション
-                <nav>
-                  <div className="flex space-x-6">
-                    {SITE_INFO.navLinks.map((link, index) => (
-                      <Link href={link.href} key={index}>
-                        <motion.div
-                          className={`font-medium relative ${
-                            scrolled
-                              ? "text-gray-800 hover:text-indigo-600"
-                              : "text-white hover:text-indigo-100 drop-shadow-md"
-                          } transition-colors duration-300`}
-                          whileHover={{ scale: 1.1 }}
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.1 + index * 0.1 }}
-                        >
-                          {link.label}
-                          <motion.span
-                            className="absolute left-0 right-0 bottom-0 h-0.5 bg-indigo-500 origin-left"
-                            initial={{ scaleX: 0 }}
-                            whileHover={{ scaleX: 1 }}
-                            transition={{ duration: 0.3 }}
-                          />
-                        </motion.div>
-                      </Link>
-                    ))}
-                  </div>
-                </nav>
-              )}
+              {/* モバイルメニューボタンとデスクトップナビゲーション */}
+              <div className="flex items-center space-x-3">
+                {/* テーマ切り替えボタン */}
+                <ThemeToggle />
+
+                {isMobile ? (
+                  <motion.button
+                    className={`p-2 rounded-md ${scrolled ? "text-gray-800" : "text-white"}`}
+                    onClick={toggleMenu}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    {isMenuOpen ? (
+                      <motion.svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        initial={{ rotate: 0 }}
+                        animate={{ rotate: 90 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <path d="M18 6L6 18M6 6l12 12" />
+                      </motion.svg>
+                    ) : (
+                      <motion.svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        initial={{ rotate: 0 }}
+                        animate={{ rotate: 0 }}
+                      >
+                        <path d="M3 12h18M3 6h18M3 18h18" />
+                      </motion.svg>
+                    )}
+                  </motion.button>
+                ) : (
+                  // デスクトップナビゲーション
+                  <nav>
+                    <div className="flex space-x-6">
+                      {SITE_INFO.navLinks.map((link, index) => (
+                        <Link href={link.href} key={index}>
+                          <motion.div
+                            className={`font-medium relative ${
+                              scrolled
+                                ? "text-gray-800 hover:text-indigo-600"
+                                : "text-white hover:text-indigo-100 drop-shadow-md"
+                            } transition-colors duration-300`}
+                            whileHover={{ scale: 1.1 }}
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 + index * 0.1 }}
+                          >
+                            {link.label}
+                            <motion.span
+                              className="absolute left-0 right-0 bottom-0 h-0.5 bg-indigo-500 origin-left"
+                              initial={{ scaleX: 0 }}
+                              whileHover={{ scaleX: 1 }}
+                              transition={{ duration: 0.3 }}
+                            />
+                          </motion.div>
+                        </Link>
+                      ))}
+                    </div>
+                  </nav>
+                )}
+              </div>
             </div>
           </div>
         )}

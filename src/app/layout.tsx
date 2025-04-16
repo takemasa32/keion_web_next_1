@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Metadata, Viewport } from "next";
+import { ThemeProvider } from "./context/ThemeContext";
 
 // メタデータの定義（SEO最適化）
 export const metadata: Metadata = {
@@ -65,24 +66,26 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
   return (
     <html lang="ja" className="scroll-smooth">
       <body className="antialiased text-slate-900 dark:text-white">
-        <div
-          id="__next"
-          className="flex flex-col min-h-screen bg-gradient-to-b from-white to-slate-50 dark:from-gray-900 dark:to-gray-800"
-          style={{
-            paddingTop: "",
-            paddingBottom: "env(safe-area-inset-bottom)",
-          }}
-        >
-          {/* ページ読み込み最適化のためにMain Content Layoutは早く表示 */}
-          <div className="flex-1">{children}</div>
+        <ThemeProvider>
+          <div
+            id="__next"
+            className="flex flex-col min-h-screen bg-gradient-to-b from-white to-slate-50 dark:from-gray-900 dark:to-gray-800"
+            style={{
+              paddingTop: "",
+              paddingBottom: "env(safe-area-inset-bottom)",
+            }}
+          >
+            {/* ページ読み込み最適化のためにMain Content Layoutは早く表示 */}
+            <div className="flex-1">{children}</div>
 
-          {/* Analytics - パフォーマンス計測 */}
-          <SpeedInsights />
-          {process.env.GA_ID && <GoogleAnalytics gaId={process.env.GA_ID} />}
+            {/* Analytics - パフォーマンス計測 */}
+            <SpeedInsights />
+            {process.env.GA_ID && <GoogleAnalytics gaId={process.env.GA_ID} />}
 
-          {/* iOS SafariでPWA時のバー対応 */}
-          <div id="safe-area-bottom" className="h-[env(safe-area-inset-bottom)]"></div>
-        </div>
+            {/* iOS SafariでPWA時のバー対応 */}
+            <div id="safe-area-bottom" className="h-[env(safe-area-inset-bottom)]"></div>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

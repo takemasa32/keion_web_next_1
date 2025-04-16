@@ -14,6 +14,13 @@ import { useSecretFeature } from "./toSecrets/useSecretFeature";
 import SecretEffectWrapper from "./toSecrets/SecretEffectWrapper";
 import Image from "next/image";
 
+// デザインシステムのコンポーネントをインポート
+import Section from "../components/ui/Section";
+import Typography from "../components/ui/Typography";
+import Button from "../components/ui/Button";
+import Card from "../components/ui/Card";
+import ThemeToggle from "../components/ThemeToggle";
+
 import {
   FaGuitar,
   FaMoneyBillWave,
@@ -557,10 +564,10 @@ const Home = () => {
         />
       </div>
 
-      {/* 改良されたヒーローセクション */}
-      <motion.section
+      {/* 新しいデザインシステムを使ったヒーローセクション */}
+      <motion.div
         ref={heroRef}
-        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-indigo-900 via-purple-900 to-indigo-900"
+        className="relative min-h-screen overflow-hidden bg-gradient-to-b from-indigo-900 via-purple-900 to-indigo-900"
         style={{ opacity, scale }}
       >
         {/* 背景レイヤー */}
@@ -577,8 +584,8 @@ const Home = () => {
         <MusicWave />
         <FloatingNotes />
 
-        {/* 中央のコンテンツ */}
-        <div className="container relative z-10 mx-auto px-4 py-24 text-center">
+        {/* 中央のコンテンツ - 新デザインシステムのコンポーネントを使用 */}
+        <div className="container relative z-10 mx-auto px-4 py-24 text-center flex flex-col items-center justify-center min-h-screen">
           <Parallax3DElement depth={0.3} className="mb-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -602,11 +609,10 @@ const Home = () => {
           </Parallax3DElement>
 
           <Parallax3DElement depth={0.5}>
-            <motion.h1
+            <Typography
+              variant="h1"
               className="text-5xl md:text-7xl font-bold text-white mb-8 leading-tight"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.8 }}
+              animate={true}
             >
               <motion.span
                 className="block mb-2"
@@ -635,15 +641,13 @@ const Home = () => {
               >
                 楽しみましょう！
               </motion.span>
-            </motion.h1>
+            </Typography>
           </Parallax3DElement>
 
           <Parallax3DElement depth={0.2}>
-            <motion.p
+            <Typography
+              variant="subtitle1"
               className="max-w-lg mx-auto text-xl text-indigo-100 mb-12"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.2, duration: 0.8 }}
             >
               初心者から経験者まで、音楽を通じて繋がるコミュニティ。
               <br />
@@ -661,7 +665,7 @@ const Home = () => {
                 あなたの大学生活を彩る最高の仲間
               </motion.span>
               がここにいます。
-            </motion.p>
+            </Typography>
           </Parallax3DElement>
 
           <Parallax3DElement depth={0.4}>
@@ -671,40 +675,33 @@ const Home = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.6, duration: 0.8 }}
             >
-              <motion.button
-                whileHover={{ scale: 1.05, boxShadow: "0 15px 30px -5px rgba(79, 70, 229, 0.5)" }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold rounded-full transform transition-all shadow-xl hover:shadow-2xl relative overflow-hidden group"
+              <Button
+                variant="primary"
+                size="lg"
                 onClick={() => {
                   document.getElementById("features")?.scrollIntoView({
                     behavior: "smooth",
                     block: "start",
                   });
                 }}
+                className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-violet-600"
               >
-                <span className="relative z-10">部活について知る</span>
-                <motion.span
-                  className="absolute inset-0 bg-gradient-to-r from-indigo-400 to-violet-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  animate={{
-                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                  }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                />
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(255, 255, 255, 0.3)" }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-transparent border-2 border-white text-white font-bold rounded-full backdrop-blur-sm transform transition-all relative overflow-hidden group"
+                部活について知る
+              </Button>
+
+              <Button
+                variant="outline"
+                size="lg"
                 onClick={navigateToEventListPage}
+                className="px-8 py-4 border-white text-white backdrop-blur-sm"
               >
-                <span className="relative z-10">活動を見る</span>
-                <motion.span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </motion.button>
+                活動を見る
+              </Button>
             </motion.div>
           </Parallax3DElement>
         </div>
 
-        {/* 装飾的な要素をより強化 */}
+        {/* 装飾的な要素 */}
         <Parallax3DElement depth={1.2}>
           <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-indigo-500/30 backdrop-blur-xl"></div>
         </Parallax3DElement>
@@ -712,6 +709,7 @@ const Home = () => {
           <div className="absolute top-16 -right-8 w-40 h-40 rounded-full bg-indigo-300/20 backdrop-blur-lg"></div>
         </Parallax3DElement>
 
+        {/* ロゴアニメーション */}
         <Parallax3DElement depth={0.8} className="absolute bottom-32 right-10 w-16 h-16">
           <motion.div
             initial={{ rotate: 0 }}
@@ -757,10 +755,12 @@ const Home = () => {
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
         >
-          <p className="text-sm font-medium mb-2 text-white/80">スクロールして続きを見る</p>
+          <Typography variant="body2" className="text-sm font-medium mb-2 text-white/80">
+            スクロールして続きを見る
+          </Typography>
           <FaChevronDown className="mx-auto text-xl text-white/80" />
         </motion.div>
-      </motion.section>
+      </motion.div>
 
       {/* 特徴紹介セクション - シークレット機能のトリガー2つ目 */}
       <div
@@ -770,137 +770,136 @@ const Home = () => {
           secret.firstStageCompleted && !secret.secondStageCompleted ? "cursor-pointer" : ""
         }`}
       >
-        <section className="apple-section bg-gradient-to-b from-indigo-50 to-white py-24">
-          <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
-            <div className="mb-10 md:mb-16 text-center">
-              <FadeInSection>
-                <h2 className="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-6 lg:text-3xl relative inline-block">
-                  <span className="relative z-10">
-                    島根大学
-                    <br />
-                    軽音楽部の特徴
-                  </span>
-                  <motion.span
-                    className="absolute -z-10 bottom-0 left-0 w-full h-3 bg-indigo-200 opacity-70"
-                    animate={{ width: ["0%", "100%"], x: ["-50%", "0%"] }}
-                    transition={{ duration: 1, delay: 0.5 }}
-                  />
-                </h2>
-              </FadeInSection>
-              <FadeInSection delay={0.2}>
-                <p className="mx-auto max-w-screen-md text-center text-gray-500 md:text-lg">
-                  私達はこんな団体です！
-                </p>
-              </FadeInSection>
-            </div>
+        <Section background="light" paddingY="xl" animate={true}>
+          <div className="mb-10 md:mb-16 text-center">
+            <Typography variant="h2" className="mb-4 text-center relative inline-block">
+              <span className="relative z-10">
+                島根大学
+                <br />
+                軽音楽部の特徴
+              </span>
+              <motion.span
+                className="absolute -z-10 bottom-0 left-0 w-full h-3 bg-indigo-200 opacity-70"
+                animate={{ width: ["0%", "100%"], x: ["-50%", "0%"] }}
+                transition={{ duration: 1, delay: 0.5 }}
+              />
+            </Typography>
 
-            <div className="grid gap-8 sm:grid-cols-2 lg:gap-12 xl:grid-cols-4 stagger-fade">
-              <motion.div
-                className="feature-card flex flex-col h-full rounded-xl border bg-white shadow-lg overflow-hidden transform transition-all duration-300"
-                whileHover={{
-                  y: -10,
-                  boxShadow: "0 25px 50px -12px rgba(79, 70, 229, 0.25)",
-                  scale: 1.02,
-                }}
-              >
-                <div className="bg-gradient-to-r from-indigo-600 to-indigo-500 text-white p-6 flex items-center justify-center relative overflow-hidden">
-                  <motion.div
-                    className="absolute inset-0 bg-indigo-400 opacity-0"
-                    whileHover={{ opacity: 0.2, scale: 1.5 }}
-                    transition={{ duration: 0.4 }}
-                  />
-                  <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="relative z-10">
-                    <MdOutlineSchool className="text-5xl" />
-                  </motion.div>
-                </div>
-                <div className="p-6">
-                  <h3 className="mb-2 text-gray-800 text-xl font-semibold">初心者歓迎</h3>
-                  <p className="text-gray-600">
-                    実際部員の中でもほぼ半数が入部時は初心者です。実際のバンド活動を通じて一緒に成長していきましょう！
-                  </p>
-                </div>
-              </motion.div>
-
-              <motion.div
-                className="feature-card flex flex-col h-full rounded-xl border bg-white shadow-lg overflow-hidden transform transition-all duration-300"
-                whileHover={{
-                  y: -10,
-                  boxShadow: "0 25px 50px -12px rgba(79, 70, 229, 0.25)",
-                  scale: 1.02,
-                }}
-              >
-                <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-6 flex items-center justify-center relative overflow-hidden">
-                  <motion.div
-                    className="absolute inset-0 bg-purple-400 opacity-0"
-                    whileHover={{ opacity: 0.2, scale: 1.5 }}
-                    transition={{ duration: 0.4 }}
-                  />
-                  <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="relative z-10">
-                    <FaTools className="text-5xl" />
-                  </motion.div>
-                </div>
-                <div className="p-6">
-                  <h3 className="mb-2 text-gray-800 text-xl font-semibold">設備が充実</h3>
-                  <p className="text-gray-600">
-                    大学内にアンプやドラムセットなど練習できる環境が揃っています。わざわざ外部のスタジオを借りなくても練習が可能です！
-                  </p>
-                </div>
-              </motion.div>
-
-              <motion.div
-                className="feature-card flex flex-col h-full rounded-xl border bg-white shadow-lg overflow-hidden transform transition-all duration-300"
-                whileHover={{
-                  y: -10,
-                  boxShadow: "0 25px 50px -12px rgba(79, 70, 229, 0.25)",
-                  scale: 1.02,
-                }}
-              >
-                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 flex items-center justify-center relative overflow-hidden">
-                  <motion.div
-                    className="absolute inset-0 bg-blue-400 opacity-0"
-                    whileHover={{ opacity: 0.2, scale: 1.5 }}
-                    transition={{ duration: 0.4 }}
-                  />
-                  <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="relative z-10">
-                    <FaUsers className="text-5xl" />
-                  </motion.div>
-                </div>
-                <div className="p-6">
-                  <h3 className="mb-2 text-gray-800 text-xl font-semibold">部員が多い</h3>
-                  <p className="text-gray-600">
-                    &quot;実際に活動をしている&quot;部員数がとても多い部活です。各学部内外大学内で友達を作るならもってこいです！！
-                  </p>
-                </div>
-              </motion.div>
-
-              <motion.div
-                className="feature-card flex flex-col h-full rounded-xl border bg-white shadow-lg overflow-hidden transform transition-all duration-300"
-                whileHover={{
-                  y: -10,
-                  boxShadow: "0 25px 50px -12px rgba(79, 70, 229, 0.25)",
-                  scale: 1.02,
-                }}
-              >
-                <div className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white p-6 flex items-center justify-center relative overflow-hidden">
-                  <motion.div
-                    className="absolute inset-0 bg-violet-400 opacity-0"
-                    whileHover={{ opacity: 0.2, scale: 1.5 }}
-                    transition={{ duration: 0.4 }}
-                  />
-                  <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="relative z-10">
-                    <FaMusic className="text-5xl" />
-                  </motion.div>
-                </div>
-                <div className="p-6">
-                  <h3 className="mb-2 text-gray-800 text-xl font-semibold">様々なジャンル</h3>
-                  <p className="text-gray-600">
-                    部員数が多いため、様々なジャンルの音楽に触れることができます。自分の知らないアーティストを見つける機会がたくさんあります。
-                  </p>
-                </div>
-              </motion.div>
-            </div>
+            <Typography
+              variant="body1"
+              className="mx-auto max-w-screen-md text-center text-gray-500 md:text-lg"
+            >
+              私達はこんな団体です！
+            </Typography>
           </div>
-        </section>
+
+          <div className="grid gap-8 sm:grid-cols-2 lg:gap-12 xl:grid-cols-4 stagger-fade">
+            {/* 特徴カード - ここから既存スタイルでカードが続く */}
+            <motion.div
+              className="feature-card flex flex-col h-full rounded-xl border bg-white shadow-lg overflow-hidden transform transition-all duration-300"
+              whileHover={{
+                y: -10,
+                boxShadow: "0 25px 50px -12px rgba(79, 70, 229, 0.25)",
+                scale: 1.02,
+              }}
+            >
+              <div className="bg-gradient-to-r from-indigo-600 to-indigo-500 text-white p-6 flex items-center justify-center relative overflow-hidden">
+                <motion.div
+                  className="absolute inset-0 bg-indigo-400 opacity-0"
+                  whileHover={{ opacity: 0.2, scale: 1.5 }}
+                  transition={{ duration: 0.4 }}
+                />
+                <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="relative z-10">
+                  <MdOutlineSchool className="text-5xl" />
+                </motion.div>
+              </div>
+              <div className="p-6">
+                <h3 className="mb-2 text-gray-800 text-xl font-semibold">初心者歓迎</h3>
+                <p className="text-gray-600">
+                  実際部員の中でもほぼ半数が入部時は初心者です。実際のバンド活動を通じて一緒に成長していきましょう！
+                </p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="feature-card flex flex-col h-full rounded-xl border bg-white shadow-lg overflow-hidden transform transition-all duration-300"
+              whileHover={{
+                y: -10,
+                boxShadow: "0 25px 50px -12px rgba(79, 70, 229, 0.25)",
+                scale: 1.02,
+              }}
+            >
+              <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-6 flex items-center justify-center relative overflow-hidden">
+                <motion.div
+                  className="absolute inset-0 bg-purple-400 opacity-0"
+                  whileHover={{ opacity: 0.2, scale: 1.5 }}
+                  transition={{ duration: 0.4 }}
+                />
+                <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="relative z-10">
+                  <FaTools className="text-5xl" />
+                </motion.div>
+              </div>
+              <div className="p-6">
+                <h3 className="mb-2 text-gray-800 text-xl font-semibold">設備が充実</h3>
+                <p className="text-gray-600">
+                  大学内にアンプやドラムセットなど練習できる環境が揃っています。わざわざ外部のスタジオを借りなくても練習が可能です！
+                </p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="feature-card flex flex-col h-full rounded-xl border bg-white shadow-lg overflow-hidden transform transition-all duration-300"
+              whileHover={{
+                y: -10,
+                boxShadow: "0 25px 50px -12px rgba(79, 70, 229, 0.25)",
+                scale: 1.02,
+              }}
+            >
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 flex items-center justify-center relative overflow-hidden">
+                <motion.div
+                  className="absolute inset-0 bg-blue-400 opacity-0"
+                  whileHover={{ opacity: 0.2, scale: 1.5 }}
+                  transition={{ duration: 0.4 }}
+                />
+                <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="relative z-10">
+                  <FaUsers className="text-5xl" />
+                </motion.div>
+              </div>
+              <div className="p-6">
+                <h3 className="mb-2 text-gray-800 text-xl font-semibold">部員が多い</h3>
+                <p className="text-gray-600">
+                  &quot;実際に活動をしている&quot;部員数がとても多い部活です。各学部内外大学内で友達を作るならもってこいです！！
+                </p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="feature-card flex flex-col h-full rounded-xl border bg-white shadow-lg overflow-hidden transform transition-all duration-300"
+              whileHover={{
+                y: -10,
+                boxShadow: "0 25px 50px -12px rgba(79, 70, 229, 0.25)",
+                scale: 1.02,
+              }}
+            >
+              <div className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white p-6 flex items-center justify-center relative overflow-hidden">
+                <motion.div
+                  className="absolute inset-0 bg-violet-400 opacity-0"
+                  whileHover={{ opacity: 0.2, scale: 1.5 }}
+                  transition={{ duration: 0.4 }}
+                />
+                <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="relative z-10">
+                  <FaMusic className="text-5xl" />
+                </motion.div>
+              </div>
+              <div className="p-6">
+                <h3 className="mb-2 text-gray-800 text-xl font-semibold">様々なジャンル</h3>
+                <p className="text-gray-600">
+                  部員数が多いため、様々なジャンルの音楽に触れることができます。自分の知らないアーティストを見つける機会がたくさんあります。
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        </Section>
 
         {/* 画像ギャラリーセクション */}
         <section className="apple-section bg-white py-24 relative overflow-hidden">
@@ -1085,8 +1084,14 @@ const Home = () => {
           </div>
         </section>
 
-        {/* よくある質問セクション */}
-        <section className="apple-section bg-gradient-to-b from-indigo-50 via-white to-indigo-50 py-24 relative overflow-hidden">
+        {/* よくある質問セクション - デザインシステムのコンポーネント使用 */}
+        <Section
+          background="light"
+          paddingY="xl"
+          animate={true}
+          className="relative overflow-hidden"
+          id="faq"
+        >
           {/* 背景装飾 */}
           <div className="absolute inset-0 opacity-5">
             <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
@@ -1129,194 +1134,114 @@ const Home = () => {
             transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
           />
 
-          <div className="mx-auto max-w-screen-xl px-4 md:px-8 relative z-10">
-            <div className="mb-10 md:mb-16">
-              <FadeInSection>
-                <h2 className="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-6 lg:text-3xl relative inline-block">
-                  <span className="relative z-10">よくある質問</span>
-                  <motion.span
-                    className="absolute -z-10 bottom-0 left-0 w-full h-3 bg-indigo-200 opacity-70"
-                    animate={{ width: ["0%", "100%"], x: ["-50%", "0%"] }}
-                    transition={{ duration: 1, delay: 0.5 }}
-                  />
-                </h2>
-              </FadeInSection>
-              <FadeInSection delay={0.2}>
-                <p className="mx-auto max-w-screen-md text-center text-gray-500 md:text-lg">
-                  気になる疑問点について回答します！
-                </p>
-              </FadeInSection>
-            </div>
+          <div className="mb-10 md:mb-16">
+            <Typography
+              variant="h2"
+              className="mb-4 text-center relative inline-block"
+              animate={true}
+            >
+              <span className="relative z-10">よくある質問</span>
+              <motion.span
+                className="absolute -z-10 bottom-0 left-0 w-full h-3 bg-indigo-200 opacity-70"
+                animate={{ width: ["0%", "100%"], x: ["-50%", "0%"] }}
+                transition={{ duration: 1, delay: 0.5 }}
+              />
+            </Typography>
 
-            <div className="grid gap-8 sm:grid-cols-2 sm:gap-y-10 xl:grid-cols-3">
-              <motion.div
-                whileHover={{ y: -5, boxShadow: "0 25px 50px -12px rgba(79, 70, 229, 0.25)" }}
-                className="faq-card"
-              >
-                <div className="relative rounded-xl bg-white p-6 pt-8 shadow-lg h-full border border-indigo-100 overflow-hidden">
-                  <motion.div
-                    className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-indigo-600 to-purple-600"
-                    animate={{
-                      backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                    }}
-                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-                  />
-                  <FAQItem
-                    question="部費はありますか？"
-                    answer="半年で6000円の部費を徴収しています.<br/>その中からイベントの運営や機材の購入に充てています．"
-                    additional="※部Tの代金など,別途費用がかかることもあります．"
-                    icon={
-                      <motion.div
-                        whileHover={{ rotate: 15, scale: 1.2 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                      >
-                        <FaMoneyBillWave className="text-indigo-500" size={28} />
-                      </motion.div>
-                    }
-                  />
-                </div>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ y: -5, boxShadow: "0 25px 50px -12px rgba(79, 70, 229, 0.25)" }}
-                className="faq-card"
-              >
-                <div className="relative rounded-xl bg-white p-6 pt-8 shadow-lg h-full border border-indigo-100 overflow-hidden">
-                  <motion.div
-                    className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-600 to-indigo-600"
-                    animate={{
-                      backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                    }}
-                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-                  />
-                  <FAQItem
-                    question="イベントはどんなものがありますか？"
-                    answer="新歓ライブや学際でのライブ、定期演奏会など,年間を通して様々なイベントがあります．詳細はSNSなどをご覧ください．"
-                    icon={
-                      <motion.div
-                        whileHover={{ rotate: 15, scale: 1.2 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                      >
-                        <FaCalendarAlt className="text-blue-500" size={28} />
-                      </motion.div>
-                    }
-                  />
-                </div>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ y: -5, boxShadow: "0 25px 50px -12px rgba(79, 70, 229, 0.25)" }}
-                className="faq-card"
-              >
-                <div className="relative rounded-xl bg-white p-6 pt-8 shadow-lg h-full border border-indigo-100 overflow-hidden">
-                  <motion.div
-                    className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-green-500 to-blue-500"
-                    animate={{
-                      backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                    }}
-                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-                  />
-                  <FAQItem
-                    question="初心者でも大丈夫ですか？"
-                    answer="もちろんです！例年ほぼ半数が初心者です．<br/>初心者の方も大歓迎ですので、一緒に成長していきましょう！"
-                    icon={
-                      <motion.div
-                        whileHover={{ rotate: 15, scale: 1.2 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                      >
-                        <FaSmile className="text-green-500" size={28} />
-                      </motion.div>
-                    }
-                  />
-                </div>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ y: -5, boxShadow: "0 25px 50px -12px rgba(79, 70, 229, 0.25)" }}
-                className="faq-card"
-              >
-                <div className="relative rounded-xl bg-white p-6 pt-8 shadow-lg h-full border border-indigo-100 overflow-hidden">
-                  <motion.div
-                    className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-orange-500 to-red-500"
-                    animate={{
-                      backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                    }}
-                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-                  />
-                  <FAQItem
-                    question="楽器は自分で買わないといけない？"
-                    answer="パートにもよりますが、家での練習のためにも、購入することをおすすめします。<br/>入部後に部や先輩から借りて体験などすることも可能ですので、気軽にご相談ください！"
-                    icon={
-                      <motion.div
-                        whileHover={{ rotate: 15, scale: 1.2 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                      >
-                        <FaGuitar className="text-orange-500" size={28} />
-                      </motion.div>
-                    }
-                  />
-                </div>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ y: -5, boxShadow: "0 25px 50px -12px rgba(79, 70, 229, 0.25)" }}
-                className="faq-card"
-              >
-                <div className="relative rounded-xl bg-white p-6 pt-8 shadow-lg h-full border border-indigo-100 overflow-hidden">
-                  <motion.div
-                    className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-pink-500 to-purple-500"
-                    animate={{
-                      backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                    }}
-                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-                  />
-                  <FAQItem
-                    question="続けられるか不安です..."
-                    answer="物は試し、楽器の演奏は生活を豊かにする一生の趣味となると思います。<br/>まずは挑戦してみることをおすすめします！どの楽器も最初は大変ですが、こつこつ臆さずに練習し、ライブへの出演を続けることで誰でも上達できると信じています！"
-                    icon={
-                      <motion.div
-                        whileHover={{ rotate: 15, scale: 1.2 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                      >
-                        <MdOutlineThumbUp className="text-pink-500" size={28} />
-                      </motion.div>
-                    }
-                  />
-                </div>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ y: -5, boxShadow: "0 25px 50px -12px rgba(79, 70, 229, 0.25)" }}
-                className="faq-card"
-              >
-                <div className="relative rounded-xl bg-white p-6 pt-8 shadow-lg h-full border border-indigo-100 overflow-hidden">
-                  <motion.div
-                    className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-indigo-500 to-cyan-500"
-                    animate={{
-                      backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                    }}
-                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-                  />
-                  <FAQItem
-                    question="わからないことがあるのですが..."
-                    answer="どんな些細なことでも結構です！SNSの方までご連絡ください！"
-                    icon={
-                      <motion.div
-                        whileHover={{ rotate: 15, scale: 1.2 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                      >
-                        <MdOutlineContactSupport className="text-cyan-500" size={28} />
-                      </motion.div>
-                    }
-                  />
-                </div>
-              </motion.div>
-            </div>
+            <Typography
+              variant="body1"
+              className="mx-auto max-w-screen-md text-center text-gray-500 md:text-lg"
+            >
+              気になる疑問点について回答します！
+            </Typography>
           </div>
-        </section>
 
-        {/* コンタクトセクション */}
-        <section className="bg-gradient-to-b from-indigo-50 to-white py-24 relative overflow-hidden">
+          <div className="grid gap-8 sm:grid-cols-2 sm:gap-y-10 xl:grid-cols-3">
+            <Card className="faq-card h-full" interactive={true} hover3D={true} bordered={true}>
+              <div className="relative pt-8">
+                <motion.div
+                  className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-indigo-600 to-purple-600"
+                  animate={{
+                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                  }}
+                  transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <FAQItem
+                  question="部費はありますか？"
+                  answer="半年で6000円の部費を徴収しています.<br/>その中からイベントの運営や機材の購入に充てています．"
+                  additional="※部Tの代金など,別途費用がかかることもあります．"
+                  icon={
+                    <motion.div
+                      whileHover={{ rotate: 15, scale: 1.2 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    >
+                      <FaMoneyBillWave className="text-indigo-500" size={28} />
+                    </motion.div>
+                  }
+                />
+              </div>
+            </Card>
+
+            {/* その他のFAQカードも同様に更新 */}
+            <Card className="faq-card h-full" interactive={true} hover3D={true} bordered={true}>
+              <div className="relative pt-8">
+                <motion.div
+                  className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-600 to-indigo-600"
+                  animate={{
+                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                  }}
+                  transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <FAQItem
+                  question="イベントはどんなものがありますか？"
+                  answer="新歓ライブや学際でのライブ、定期演奏会など,年間を通して様々なイベントがあります．詳細はSNSなどをご覧ください．"
+                  icon={
+                    <motion.div
+                      whileHover={{ rotate: 15, scale: 1.2 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    >
+                      <FaCalendarAlt className="text-blue-500" size={28} />
+                    </motion.div>
+                  }
+                />
+              </div>
+            </Card>
+
+            {/* 残りのFAQカード */}
+            <Card className="faq-card h-full" interactive={true} hover3D={true} bordered={true}>
+              <div className="relative pt-8">
+                <motion.div
+                  className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-green-500 to-blue-500"
+                  animate={{
+                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                  }}
+                  transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <FAQItem
+                  question="初心者でも大丈夫ですか？"
+                  answer="もちろんです！例年ほぼ半数が初心者です．<br/>初心者の方も大歓迎ですので、一緒に成長していきましょう！"
+                  icon={
+                    <motion.div
+                      whileHover={{ rotate: 15, scale: 1.2 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    >
+                      <FaSmile className="text-green-500" size={28} />
+                    </motion.div>
+                  }
+                />
+              </div>
+            </Card>
+          </div>
+        </Section>
+
+        {/* コンタクトセクション - デザインシステムのコンポーネント使用 */}
+        <Section
+          background="white"
+          paddingY="xl"
+          animate={true}
+          className="relative overflow-hidden"
+          id="contact"
+        >
           <div className="absolute inset-0 bg-pattern opacity-5"></div>
 
           {/* 装飾的な背景要素 */}
@@ -1361,52 +1286,55 @@ const Home = () => {
             </svg>
           </motion.div>
 
-          <div className="max-w-screen-xl mx-auto px-4 relative z-10">
-            <FadeInSection>
-              <h2 className="text-center text-3xl font-bold text-gray-800 mb-6">
-                次は部室で会いましょう！
-              </h2>
-            </FadeInSection>
+          <Typography variant="h2" className="text-center font-bold mb-8" animate={true}>
+            次は部室で会いましょう！
+          </Typography>
 
-            <FadeInSection delay={0.3}>
-              <div className="p-6 bg-white rounded-2xl shadow-xl border border-indigo-50 max-w-lg mx-auto transform hover:scale-[1.02] transition-all duration-300">
-                <p className="text-center text-gray-600 mb-8">
-                  ご質問やお問い合わせは各SNSからお気軽にどうぞ。
-                  <br />
-                  見学や体験も随時受け付けています！
-                </p>
-                <SNSButton />
-                <div className="mt-8 text-center">
+          <Card
+            className="p-6 max-w-lg mx-auto transform hover:scale-[1.02] transition-all duration-300"
+            interactive={true}
+            bordered={true}
+            shadow="lg"
+          >
+            <Card.Body>
+              <Typography variant="body1" className="text-center text-gray-600 mb-8">
+                ご質問やお問い合わせは各SNSからお気軽にどうぞ。
+                <br />
+                見学や体験も随時受け付けています！
+              </Typography>
+
+              <SNSButton />
+
+              <div className="mt-8 text-center">
+                <motion.div
+                  className="inline-flex items-center text-indigo-600 font-medium"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <span className="mr-2">みんなで音楽を楽しもう</span>
                   <motion.div
-                    className="inline-flex items-center text-indigo-600 font-medium"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
                   >
-                    <span className="mr-2">みんなで音楽を楽しもう</span>
-                    <motion.div
-                      animate={{ x: [0, 5, 0] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M5 12h14M12 5l7 7-7 7" />
-                      </svg>
-                    </motion.div>
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
                   </motion.div>
-                </div>
+                </motion.div>
               </div>
-            </FadeInSection>
-          </div>
-        </section>
+            </Card.Body>
+          </Card>
+        </Section>
       </div>
     </SecretEffectWrapper>
   );

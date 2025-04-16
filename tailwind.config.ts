@@ -3,6 +3,7 @@ import colors from "tailwindcss/colors";
 
 const config: Config = {
   content: ["./src/**/*.{js,ts,jsx,tsx}", "./node_modules/@tremor/**/*.{js,ts,jsx,tsx}"],
+  darkMode: "class", // クラスベースのダークモードを使用
   theme: {
     extend: {
       backgroundImage: {
@@ -10,6 +11,35 @@ const config: Config = {
         "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       colors: {
+        // デザインシステムのメインカラー
+        primary: {
+          50: colors.indigo[50],
+          100: colors.indigo[100],
+          200: colors.indigo[200],
+          300: colors.indigo[300],
+          400: colors.indigo[400],
+          500: colors.indigo[500],
+          600: colors.indigo[600],
+          700: colors.indigo[700],
+          800: colors.indigo[800],
+          900: colors.indigo[900],
+          950: colors.indigo[950],
+        },
+        // アクセントカラー
+        accent: {
+          50: colors.purple[50],
+          100: colors.purple[100],
+          200: colors.purple[200],
+          300: colors.purple[300],
+          400: colors.purple[400],
+          500: colors.purple[500],
+          600: colors.purple[600],
+          700: colors.purple[700],
+          800: colors.purple[800],
+          900: colors.purple[900],
+          950: colors.purple[950],
+        },
+        // 既存のtremorスタイルなど
         tremor: {
           brand: {
             faint: colors.blue[50],

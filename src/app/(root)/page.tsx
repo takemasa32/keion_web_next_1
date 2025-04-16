@@ -130,7 +130,15 @@ const calculateDaysUntil = (targetDate: Date): number => {
 };
 
 // 3D視差効果用のコンポーネント
-const Parallax3DElement = ({ children, depth = 1, className = "" }) => {
+const Parallax3DElement = ({
+  children,
+  depth = 1,
+  className = "",
+}: {
+  children: React.ReactNode;
+  depth?: number;
+  className?: string;
+}) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const [isMobile, setIsMobile] = useState(false);
@@ -140,7 +148,7 @@ const Parallax3DElement = ({ children, depth = 1, className = "" }) => {
 
   // 実際の位置更新をRAFにより最適化
   useEffect(() => {
-    let rafId;
+    let rafId: number | undefined;
 
     const updatePosition = () => {
       if (
@@ -153,7 +161,11 @@ const Parallax3DElement = ({ children, depth = 1, className = "" }) => {
     };
 
     rafId = requestAnimationFrame(updatePosition);
-    return () => cancelAnimationFrame(rafId);
+    return () => {
+      if (rafId !== undefined) {
+        cancelAnimationFrame(rafId);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -169,33 +181,51 @@ const Parallax3DElement = ({ children, depth = 1, className = "" }) => {
       setIsReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     };
 
-    const handleMouseMove = (e) => {
+    // Define interface for position tracking
+    interface Position {
+      x: number;
+      y: number;
+    }
+
+    // Define interface for mouse event
+    interface MouseEvent {
+      clientX: number;
+      clientY: number;
+    }
+
+    const handleMouseMove = (e: MouseEvent): void => {
       if (isMobile || isReduced) return; // モバイルデバイスまたは省モーション設定では無効化
 
       // スロットリングを適用（パフォーマンス向上）
-      const now = Date.now();
+      const now: number = Date.now();
       if (now - lastUpdate.current < 16) return; // 約60fpsに制限
       lastUpdate.current = now;
 
       const { clientX, clientY } = e;
-      const x = (clientX / windowSize.width - 0.5) * depth * 20;
-      const y = (clientY / windowSize.height - 0.5) * depth * 20;
+      const x: number = (clientX / windowSize.width - 0.5) * depth * 20;
+      const y: number = (clientY / windowSize.height - 0.5) * depth * 20;
       positionRef.current = { x, y };
     };
 
     // モバイル向けのジャイロセンサー対応 (最適化)
-    const handleDeviceOrientation = (e) => {
+    // Define interface for device orientation event
+    interface DeviceOrientationEvent {
+      beta: number | null;
+      gamma: number | null;
+    }
+
+    const handleDeviceOrientation = (e: DeviceOrientationEvent): void => {
       if (!isMobile || isReduced) return; // PCまたは省モーション設定では無効化
 
       // スロットリングを適用
-      const now = Date.now();
+      const now: number = Date.now();
       if (now - lastUpdate.current < 50) return; // モバイルは50msごとに更新（約20fps）
       lastUpdate.current = now;
 
-      if (e.beta && e.gamma) {
+      if (e.beta !== null && e.gamma !== null) {
         // 値の範囲を制限し、移動量を調整（バッテリー消費を抑制）
-        const x = (Math.min(Math.max(e.gamma, -15), 15) / 15) * depth * 8;
-        const y = (Math.min(Math.max(e.beta, -15), 15) / 15) * depth * 8;
+        const x: number = (Math.min(Math.max(e.gamma, -15), 15) / 15) * depth * 8;
+        const y: number = (Math.min(Math.max(e.beta, -15), 15) / 15) * depth * 8;
         positionRef.current = { x, y };
       }
     };

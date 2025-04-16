@@ -11,7 +11,14 @@ const FloatingNav = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   // パフォーマンス最適化：スロットリング関数
-  const throttle = (callback, delay) => {
+  // Define the throttle function type
+  interface ThrottleFunction {
+    <T extends (...args: any[]) => void>(callback: T, delay: number): (
+      ...args: Parameters<T>
+    ) => void;
+  }
+
+  const throttle: ThrottleFunction = (callback, delay) => {
     let previousCall = 0;
     return (...args) => {
       const now = Date.now();

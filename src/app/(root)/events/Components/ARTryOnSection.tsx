@@ -1,12 +1,6 @@
 "use client";
 
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import CustomImage from "./CustomImage";
 
@@ -32,8 +26,7 @@ type CameraOption = {
 
 const FALLBACK_ASPECT_RATIO = 3 / 4; // portrait baseline
 
-const clamp = (value: number, min: number, max: number) =>
-  Math.min(Math.max(value, min), max);
+const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
 const designAssets: Record<
   DesignKey,
@@ -126,11 +119,7 @@ const ARTryOnSection = () => {
       const range = overlaySizeRange[designKey];
       const widthPercent = clamp(state.widthPercent, range.min, range.max);
       const heightPercent = computeHeightPercent(widthPercent, designKey);
-      const centerXPercent = clamp(
-        state.centerXPercent,
-        widthPercent / 2,
-        100 - widthPercent / 2
-      );
+      const centerXPercent = clamp(state.centerXPercent, widthPercent / 2, 100 - widthPercent / 2);
       const centerYPercent = clamp(
         state.centerYPercent,
         heightPercent / 2,
@@ -237,8 +226,7 @@ const ARTryOnSection = () => {
           await attachStreamToVideo(stream);
 
           const cameras = await refreshCameraList();
-          const trackDeviceId =
-            stream.getVideoTracks()[0]?.getSettings().deviceId || "";
+          const trackDeviceId = stream.getVideoTracks()[0]?.getSettings().deviceId || "";
           const activeId =
             trackDeviceId ||
             deviceId ||
@@ -345,8 +333,7 @@ const ARTryOnSection = () => {
 
       const overlayConfig = overlayStates[design];
       const overlayWidth = (overlayConfig.widthPercent / 100) * width;
-      const overlayHeight =
-        (overlayWidth / overlayImage.naturalWidth) * overlayImage.naturalHeight;
+      const overlayHeight = (overlayWidth / overlayImage.naturalWidth) * overlayImage.naturalHeight;
 
       const centerX = (overlayConfig.centerXPercent / 100) * width;
       const centerY = (overlayConfig.centerYPercent / 100) * height;
@@ -408,10 +395,7 @@ const ARTryOnSection = () => {
         if (!current) {
           return prev;
         }
-        const nextState = clampOverlayState(
-          { ...current, widthPercent: newWidth },
-          design
-        );
+        const nextState = clampOverlayState({ ...current, widthPercent: newWidth }, design);
         if (
           nextState.widthPercent === current.widthPercent &&
           nextState.centerXPercent === current.centerXPercent &&
@@ -440,10 +424,7 @@ const ARTryOnSection = () => {
         if (!current) {
           return prev;
         }
-        const heightPercent = computeHeightPercent(
-          current.widthPercent,
-          designKey
-        );
+        const heightPercent = computeHeightPercent(current.widthPercent, designKey);
         const nextState: OverlayState = {
           ...current,
           centerXPercent: clamp(
@@ -451,11 +432,7 @@ const ARTryOnSection = () => {
             current.widthPercent / 2,
             100 - current.widthPercent / 2
           ),
-          centerYPercent: clamp(
-            targetCenterY,
-            heightPercent / 2,
-            100 - heightPercent / 2
-          ),
+          centerYPercent: clamp(targetCenterY, heightPercent / 2, 100 - heightPercent / 2),
         };
         if (
           nextState.centerXPercent === current.centerXPercent &&
@@ -498,23 +475,22 @@ const ARTryOnSection = () => {
     [design, overlayStates]
   );
 
-  const handleOverlayPointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
-    const dragState = dragStateRef.current;
-    if (
-      !dragState ||
-      dragState.pointerId !== event.pointerId ||
-      !frameRef.current
-    ) {
-      return;
-    }
-    event.preventDefault();
-    const rect = frameRef.current.getBoundingClientRect();
-    const pointerXPercent = ((event.clientX - rect.left) / rect.width) * 100;
-    const pointerYPercent = ((event.clientY - rect.top) / rect.height) * 100;
-    const targetX = pointerXPercent + dragState.deltaXPercent;
-    const targetY = pointerYPercent + dragState.deltaYPercent;
-    updateOverlayPosition(dragState.designKey, targetX, targetY);
-  }, [updateOverlayPosition]);
+  const handleOverlayPointerMove = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      const dragState = dragStateRef.current;
+      if (!dragState || dragState.pointerId !== event.pointerId || !frameRef.current) {
+        return;
+      }
+      event.preventDefault();
+      const rect = frameRef.current.getBoundingClientRect();
+      const pointerXPercent = ((event.clientX - rect.left) / rect.width) * 100;
+      const pointerYPercent = ((event.clientY - rect.top) / rect.height) * 100;
+      const targetX = pointerXPercent + dragState.deltaXPercent;
+      const targetY = pointerYPercent + dragState.deltaYPercent;
+      updateOverlayPosition(dragState.designKey, targetX, targetY);
+    },
+    [updateOverlayPosition]
+  );
 
   const endOverlayDrag = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     const dragState = dragStateRef.current;
@@ -593,7 +569,7 @@ const ARTryOnSection = () => {
             スマホで作る軽音ロゴフォトブース
           </h2>
           <p className="text-sm leading-relaxed text-slate-200 sm:text-base">
-            画面角にロゴを合わせた自撮りや、中央に大胆に乗せた集合ショットをワンタップで保存。
+            ロゴ付き写真をワンタップで保存。
             ロゴは長押しドラッグで移動、スライダーでサイズ調整できます。
           </p>
 
@@ -766,9 +742,7 @@ const ARTryOnSection = () => {
             </div>
 
             {isLoadingCamera && (
-              <p className="mt-3 text-xs leading-relaxed text-slate-300">
-                カメラを起動しています…
-              </p>
+              <p className="mt-3 text-xs leading-relaxed text-slate-300">カメラを起動しています…</p>
             )}
 
             {errorMessage && (

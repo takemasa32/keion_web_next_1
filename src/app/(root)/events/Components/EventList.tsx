@@ -54,12 +54,12 @@ const EventList: React.FC<EventListProps> = ({
 
   return (
     <motion.div
-      className="mt-8 sm:mt-12 bg-white bg-opacity-90 p-6 rounded-lg shadow-lg"
+      className="mt-8 rounded-2xl bg-white/90 p-4 shadow-lg backdrop-blur-sm sm:mt-12 sm:p-6"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <h1 className="text-2xl sm:text-3xl font-bold text-center text-black mb-6 sm:mb-8 break-words">
+      <h1 className="mb-6 break-words text-center text-2xl font-bold text-slate-900 sm:mb-8 sm:text-3xl">
         {title}
       </h1>
 
@@ -95,7 +95,7 @@ const EventList: React.FC<EventListProps> = ({
       )}
 
       {filteredEvents.length > 0 ? (
-        <div className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
           {filteredEvents.map((event, index) => (
             <EventCard key={index} event={event} index={index} />
           ))}

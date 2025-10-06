@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { FaExternalLinkAlt, FaCalendarAlt, FaCaretDown } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 
 interface EventCardProps {
   event: {
@@ -21,10 +20,6 @@ interface EventCardProps {
 const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [showAllDates, setShowAllDates] = useState(false);
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  });
 
   // 画像の読み込みエラー処理
   const handleImageError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -172,30 +167,29 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
 
   const cardContent = (
     <motion.div
-      ref={ref}
       variants={cardVariants}
       initial="hidden"
-      animate={inView ? "visible" : "hidden"}
-      className={`relative bg-white rounded-lg shadow-lg overflow-hidden h-full transform transition-all duration-300
+      animate="visible"
+      className={`relative flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-lg transition-shadow duration-300
         ${
           hasLink
-            ? "cursor-pointer hover:shadow-xl hover:border-indigo-300 border-2 border-transparent"
+            ? "cursor-pointer border-2 border-transparent hover:border-indigo-300 hover:shadow-xl"
             : "border border-gray-100"
         }`}
-      whileHover={hasLink ? { scale: 1.02, y: -5 } : { scale: 1 }}
-      whileTap={hasLink ? { scale: 0.98 } : { scale: 1 }}
+      whileHover={hasLink ? { scale: 1.01 } : undefined}
+      whileTap={hasLink ? { scale: 0.99 } : undefined}
     >
-      <div className="relative aspect-video w-full overflow-hidden bg-gray-100">
+      <div className="relative w-full overflow-hidden bg-gray-100 aspect-[4/3] sm:aspect-[16/10]">
         {/* リンク付きイベントの場合、左上にインジケータを表示 */}
         {hasLink && (
-          <div className="absolute top-0 left-0 m-2 bg-indigo-600 text-white px-2 py-1 rounded-md text-xs font-medium z-10 shadow-md">
+          <div className="absolute top-0 left-0 z-20 m-2 rounded-md bg-indigo-600 px-2 py-1 text-xs font-medium text-white shadow-md">
             詳細あり
           </div>
         )}
 
         {/* 複数日程のイベントにはバッジ表示 */}
         {hasMultipleDates && !hasLink && (
-          <div className="absolute top-0 left-0 m-2 bg-amber-500 text-white px-2 py-1 rounded-md text-xs font-medium z-10 shadow-md">
+          <div className="absolute top-0 left-0 z-20 m-2 rounded-md bg-amber-500 px-2 py-1 text-xs font-medium text-white shadow-md">
             複数日程
           </div>
         )}
@@ -218,12 +212,12 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
         />
       </div>
 
-      <div className="p-5">
+      <div className="flex flex-1 flex-col p-4 sm:p-5">
         {/* 日付表示 - 複数日程対応 */}
         <div className="mb-2">
           <div className="flex items-center text-gray-700 text-sm">
             <FaCalendarAlt className="mr-2 flex-shrink-0 text-indigo-600" />
-            <time dateTime={event.date} className="line-clamp-2">
+            <time dateTime={event.date} className="line-clamp-3 leading-snug">
               {formatDate(event.date)}
             </time>
 
@@ -269,17 +263,19 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
         </div>
 
         <h2
-          className={`text-xl font-bold mb-2 line-clamp-2 ${
+          className={`mb-2 text-base font-semibold leading-snug line-clamp-2 sm:text-lg ${
             hasLink ? "text-indigo-800 group-hover:text-indigo-600" : "text-gray-800"
           }`}
         >
           {event.title}
         </h2>
-        <p className="text-gray-600 mb-4 line-clamp-3">{event.description}</p>
+        <p className="mb-4 text-sm leading-relaxed text-gray-700 sm:text-base sm:leading-relaxed line-clamp-4 sm:line-clamp-3">
+          {event.description}
+        </p>
 
         {/* タグ表示 */}
         {event.tags && event.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-4">
+          <div className="mb-4 flex flex-wrap gap-1">
             {event.tags.map((tag, i) => (
               <span
                 key={i}
@@ -296,7 +292,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
         {/* リンクがある場合はボタンを表示 */}
         {hasLink && (
           <div className="mt-auto pt-2">
-            <div className="flex items-center justify-end text-indigo-600 font-medium text-sm">
+            <div className="flex items-center justify-end text-sm font-medium text-indigo-600">
               詳細を見る
               <FaExternalLinkAlt className="ml-1" />
             </div>
@@ -306,18 +302,14 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
 
       {/* リンクがある場合はホバー時に表示されるオーバーレイ */}
       {hasLink && (
-        <motion.div
-          className="absolute inset-0 bg-indigo-600 bg-opacity-0 flex items-center justify-center transition-all duration-300"
-          initial={{ opacity: 0 }}
-          whileHover={{ opacity: 1 }}
-        >
-          <div className="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg">
-            <span className="flex items-center text-indigo-700 font-medium">
+        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-indigo-600 bg-opacity-0 opacity-0 transition-opacity duration-300 group-hover:bg-opacity-10 group-hover:opacity-100">
+          <div className="rounded-full bg-white/95 px-4 py-2 font-medium text-indigo-700 shadow-lg backdrop-blur-sm">
+            <span className="flex items-center">
               詳細ページへ
               <FaExternalLinkAlt className="ml-2" />
             </span>
           </div>
-        </motion.div>
+        </div>
       )}
     </motion.div>
   );

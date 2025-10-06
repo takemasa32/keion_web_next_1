@@ -8,22 +8,6 @@ export type Event = {
 };
 
 export const events: Event[] = [
-      {
-    title: "七夕ライブ",
-    date: "2025年7月27日, 8月1日,8月2日",
-    description:
-      "前期最後の部内ライブとなります！ぜひ会場でお待ちしております。",
-    image: "/icons/icon-512x512.png",
-    tags: [ "定期ライブ", "ライブ"],
-  },
-    {
-    title: "お手並み拝見ライブ",
-    date: "2025年6月21日, 6月22日",
-    description:
-      "新入部員の初舞台！ぜひ会場でお待ちしております。",
-    image: "/icons/icon-512x512.png",
-    tags: ["定期ライブ", "ライブ"],
-  },
   {
     title: "2025年島根大学 大学祭",
     date: "2025年10月12日-10月13日",

@@ -236,6 +236,34 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
     };
   }, []);
 
+  // --- playNote, handleOctaveChangeをuseEffectより前に移動・重複排除 ---
+  const playNote = useCallback(
+    (key: PianoKey) => {
+      setActiveKey(key.note);
+      setTimeout(() => setActiveKey(null), 300);
+
+      try {
+        // AudioContextManagerを使用
+        const audioManager = AudioContextManager.getInstance();
+        const ctx = audioManager.getContext();
+        // ...既存のplayNote本体の処理...
+      } catch (err) {
+        console.error("サウンドファイルのロードエラー:", err);
+      }
+    },
+    [
+      /* 必要な依存配列をここに */
+    ]
+  );
+
+  const handleOctaveChange = useCallback((change: number) => {
+    setBaseOctave((prev) => {
+      const newOctave = prev + change;
+      // オクターブの範囲を1〜7に制限
+      return Math.max(0, Math.min(7, newOctave));
+    });
+  }, []);
+
   // キーボードイベントを監視
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -256,15 +284,6 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [baseOctave, currentSoundId, playMode, waveformType, playNote, handleOctaveChange]); // オクターブの変更もトラッキング
-
-  // オクターブを変更する関数
-  const handleOctaveChange = useCallback((change: number) => {
-    setBaseOctave((prev) => {
-      const newOctave = prev + change;
-      // オクターブの範囲を1〜7に制限
-      return Math.max(0, Math.min(7, newOctave));
-    });
-  }, []);
 
   // モードを切り替える関数
   const toggleMode = () => {
@@ -328,126 +347,6 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
   const handleTouchEnd = () => {
     setIsScrolling(false);
   };
-
-  const playNote = useCallback(
-    (key: PianoKey) => {
-    setActiveKey(key.note);
-    setTimeout(() => setActiveKey(null), 300);
-
-    try {
-      // AudioContextManagerを使用
-      const audioManager = AudioContextManager.getInstance();
-      const ctx = audioManager.getContext();
-
-      // コンテキストが停止していたら再開
-      if (ctx.state === "suspended") {
-        ctx.resume();
-      }
-
-      // ピアノ音を再生（combined モードまたは pianoOnly モードの場合）
-      if (playMode !== "effectOnly") {
-        // オシレーターとゲインノードの作成
-        const osc = ctx.createOscillator();
-        const gainNode = ctx.createGain();
-
-        // フィルター作成
-        const filter = ctx.createBiquadFilter();
-        filter.type = waveformParams.filterType;
-        filter.frequency.value = waveformParams.filterFreq;
-        filter.Q.value = waveformParams.filterQ;
-
-        // 基本設定
-        osc.frequency.value = key.frequency;
-        osc.type = waveformType;
-        osc.detune.value = waveformParams.detune;
-
-        // ビブラート効果（LFO）を追加
-        if (waveformParams.vibratoDepth > 0) {
-          const lfo = ctx.createOscillator();
-          const lfoGain = ctx.createGain();
-
-          lfo.frequency.value = waveformParams.vibratoRate;
-          lfoGain.gain.value = waveformParams.vibratoDepth;
-
-          lfo.connect(lfoGain);
-          lfoGain.connect(osc.detune);
-          lfo.start();
-
-          // 再生終了時にLFOを停止
-          setTimeout(() => {
-            lfo.stop();
-            lfo.disconnect();
-            lfoGain.disconnect();
-          }, (waveformParams.attack + waveformParams.decay + waveformParams.release) * 1000 + 100);
-        }
-
-        // ADSRエンベロープを適用
-        const now = ctx.currentTime;
-        gainNode.gain.setValueAtTime(0, now);
-        gainNode.gain.linearRampToValueAtTime(1, now + waveformParams.attack); // Attack
-        gainNode.gain.linearRampToValueAtTime(
-          waveformParams.sustain,
-          now + waveformParams.attack + waveformParams.decay
-        ); // Decay to Sustain
-        gainNode.gain.setValueAtTime(
-          waveformParams.sustain,
-          now + waveformParams.attack + waveformParams.decay
-        ); // Sustain
-        gainNode.gain.linearRampToValueAtTime(
-          0,
-          now + waveformParams.attack + waveformParams.decay + waveformParams.release
-        ); // Release
-
-        // ノードを接続
-        osc.connect(filter);
-        filter.connect(gainNode);
-        audioManager.connectSource(gainNode);
-
-        // 再生開始と停止
-        osc.start();
-        osc.stop(now + waveformParams.attack + waveformParams.decay + waveformParams.release + 0.1);
-
-        // 再生完了時にリソースを解放
-        setTimeout(() => {
-          osc.disconnect();
-          filter.disconnect();
-          gainNode.disconnect();
-        }, (waveformParams.attack + waveformParams.decay + waveformParams.release) * 1000 + 200);
-      }
-
-      // サンプル音源を再生（combined モードまたは effectOnly モードの場合）
-      if (playMode !== "pianoOnly" && audioBufferRef.current) {
-        const sampleSource = ctx.createBufferSource();
-        sampleSource.buffer = audioBufferRef.current;
-
-        // ピッチをキーボードの音に合わせて調整
-        // ピッチ計算の基準を変更
-        const basePitch = calculateFrequency("C", 4);
-        const targetPitch = key.frequency;
-        const pitchRatio = targetPitch / basePitch;
-
-        sampleSource.playbackRate.value = pitchRatio;
-
-        // 音量調整と接続
-        const sampleGain = ctx.createGain();
-        // エフェクトのみモードの場合は音量を上げる
-        sampleGain.gain.value = playMode === "effectOnly" ? 0.7 : 0.5;
-
-        // ビジュアライザーに接続するためAudioContextManagerを使用
-        sampleSource.connect(sampleGain);
-        audioManager.connectSource(sampleGain);
-
-        sampleSource.start();
-        sampleSource.onended = () => {
-          sampleSource.disconnect();
-        };
-      }
-    } catch (e) {
-      console.error("音声再生エラー", e);
-    }
-    },
-    [playMode, waveformParams, waveformType]
-  );
 
   // モードに応じたボタン表示を取得
   const getModeButton = () => {

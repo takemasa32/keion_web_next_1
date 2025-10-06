@@ -114,7 +114,11 @@ const PopupModal = ({
 // 特定の日付までの日数を計算する関数
 const calculateDaysUntil = (targetDate: Date): number => {
   const currentDate = new Date();
-  const midnightTarget = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
+  const midnightTarget = new Date(
+    targetDate.getFullYear(),
+    targetDate.getMonth(),
+    targetDate.getDate()
+  );
   const midnightCurrent = new Date(
     currentDate.getFullYear(),
     currentDate.getMonth(),
@@ -182,7 +186,7 @@ const extractCandidateDates = (dateText: string): Date[] => {
   return candidates;
 };
 
-const findUpcomingEvent = () => {
+const findUpcomingEvent = (): { event: KeionEvent; date: Date } | null => {
   const now = new Date();
   let nextEvent: { event: KeionEvent; date: Date } | null = null;
 
@@ -345,7 +349,7 @@ const Home = () => {
   // スムーズスクロールとアニメーション効果を初期化
   useAnimations();
 
-  const upcomingEvent = useMemo(findUpcomingEvent, []);
+  const upcomingEvent = useMemo<{ event: KeionEvent; date: Date } | null>(findUpcomingEvent, []);
 
   // シークレット機能のカスタムフックを使用
   const secret = useSecretFeature({
@@ -375,7 +379,7 @@ const Home = () => {
     setIsModalOpen(false);
   };
 
-  const eventLink = upcomingEvent?.event.link ?? "/events";
+  const eventLink = upcomingEvent?.event?.link ?? "/events";
   const navigateToEventPage = () => {
     router.push(eventLink);
   };

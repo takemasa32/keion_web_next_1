@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import AudioContextManager from "../utils/AudioContextManager";
 import { soundSamples } from "./AudioPlayer";
@@ -255,16 +255,16 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [baseOctave, currentSoundId, playMode, waveformType]); // オクターブの変更もトラッキング
+  }, [baseOctave, currentSoundId, playMode, waveformType, playNote, handleOctaveChange]); // オクターブの変更もトラッキング
 
   // オクターブを変更する関数
-  const handleOctaveChange = (change: number) => {
+  const handleOctaveChange = useCallback((change: number) => {
     setBaseOctave((prev) => {
       const newOctave = prev + change;
       // オクターブの範囲を1〜7に制限
       return Math.max(0, Math.min(7, newOctave));
     });
-  };
+  }, []);
 
   // モードを切り替える関数
   const toggleMode = () => {
@@ -329,7 +329,8 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
     setIsScrolling(false);
   };
 
-  const playNote = (key: PianoKey) => {
+  const playNote = useCallback(
+    (key: PianoKey) => {
     setActiveKey(key.note);
     setTimeout(() => setActiveKey(null), 300);
 
@@ -444,7 +445,9 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
     } catch (e) {
       console.error("音声再生エラー", e);
     }
-  };
+    },
+    [playMode, waveformParams, waveformType]
+  );
 
   // モードに応じたボタン表示を取得
   const getModeButton = () => {

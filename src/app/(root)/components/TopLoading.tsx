@@ -11,14 +11,44 @@ const TopLoading: React.FC<TopLoadingProps> = ({ text, time }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(
-      () => {
-        setLoading(false);
-      },
-      time ? time : 2000
-    ); // 2秒後にローディングを非表示にする
+    if (typeof window === "undefined") return;
 
-    return () => clearTimeout(timer); // コンポーネントのアンマウント時にタイマーをクリアする
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    if (prefersReducedMotion.matches) {
+      setLoading(false);
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      setLoading(false);
+    }, time ?? 2000);
+
+    const handlePreferenceChange = (event: MediaQueryListEvent) => {
+      if (event.matches) {
+        setLoading(false);
+        window.clearTimeout(timeout);
+      }
+    };
+
+    const supportsEventListener = typeof prefersReducedMotion.addEventListener === "function";
+    if (supportsEventListener) {
+      prefersReducedMotion.addEventListener("change", handlePreferenceChange);
+    } else {
+      // Safari fallback
+      // @ts-ignore
+      prefersReducedMotion.addListener(handlePreferenceChange);
+    }
+
+    return () => {
+      window.clearTimeout(timeout);
+      if (supportsEventListener) {
+        prefersReducedMotion.removeEventListener("change", handlePreferenceChange);
+      } else {
+        // @ts-ignore
+        prefersReducedMotion.removeListener(handlePreferenceChange);
+      }
+    };
   }, [time]);
 
   const words = text.split("");
@@ -58,11 +88,14 @@ const TopLoading: React.FC<TopLoadingProps> = ({ text, time }) => {
     <AnimatePresence>
       {loading && (
         <motion.div
-          className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 z-50"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-indigo-900 via-indigo-700 to-purple-600 text-white"
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: "easeInOut" }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={text || "Loading"}
         >
           <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
             {/* 背景のアニメーション要素 */}
@@ -157,7 +190,7 @@ const TopLoading: React.FC<TopLoadingProps> = ({ text, time }) => {
 
           {/* ローディングインジケーター */}
           <motion.div
-            className="absolute bottom-20 left-1/2 transform -translate-x-1/2"
+            className="absolute bottom-24 left-1/2 -translate-x-1/2"
             animate={{
               opacity: [0.5, 1, 0.5],
               scale: [0.95, 1, 0.95],
@@ -174,6 +207,17 @@ const TopLoading: React.FC<TopLoadingProps> = ({ text, time }) => {
               <div className="w-3 h-3 bg-white rounded-full"></div>
             </div>
           </motion.div>
+
+          <button
+            type="button"
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 rounded-full bg-white/20 px-4 py-2 text-sm font-medium text-white backdrop-blur transition hover:bg-white/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+            onClick={(event) => {
+              event.stopPropagation();
+              setLoading(false);
+            }}
+          >
+            スキップ
+          </button>
         </motion.div>
       )}
     </AnimatePresence>

@@ -1,7 +1,8 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
 // 画像パスを定数として管理
@@ -23,229 +24,231 @@ const SITE_INFO = {
 };
 
 const Header = () => {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [atTop, setAtTop] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollYRef = useRef(0);
   const [hideHeader, setHideHeader] = useState(false);
 
-  // デバイス検出
   useEffect(() => {
-    const checkDevice = () => {
-      setIsMobile(window.innerWidth < 768);
+    if (typeof window === "undefined") return;
+
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+
+    const updateIsMobile = (event: MediaQueryList | MediaQueryListEvent) => {
+      setIsMobile(event.matches);
     };
 
-    checkDevice();
-    window.addEventListener("resize", checkDevice);
-    return () => window.removeEventListener("resize", checkDevice);
+    updateIsMobile(mediaQuery);
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", updateIsMobile);
+      return () => mediaQuery.removeEventListener("change", updateIsMobile);
+    }
+
+    mediaQuery.addListener(updateIsMobile);
+    return () => mediaQuery.removeListener(updateIsMobile);
   }, []);
 
-  // スクロール検知 - 高度な追従機能
+  useEffect(() => {
+    if (!isMobile) {
+      setIsMenuOpen(false);
+    }
+  }, [isMobile]);
+
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      const isScrolled = currentScrollY > 10;
-      const isAtTop = currentScrollY < 50;
+      if (typeof window === "undefined") return;
 
-      // スクロール方向に基づいてヘッダーを表示/非表示
-      if (currentScrollY > lastScrollY && currentScrollY > 200) {
-        // 下スクロール時の動作（ヘッダー非表示）
+      const currentScrollY = window.scrollY;
+      const lastScrollY = lastScrollYRef.current;
+
+      if (currentScrollY > lastScrollY + 8 && currentScrollY > 220) {
         setHideHeader(true);
-      } else {
-        // 上スクロール時の動作（ヘッダー表示）
+      } else if (currentScrollY < lastScrollY - 8 || currentScrollY <= 220) {
         setHideHeader(false);
       }
 
-      setLastScrollY(currentScrollY);
+      lastScrollYRef.current = currentScrollY;
 
-      if (isScrolled !== scrolled) {
-        setScrolled(isScrolled);
-      }
-
-      if (isAtTop !== atTop) {
-        setAtTop(isAtTop);
-      }
+      setScrolled(currentScrollY > 24);
+      setAtTop(currentScrollY < 32);
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [scrolled, atTop, lastScrollY]);
+  }, []);
 
   const headerBgClass = scrolled
     ? "bg-white bg-opacity-90 backdrop-blur-md text-gray-800 shadow-lg"
     : atTop
-    ? "bg-gradient-to-b from-black/30 to-transparent text-white"
-    : "bg-black/20 backdrop-blur-sm text-white";
+    ? "bg-gradient-to-b from-black/40 via-black/10 to-transparent text-white"
+    : "bg-indigo-900/40 backdrop-blur-md text-white";
+
+  const isHome = pathname === "/";
+  const isExpanded = isHome && atTop && !scrolled;
+  const logoSize = isExpanded ? (isMobile ? 64 : 80) : 40;
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+    setIsMenuOpen((prev) => !prev);
   };
 
   return (
     <motion.header
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${headerBgClass}`}
-      initial={{ y: -100 }}
+      className={`fixed top-0 w-full z-50 transition-colors duration-300 ${headerBgClass}`}
+      initial={false}
       animate={{
-        y: hideHeader ? -100 : 0,
+        y: hideHeader ? -110 : 0,
         opacity: hideHeader ? 0 : 1,
       }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      transition={{ type: "spring", stiffness: 260, damping: 28 }}
     >
-      <AnimatePresence mode="wait">
-        {/* 最上部表示 - タイトルとロゴのみ */}
-        {atTop && !scrolled ? (
+      <div
+        className={`relative container mx-auto px-4 ${
+          isExpanded
+            ? "flex flex-col items-center justify-center space-y-4 py-4 md:py-6"
+            : "flex items-center justify-between py-3"
+        }`}
+      >
+        <Link href="/">
           <motion.div
-            key="top-header"
-            className="container mx-auto flex flex-col items-center justify-center py-4 md:py-6"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+            className={`flex ${isExpanded ? "flex-col items-center gap-2" : "items-center gap-2"}`}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
           >
-            <Link href="/">
-              <motion.div
-                className="flex flex-col items-center"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+            <motion.div
+              animate={
+                isExpanded
+                  ? {
+                      boxShadow: [
+                        "0px 0px 0px rgba(79, 70, 229, 0.2)",
+                        "0px 0px 24px rgba(99, 102, 241, 0.65)",
+                        "0px 0px 0px rgba(79, 70, 229, 0.2)",
+                      ],
+                    }
+                  : { boxShadow: "0px 0px 0px rgba(0,0,0,0)" }
+              }
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <Image
+                src={IMAGES.logo.path}
+                alt={IMAGES.logo.alt}
+                width={logoSize}
+                height={logoSize}
+                priority
+                className="rounded-lg shadow-lg"
+              />
+            </motion.div>
+            {isExpanded ? (
+              <h1 className="text-center text-2xl md:text-3xl font-bold text-white drop-shadow-2xl">
+                {SITE_INFO.title}
+              </h1>
+            ) : (
+              <span
+                className={`text-lg font-semibold ${
+                  scrolled ? "text-indigo-600" : "text-white drop-shadow-md"
+                }`}
               >
-                <motion.div
-                  animate={{
-                    boxShadow: [
-                      "0px 0px 0px rgba(79, 70, 229, 0.2)",
-                      "0px 0px 20px rgba(79, 70, 229, 0.7)",
-                      "0px 0px 0px rgba(79, 70, 229, 0.2)",
-                    ],
-                  }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <Image
-                    src={IMAGES.logo.path}
-                    alt={IMAGES.logo.alt}
-                    width={isMobile ? 60 : 80}
-                    height={isMobile ? 60 : 80}
-                    className="rounded-lg shadow-lg mb-2 md:mb-3 top-logo"
-                  />
-                </motion.div>
-                <h1 className={`text-2xl md:text-3xl font-bold text-white drop-shadow-xl`}>
-                  {SITE_INFO.title}
-                </h1>
-              </motion.div>
-            </Link>
+                {isMobile ? "島根大学 軽音楽部" : SITE_INFO.title}
+              </span>
+            )}
           </motion.div>
-        ) : (
-          // スクロール時のコンパクトヘッダー
-          <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between py-3">
-              {/* ロゴとタイトル */}
-              <Link href="/">
-                <div className="flex items-center">
-                  <Image
-                    src={IMAGES.logo.path}
-                    alt={IMAGES.logo.alt}
-                    width={36}
-                    height={36}
-                    className="rounded-full shadow-md"
-                  />
-                  <span
-                    className={`ml-2 text-lg font-semibold ${
-                      scrolled ? "text-indigo-600" : "text-white drop-shadow-md"
+        </Link>
+
+        {!isMobile && (
+          <nav
+            className={`transition-opacity duration-300 ${
+              isExpanded ? "pointer-events-none opacity-0" : "opacity-100"
+            }`}
+          >
+            <div className="flex items-center space-x-6">
+              {SITE_INFO.navLinks.map((link, index) => (
+                <Link href={link.href} key={index}>
+                  <motion.span
+                    className={`font-medium ${
+                      scrolled ? "text-gray-700 hover:text-indigo-600" : "text-white"
                     }`}
+                    whileHover={{ scale: 1.06 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   >
-                    {isMobile ? "軽音楽部" : SITE_INFO.title}
-                  </span>
-                </div>
-              </Link>
-
-              {/* モバイルメニューボタン */}
-              {isMobile ? (
-                <motion.button
-                  className={`p-2 rounded-md ${scrolled ? "text-gray-800" : "text-white"}`}
-                  onClick={toggleMenu}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  {isMenuOpen ? (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M18 6L6 18M6 6l12 12" />
-                    </svg>
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M3 12h18M3 6h18M3 18h18" />
-                    </svg>
-                  )}
-                </motion.button>
-              ) : (
-                // デスクトップナビゲーション
-                <nav>
-                  <div className="flex space-x-6">
-                    {SITE_INFO.navLinks.map((link, index) => (
-                      <Link href={link.href} key={index}>
-                        <motion.div
-                          className={`font-medium ${
-                            scrolled
-                              ? "hover:text-indigo-600"
-                              : "hover:text-indigo-200 drop-shadow-md"
-                          }`}
-                          whileHover={{ scale: 1.1 }}
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.1 + index * 0.1 }}
-                        >
-                          {link.label}
-                        </motion.div>
-                      </Link>
-                    ))}
-                  </div>
-                </nav>
-              )}
+                    {link.label}
+                  </motion.span>
+                </Link>
+              ))}
             </div>
-          </div>
+          </nav>
         )}
-      </AnimatePresence>
 
-      {/* モバイルメニュー（オーバーレイ） */}
+        {isMobile && (
+          <motion.button
+            className={`absolute right-4 ${
+              isExpanded ? "top-4" : "top-1/2 -translate-y-1/2"
+            } rounded-md p-2 transition-colors ${scrolled ? "text-gray-800" : "text-white"}`}
+            onClick={toggleMenu}
+            whileTap={{ scale: 0.9 }}
+            aria-label="ナビゲーションメニューを開く"
+          >
+            {isMenuOpen ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M3 12h18M3 6h18M3 18h18" />
+              </svg>
+            )}
+          </motion.button>
+        )}
+      </div>
+
       <AnimatePresence>
         {isMenuOpen && isMobile && (
           <motion.div
-            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={toggleMenu}
           >
             <motion.div
-              className="absolute right-0 top-0 h-screen w-64 bg-white shadow-lg"
-              initial={{ x: "100%" }}
+              className="absolute right-0 top-0 h-full w-72 max-w-[85vw] md:w-80"
+              initial={{ x: "120%" }}
               animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "tween", ease: "easeOut" }}
+              exit={{ x: "120%" }}
+              transition={{ type: "tween", ease: "easeOut", duration: 0.25 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="p-5">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold text-indigo-600">メニュー</h2>
-                  <motion.button whileTap={{ scale: 0.9 }} onClick={toggleMenu}>
+              <div className="flex h-full flex-col overflow-y-auto rounded-l-3xl bg-gradient-to-b from-white via-white to-gray-50 shadow-2xl ring-1 ring-black/5">
+                <div className="flex items-center justify-between px-5 pb-4 pt-5">
+                  <h2 className="text-lg font-semibold text-indigo-600">メニュー</h2>
+                  <motion.button
+                    whileTap={{ scale: 0.92 }}
+                    onClick={toggleMenu}
+                    aria-label="メニューを閉じる"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -256,22 +259,23 @@ const Header = () => {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
+                      className="text-gray-600"
                     >
                       <path d="M18 6L6 18M6 6l12 12" />
                     </svg>
                   </motion.button>
                 </div>
-                <nav>
-                  <ul className="space-y-4">
+                <nav className="px-5 pb-8">
+                  <ul className="space-y-3">
                     {SITE_INFO.navLinks.map((link, index) => (
                       <motion.li
                         key={index}
                         initial={{ x: 20, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
-                        transition={{ delay: index * 0.1 }}
+                        transition={{ delay: 0.06 * index }}
                       >
                         <Link href={link.href} onClick={toggleMenu}>
-                          <span className="block py-2 px-4 text-gray-800 font-medium hover:bg-indigo-50 hover:text-indigo-600 rounded-md transition-colors">
+                          <span className="block rounded-lg bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm transition-colors hover:bg-indigo-50 hover:text-indigo-600">
                             {link.label}
                           </span>
                         </Link>

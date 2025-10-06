@@ -36,7 +36,7 @@ const BukatuTPage = () => {
           <div className="flex justify-center space-x-8">
             <div className="flex flex-col items-center">
               <CustomImage
-                src="/image/keionBackImage.JPG"
+                src="/image/2024T/keionBackImage.JPG"
                 alt="今年のTシャツ背面デザイン"
                 width={400}
                 height={400}
@@ -48,7 +48,7 @@ const BukatuTPage = () => {
             </div>
             <div className="flex flex-col items-center">
               <CustomImage
-                src="/image/keionMiniLogo.JPG"
+                src="/image/2024T/keionMiniLogo.JPG"
                 alt="今年のTシャツワンポイントデザイン"
                 width={400}
                 height={400}

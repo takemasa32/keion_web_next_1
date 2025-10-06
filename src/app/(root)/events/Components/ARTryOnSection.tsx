@@ -52,28 +52,67 @@ const ARTryOnSection = () => {
     setIsActive(false);
   }, [stopStream]);
 
+  const attachStreamToVideo = useCallback(async (stream: MediaStream) => {
+    if (!videoRef.current) {
+      stream.getTracks().forEach((track) => track.stop());
+      return;
+    }
+
+    const videoElement = videoRef.current;
+    videoElement.srcObject = stream;
+    streamRef.current = stream;
+
+    const ensurePlay = async () => {
+      if (videoRef.current) {
+        try {
+          await videoRef.current.play();
+        } catch (playError) {
+          console.warn("動画の自動再生に失敗しました。", playError);
+        }
+      }
+    };
+
+    if (videoElement.readyState >= 2) {
+      await ensurePlay();
+    } else {
+      const onLoadedMetadata = async () => {
+        videoElement.removeEventListener("loadedmetadata", onLoadedMetadata);
+        await ensurePlay();
+      };
+      videoElement.addEventListener("loadedmetadata", onLoadedMetadata);
+    }
+
+    setIsActive(true);
+    setErrorMessage(null);
+  }, []);
+
   const handleStart = useCallback(async () => {
     if (!navigator.mediaDevices?.getUserMedia) {
       setErrorMessage("お使いのブラウザではカメラ機能に対応していません。");
       return;
     }
 
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user" },
+    const requestStream = async (facingMode: "user" | "environment") => {
+      return navigator.mediaDevices.getUserMedia({
+        video: { facingMode },
         audio: false,
       });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        streamRef.current = stream;
-        setIsActive(true);
-        setErrorMessage(null);
+    };
+
+    try {
+      const stream = await requestStream("user");
+      await attachStreamToVideo(stream);
+    } catch (primaryError) {
+      console.warn("フロントカメラ取得に失敗しました。バックカメラを試行します。", primaryError);
+      try {
+        const fallbackStream = await requestStream("environment");
+        await attachStreamToVideo(fallbackStream);
+      } catch (fallbackError) {
+        console.error(fallbackError);
+        setErrorMessage("カメラへのアクセスが拒否されました。設定を確認してください。");
       }
-    } catch (error) {
-      console.error(error);
-      setErrorMessage("カメラへのアクセスが拒否されました。設定を確認してください。");
     }
-  }, []);
+  }, [attachStreamToVideo]);
 
   useEffect(() => {
     return () => {

@@ -1,5 +1,6 @@
 import React from "react";
 import CustomImage from "../Components/CustomImage";
+import ARTryOnSection from "../Components/ARTryOnSection";
 import EventList from "../Components/EventList";
 import { Metadata } from "next/dist/lib/metadata/types/metadata-interface";
 
@@ -76,6 +77,8 @@ const BukatuTPage = () => {
             </div>
           </article>
         </section>
+
+        <ARTryOnSection />
 
         {/* イベント情報 */}
         <EventList />

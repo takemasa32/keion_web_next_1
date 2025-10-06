@@ -8,6 +8,66 @@ export type Event = {
 };
 
 export const events: Event[] = [
+      {
+    title: "七夕ライブ",
+    date: "2025年7月27日, 8月1日,8月2日",
+    description:
+      "前期最後の部内ライブとなります！ぜひ会場でお待ちしております。",
+    image: "/icons/icon-512x512.png",
+    tags: [ "定期ライブ", "ライブ"],
+  },
+    {
+    title: "お手並み拝見ライブ",
+    date: "2025年6月21日, 6月22日",
+    description:
+      "新入部員の初舞台！ぜひ会場でお待ちしております。",
+    image: "/icons/icon-512x512.png",
+    tags: ["定期ライブ", "ライブ"],
+  },
+  {
+    title: "2025年島根大学 大学祭",
+    date: "2025年10月12日-10月13日",
+    description: "大学祭が開催されます。ステージと室内2箇所で行われます。", //詳細はこちらから",
+    image: "/image/2025T/keionMiniLogo.JPG",
+    tags: ["大学祭", "ライブ"], //"詳細あり",
+  },
+  {
+    title: "2025年 部T完成",
+    date: "2025年10月",
+    description: "2025年度、島根大学軽音部の部Tが完成しました！。詳細はこちらから",
+    image: "/image/2025T/keionBackImage.JPG",
+    link: "/events/2025BukatuT",
+    tags: ["詳細あり", "グッズ", "大学祭"],
+  },
+  {
+    title: "OS争奪ライブ",
+    date: "2025年9月19日, 9月20日, 9月21日",
+    description:
+      "大学祭の大ステージに立てるバンドを決める熱いライブとなりました！ご観覧くださった方々,ありがとうございました！",
+    image: "/image/2025T/keionMiniLogo.JPG",
+    tags: ["大学祭", "定期ライブ", "ライブ"],
+  },
+  {
+    title: "1,2回生ライブ",
+    date: "2025年8月28日",
+    description: "1,2回生のみが出演するライブでした!ご観覧くださった方々,ありがとうございました！",
+    image: "/image/2025T/keionMiniLogo.JPG",
+    tags: ["定期ライブ", "ライブ", "新歓"],
+  },
+  {
+    title: "七夕ライブ",
+    date: "2025年7月27日, 8月1日,8月2日",
+    description: "前期最後の部内ライブとなります！ぜひ会場でお待ちしております。",
+    image: "/image/2025T/keionMiniLogo.JPG",
+    tags: ["定期ライブ", "ライブ"],
+  },
+  {
+    title: "お手並み拝見ライブ",
+    date: "2025年6月21日, 6月22日",
+    description: "新入部員の初舞台！ぜひ会場でお待ちしております。",
+    image: "/image/2025T/keionMiniLogo.JPG",
+    tags: ["定期ライブ", "ライブ"],
+  },
   {
     title: "2025年島根大学 大学祭",
     date: "2025年10月12日-10月13日",

@@ -198,16 +198,18 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ onSoundChange }) => {
     setIsMuted(!isMuted);
   };
 
-  // 初期音量設定と初期音源通知
+  // 初期音量設定
   useEffect(() => {
     const audioManager = AudioContextManager.getInstance();
-    audioManager.setVolume(volume);
+    audioManager.setVolume(isMuted ? 0 : volume);
+  }, [volume, isMuted]);
 
-    // 初期音源を親コンポーネントに通知
+  // 初期音源を親コンポーネントに通知
+  useEffect(() => {
     if (onSoundChange) {
       onSoundChange(currentSound);
     }
-  }, []);
+  }, [currentSound, onSoundChange]);
 
   // コンポーネントのアンマウント時にリソースを解放
   useEffect(() => {

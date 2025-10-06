@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import SNSButton from "./components/SNSButton";
 import FAQItem from "./components/FAQItems";
@@ -13,6 +13,7 @@ import { useAnimations } from "./hooks/useAnimations";
 import { useSecretFeature } from "./toSecrets/useSecretFeature";
 import SecretEffectWrapper from "./toSecrets/SecretEffectWrapper";
 import Image from "next/image";
+import { events as eventData, type Event as KeionEvent } from "@/app/data/events";
 
 import {
   FaGuitar,
@@ -22,7 +23,6 @@ import {
   FaTools,
   FaCalendarAlt,
   FaSmile,
-  FaChevronDown,
 } from "react-icons/fa";
 import { MdOutlineSchool, MdOutlineContactSupport, MdOutlineThumbUp } from "react-icons/md";
 import ActivityCard from "./events/Components/ActivityCard";
@@ -50,7 +50,6 @@ const PopupModal = ({
   confirmText?: string;
 }) => {
   const [shouldShow, setShouldShow] = useState(false);
-  const [isPC, setIsPC] = useState(false);
 
   useEffect(() => {
     const appElement = document.getElementById("__next");
@@ -69,16 +68,7 @@ const PopupModal = ({
       setShouldShow(false);
     }
 
-    // デバイスの種類を判別
-    const mediaQuery = window.matchMedia("(min-width: 1024px)");
-    setIsPC(mediaQuery.matches);
-
-    const handleResize = () => {
-      setIsPC(mediaQuery.matches);
-    };
-
-    mediaQuery.addEventListener("change", handleResize);
-    return () => mediaQuery.removeEventListener("change", handleResize);
+    return undefined;
   }, [startDate, endDate]);
 
   return (
@@ -86,8 +76,8 @@ const PopupModal = ({
       isOpen={isOpen && shouldShow}
       onRequestClose={onRequestClose}
       contentLabel={contentLabel}
-      className="fixed inset-0 flex items-center justify-center z-50 transition-transform duration-300"
-      overlayClassName="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300"
+      className="relative z-[10001] mx-auto w-full max-w-xl rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-500 to-pink-500 p-6 shadow-2xl focus:outline-none transition-transform duration-300"
+      overlayClassName="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 p-4 transition-opacity duration-300"
       closeTimeoutMS={300}
     >
       <motion.div
@@ -95,7 +85,7 @@ const PopupModal = ({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-6 rounded-lg shadow-lg max-w-md mx-auto"
+        className="space-y-6 text-white"
       >
         {children}
         <div className="flex justify-end space-x-4">
@@ -103,7 +93,7 @@ const PopupModal = ({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={onRequestClose}
-            className="px-4 py-2 bg-blue-300 text-white rounded hover:bg-blue-400 transition-colors duration-200"
+            className="rounded-full bg-white/15 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-white/25"
           >
             {cancelText ? cancelText : "キャンセル"}
           </motion.button>
@@ -111,7 +101,7 @@ const PopupModal = ({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={onConfirm}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors duration-200"
+            className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-indigo-600 transition-colors duration-200 hover:bg-slate-100"
           >
             {confirmText ? confirmText : "移動する"}
           </motion.button>
@@ -124,14 +114,101 @@ const PopupModal = ({
 // 特定の日付までの日数を計算する関数
 const calculateDaysUntil = (targetDate: Date): number => {
   const currentDate = new Date();
-  const timeDifference = targetDate.getTime() - currentDate.getTime();
+  const midnightTarget = new Date(
+    targetDate.getFullYear(),
+    targetDate.getMonth(),
+    targetDate.getDate()
+  );
+  const midnightCurrent = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    currentDate.getDate()
+  );
+  const timeDifference = midnightTarget.getTime() - midnightCurrent.getTime();
   const daysDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
-  return daysDifference;
+  return Math.max(0, daysDifference);
+};
+
+const extractCandidateDates = (dateText: string): Date[] => {
+  const now = new Date();
+  const rawTokens = dateText
+    .replace(/\s+/g, "")
+    .split(/[、,〜～]/)
+    .flatMap((token) => token.split("-"))
+    .filter(Boolean);
+
+  let lastKnownYear: number | null = null;
+  const candidates: Date[] = [];
+
+  rawTokens.forEach((token) => {
+    const fullMatch = token.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+    if (fullMatch) {
+      const year = parseInt(fullMatch[1], 10);
+      const month = parseInt(fullMatch[2], 10) - 1;
+      const day = parseInt(fullMatch[3], 10);
+      lastKnownYear = year;
+      candidates.push(new Date(year, month, day));
+      return;
+    }
+
+    const monthDayMatch = token.match(/(\d{1,2})月(\d{1,2})日/);
+    if (monthDayMatch) {
+      const month = parseInt(monthDayMatch[1], 10) - 1;
+      const day = parseInt(monthDayMatch[2], 10);
+      const baseYear = lastKnownYear ?? now.getFullYear();
+      let candidate = new Date(baseYear, month, day);
+      if (!lastKnownYear && candidate < now) {
+        candidate = new Date(baseYear + 1, month, day);
+      }
+      candidates.push(candidate);
+      return;
+    }
+
+    const yearMonthMatch = token.match(/(\d{4})年(\d{1,2})月/);
+    if (yearMonthMatch) {
+      const year = parseInt(yearMonthMatch[1], 10);
+      const month = parseInt(yearMonthMatch[2], 10) - 1;
+      lastKnownYear = year;
+      candidates.push(new Date(year, month, 1));
+      return;
+    }
+
+    const isoMatch = token.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (isoMatch) {
+      const year = parseInt(isoMatch[1], 10);
+      const month = parseInt(isoMatch[2], 10) - 1;
+      const day = parseInt(isoMatch[3], 10);
+      lastKnownYear = year;
+      candidates.push(new Date(year, month, day));
+    }
+  });
+
+  return candidates;
+};
+
+const findUpcomingEvent = (): { event: KeionEvent; date: Date } | null => {
+  const now = new Date();
+  let nextEvent: { event: KeionEvent; date: Date } | null = null;
+
+  eventData.forEach((eventItem) => {
+    const candidateDates = extractCandidateDates(eventItem.date);
+    const futureDates = candidateDates.filter((date) => date >= now);
+    if (futureDates.length === 0) return;
+
+    futureDates.sort((a, b) => a.getTime() - b.getTime());
+    const earliest = futureDates[0];
+
+    if (!nextEvent || earliest < nextEvent.date) {
+      nextEvent = { event: eventItem, date: earliest };
+    }
+  });
+
+  return nextEvent;
 };
 
 const MusicWave = () => {
   return (
-    <div className="absolute top-0 left-0 w-full h-full z-0 overflow-hidden opacity-80">
+    <div className="absolute top-0 left-0 w-full h-full z-0 overflow-hidden opacity-70">
       <svg viewBox="0 0 1440 320" className="absolute bottom-0 left-0">
         <motion.path
           fill="#4F46E5"
@@ -200,16 +277,19 @@ const MusicWave = () => {
 
 // 浮遊する音符コンポーネント
 const FloatingNotes = () => {
-  const notes = [
-    { delay: 0, x: "10%", y: "20%", size: 1.2 },
-    { delay: 2, x: "25%", y: "15%", size: 1 },
-    { delay: 1, x: "75%", y: "25%", size: 1.5 },
-    { delay: 3, x: "85%", y: "15%", size: 0.8 },
-    { delay: 2.5, x: "65%", y: "60%", size: 1.3 },
-    { delay: 1.5, x: "35%", y: "70%", size: 0.9 },
-    { delay: 4, x: "15%", y: "40%", size: 1.1 },
-    { delay: 3.5, x: "90%", y: "50%", size: 1 },
-  ];
+  const notes = useMemo(
+    () => [
+      { delay: 0, x: "10%", y: "20%", size: 1.2, duration: 15 },
+      { delay: 2, x: "25%", y: "15%", size: 1, duration: 17 },
+      { delay: 1, x: "75%", y: "25%", size: 1.5, duration: 16.5 },
+      { delay: 3, x: "85%", y: "15%", size: 0.8, duration: 18 },
+      { delay: 2.5, x: "65%", y: "60%", size: 1.3, duration: 19 },
+      { delay: 1.5, x: "35%", y: "70%", size: 0.9, duration: 16 },
+      { delay: 4, x: "15%", y: "40%", size: 1.1, duration: 17.5 },
+      { delay: 3.5, x: "90%", y: "50%", size: 1, duration: 18.5 },
+    ],
+    []
+  );
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -229,14 +309,14 @@ const FloatingNotes = () => {
             ],
           }}
           transition={{
-            duration: 15 + Math.random() * 5,
+            duration: note.duration,
             repeat: Infinity,
             delay: note.delay,
             ease: "easeInOut",
           }}
           style={{
             left: note.x,
-            fontSize: `${(24 + Math.random() * 16) * note.size}px`,
+            fontSize: `${(26 + index * 3) * note.size}px`,
           }}
         >
           {index % 4 === 0 ? "♪" : index % 4 === 1 ? "♫" : index % 4 === 2 ? "♩" : "♬"}
@@ -269,6 +349,8 @@ const Home = () => {
   // スムーズスクロールとアニメーション効果を初期化
   useAnimations();
 
+  const upcomingEvent = useMemo<{ event: KeionEvent; date: Date } | null>(findUpcomingEvent, []);
+
   // シークレット機能のカスタムフックを使用
   const secret = useSecretFeature({
     keyNumber: 7,
@@ -281,61 +363,71 @@ const Home = () => {
       Modal.setAppElement(appElement);
     }
 
-    const timer = setTimeout(() => {
+    if (!upcomingEvent) {
+      setIsModalOpen(false);
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
       setIsModalOpen(true);
     }, loadingTime + 1000);
 
-    return () => clearTimeout(timer); // クリーンアップ
-  }, [loadingTime]);
+    return () => window.clearTimeout(timer); // クリーンアップ
+  }, [loadingTime, upcomingEvent]);
 
   const closeModal = () => {
     setIsModalOpen(false);
   };
 
-  const eventLink = "/events/2024teikiensoukai";
+  const eventLink = upcomingEvent?.event?.link ?? "/events";
   const navigateToEventPage = () => {
     router.push(eventLink);
   };
 
-  const eventDate = new Date(Date.UTC(2024, 11, 21)); // 2024/12/21
-  const daysUntilDate = calculateDaysUntil(eventDate);
+  const eventDate = upcomingEvent?.date ?? null;
+  const daysUntilDate = eventDate ? calculateDaysUntil(eventDate) : null;
+  const modalShouldRender = Boolean(upcomingEvent && eventDate);
 
   return (
     <SecretEffectWrapper secretClassName={secret.getSecretClassNames()}>
       {/* ポップアップモーダル */}
-      <PopupModal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
-        onConfirm={navigateToEventPage}
-        contentLabel="定期演奏会のお知らせ"
-        startDate={new Date(Date.UTC(2024, 10, 1))} // 2024/11/1
-        endDate={eventDate}
-        cancelText="閉じる"
-        confirmText="特設ページへ"
-      >
-        <div className="flex justify-center mb-4">
-          <motion.div
-            animate={{
-              y: [0, -10, 0],
-              rotateZ: [0, 5, -5, 0],
-            }}
-            transition={{
-              repeat: Infinity,
-              duration: 2,
-            }}
-          >
-            <FaGuitar className="text-6xl h-12 w-12 my-2" />
-          </motion.div>
-        </div>
-        <h2 className="text-2xl font-bold mb-4 text-center text-white">お知らせ</h2>
-        <p className="mb-4 text-center text-white">
-          {daysUntilDate
-            ? `今年の定期演奏会があと${daysUntilDate}日で開催されます！`
-            : "今年も定期演奏会が開催されます！"}
-          <br />
-          特設ページに移動しますか？
-        </p>
-      </PopupModal>
+      {modalShouldRender && eventDate && (
+        <PopupModal
+          isOpen={isModalOpen}
+          onRequestClose={closeModal}
+          onConfirm={navigateToEventPage}
+          contentLabel="最新イベントのお知らせ"
+          startDate={new Date(eventDate.getTime() - 1000 * 60 * 60 * 24 * 60)}
+          endDate={eventDate}
+          cancelText="閉じる"
+          confirmText="詳細を見る"
+        >
+          <div className="flex justify-center mb-4">
+            <motion.div
+              animate={{
+                y: [0, -10, 0],
+                rotateZ: [0, 5, -5, 0],
+              }}
+              transition={{
+                repeat: Infinity,
+                duration: 2,
+              }}
+            >
+              <FaGuitar className="text-6xl h-12 w-12 my-2" />
+            </motion.div>
+          </div>
+          <h2 className="text-2xl font-bold mb-4 text-center text-white">
+            {upcomingEvent?.event.title ?? "最新イベント"}
+          </h2>
+          <p className="mb-4 text-center text-white">
+            {daysUntilDate === 0
+              ? "本日開催です。会場でお待ちしています！"
+              : `開催まであと${daysUntilDate}日。ぜひチェックしてください！`}
+            <br />
+            詳細ページに移動しますか？
+          </p>
+        </PopupModal>
+      )}
 
       {/* ローディング画面 - シークレット機能のトリガー1つ目 */}
       <div
@@ -351,7 +443,7 @@ const Home = () => {
       {/* 新しいヒーローセクション */}
       <motion.section
         ref={heroRef}
-        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-indigo-900 via-indigo-800 to-indigo-900"
+        className="relative -mt-24 md:-mt-28 min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-indigo-900 via-indigo-800 to-indigo-900"
         style={{ opacity, scale }}
       >
         {/* 背景レイヤー - より多層的な表現 */}
@@ -391,7 +483,7 @@ const Home = () => {
           </motion.div>
 
           <motion.h1
-            className="text-5xl md:text-7xl font-bold text-white mb-8 leading-tight"
+            className="text-5xl md:text-7xl font-bold text-white mb-8 leading-tight drop-shadow-[0_10px_35px_rgba(79,70,229,0.45)]"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.8 }}
@@ -414,7 +506,7 @@ const Home = () => {
           </motion.h1>
 
           <motion.p
-            className="max-w-lg mx-auto text-xl text-indigo-100 mb-12"
+            className="max-w-2xl mx-auto text-xl text-indigo-100/90 mb-12 leading-relaxed drop-shadow-[0_8px_24px_rgba(15,23,42,0.45)]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.2, duration: 0.8 }}

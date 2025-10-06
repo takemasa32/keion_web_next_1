@@ -27,7 +27,7 @@ const SubLayout = ({ children }: { children: ReactNode }) => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-grow pt-16 md:pt-20">{children}</main>
+      <main className="flex-grow pt-24 md:pt-28">{children}</main>
       <Footer />
       <FloatingNav />
     </div>

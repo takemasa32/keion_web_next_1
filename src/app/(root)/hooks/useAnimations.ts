@@ -6,25 +6,26 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export const useAnimations = () => {
   const lenisRef = useRef<Lenis | null>(null);
+  const rafCallbackRef = useRef<(time: number) => void>();
 
   useEffect(() => {
-    // GSAPプラグインを登録
-    if (typeof window !== "undefined") {
-      gsap.registerPlugin(ScrollTrigger);
-    }
+    if (typeof window === "undefined") return;
 
-    // スムーズスクロールの初期化
+    gsap.registerPlugin(ScrollTrigger);
+
     lenisRef.current = new Lenis({
-      duration: 1.2,
+      duration: 1.1,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
       smoothWheel: true,
     });
 
-    // GSAPとLenisの連携
-    gsap.ticker.add((time) => {
+    const rafCallback = (time: number) => {
       lenisRef.current?.raf(time * 1000);
-    });
+    };
+    rafCallbackRef.current = rafCallback;
+
+    gsap.ticker.add(rafCallback);
 
     // 交差検知を使ったアニメーション
     const fadeUpElements = document.querySelectorAll(".fade-up");
@@ -94,11 +95,12 @@ export const useAnimations = () => {
       fadeObserver.observe(elem);
     });
 
-    // クリーンアップ
     return () => {
-      gsap.ticker.remove(() => {
-        lenisRef.current?.destroy();
-      });
+      if (rafCallbackRef.current) {
+        gsap.ticker.remove(rafCallbackRef.current);
+      }
+      lenisRef.current?.destroy();
+      lenisRef.current = null;
       observer.disconnect();
       anchorLinks.forEach((anchor) => {
         anchor.removeEventListener("click", handleSmoothScroll);

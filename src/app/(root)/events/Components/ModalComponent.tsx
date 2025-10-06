@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect } from "react";
 import Modal from "react-modal";
 import Image from "next/image";
@@ -6,12 +7,14 @@ import { BandData } from "../2024teikiensoukai/data";
 
 // ドキュメントの書字方向を取得し、縦書きかどうかを判定
 const isVerticalWritingMode = (): boolean => {
+  if (typeof window === "undefined") return false;
   const writingMode = window.getComputedStyle(document.documentElement).writingMode;
   return writingMode.includes("vertical");
 };
 
 // スクロールバーの幅を計算する
 const getScrollBarSize = (): number => {
+  if (typeof window === "undefined") return 0;
   const scrollBarXSize = window.innerHeight - document.body.clientHeight;
   const scrollBarYSize = window.innerWidth - document.body.clientWidth;
   return isVerticalWritingMode() ? scrollBarXSize : scrollBarYSize;
@@ -19,6 +22,7 @@ const getScrollBarSize = (): number => {
 
 // スクロール位置を取得する
 const getScrollPosition = (fixed: boolean): number => {
+  if (typeof window === "undefined") return 0;
   if (fixed) {
     return isVerticalWritingMode()
       ? document.scrollingElement?.scrollLeft ?? 0
@@ -36,6 +40,7 @@ type AllowedStyles =
 
 // 背面固定のスタイルを適用する
 const applyStyles = (scrollPosition: number, apply: boolean): void => {
+  if (typeof document === "undefined") return;
   const styles: Partial<Record<AllowedStyles, string>> = {
     blockSize: "100dvb",
     insetInlineStart: "0",
@@ -51,6 +56,7 @@ const applyStyles = (scrollPosition: number, apply: boolean): void => {
 
 // スクロール位置を元に戻す
 const restorePosition = (scrollPosition: number): void => {
+  if (typeof window === "undefined") return;
   const options: ScrollToOptions = {
     behavior: "instant",
     [isVerticalWritingMode() ? "left" : "top"]: isVerticalWritingMode()
@@ -62,6 +68,7 @@ const restorePosition = (scrollPosition: number): void => {
 
 // 背面を固定する
 const backfaceFixed = (fixed: boolean): void => {
+  if (typeof window === "undefined") return;
   const scrollBarWidth = getScrollBarSize();
   const scrollPosition = getScrollPosition(fixed);
   document.body.style.paddingInlineEnd = fixed ? `${scrollBarWidth}px` : "";
@@ -96,6 +103,13 @@ const ModalComponent: React.FC<ModalComponentProps> = ({
   });
 
   useEffect(() => {
+    if (typeof document !== "undefined") {
+      const app = document.getElementById("__next");
+      if (app) {
+        Modal.setAppElement(app);
+      }
+    }
+
     if (selectedBand) {
       backfaceFixed(true); // モーダルを開くときにスクロールを無効にする
     } else {
@@ -109,76 +123,90 @@ const ModalComponent: React.FC<ModalComponentProps> = ({
   return (
     <>
       {/* バンド情報モーダル */}
-      <div className="hidden sm:block">
-        <Modal
-          isOpen={!!selectedBand}
-          onRequestClose={closeModal}
-          contentLabel="Band Details"
-          className="fixed mx-2 md:mx-auto my-6 inset-0 max-w-3xl flex items-center justify-center z-50 transition-opacity duration-600"
-          overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-600"
-          ariaHideApp={false}
+      <Modal
+        isOpen={!!selectedBand}
+        onRequestClose={closeModal}
+        contentLabel="Band Details"
+        className="mx-4 my-8 max-h-[90vh] overflow-y-auto focus:outline-none"
+        overlayClassName="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 flex items-center justify-center p-0 sm:p-6"
+      >
+        <div
+          {...handlers}
+          className="relative z-50 w-full max-w-3xl rounded-2xl bg-white shadow-2xl ring-1 ring-black/5"
         >
-          <div
-            {...handlers}
-            className="bg-white rounded-lg p-6 max-w-4xl w-full mx-auto relative z-50 transform transition-transform duration-300 scale-100"
-            style={{ maxWidth: "90%", maxHeight: "90vh" }}
+          <button
+            onClick={closeModal}
+            className="absolute right-3 top-3 rounded-full bg-white/80 px-2 py-1 text-sm font-medium text-gray-600 shadow hover:bg-white"
+            aria-label="モーダルを閉じる"
           >
-            <button
-              onClick={closeModal}
-              className="absolute top-0 right-2 text-gray-600 hover:text-gray-800 text-2xl"
-            >
-              &times;
-            </button>
-            <div className="flex flex-col md:flex-row items-center md:items-stretch">
-              <div className="relative w-72 h-72 md:h-auto bg-gray-200">
-                {loading && <div className="loading-spinner"></div>}
+            ×
+          </button>
+          <div className="flex flex-col gap-6 p-6 sm:flex-row">
+            <div className="relative mx-auto aspect-square w-full max-w-[280px] overflow-hidden rounded-xl bg-gray-100">
+              {!loading && !selectedBand?.photo && (
+                <div className="flex h-full items-center justify-center text-sm text-gray-500">
+                  No Image
+                </div>
+              )}
+              {loading && <div className="loading-spinner"></div>}
+              {selectedBand?.photo && (
                 <Image
-                  src={selectedBand?.photo || ""}
-                  alt={selectedBand?.name || ""}
+                  src={selectedBand.photo}
+                  alt={selectedBand.name}
                   fill
-                  className="w-full h-full object-contain rounded transition-opacity duration-500 ease-in-out"
-                  onLoad={(img) => {
-                    img.currentTarget.classList.remove("bg-black", "animate-pulse");
-                    setLoading(false);
+                  className="object-cover transition-opacity duration-500 ease-in-out"
+                  onLoadingComplete={() => setLoading(false)}
+                />
+              )}
+            </div>
+            <div className="flex-1 space-y-4">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-wide text-indigo-500">
+                  {selectedBand?.copyFrom}
+                </p>
+                <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+                  {selectedBand?.name}
+                </h2>
+              </div>
+              <div className="rounded-xl bg-gray-50 p-4 text-sm leading-relaxed text-gray-700 shadow-inner">
+                <p
+                  dangerouslySetInnerHTML={{
+                    __html: selectedBand?.comment.replace(/\n/g, "<br />") || "",
                   }}
                 />
               </div>
-              <div className="md:w-1/2 p-2">
-                <h2 className="text-2xl text-gray-700 font-bold">{selectedBand?.name}</h2>
-                <p className="text-sm text-gray-500 font-bold mb-2">{selectedBand?.copyFrom}</p>
-                <div className="overflow-y-auto max-h-28 border-t border-b border-gray-300 my-4 p-2 bg-gray-100 rounded-lg shadow-inner">
-                  <p
-                    className="text-gray-700 leading-relaxed whitespace-pre-wrap"
-                    dangerouslySetInnerHTML={{
-                      __html: selectedBand?.comment.replace(/\n/g, "<br />") || "",
-                    }}
-                  ></p>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
-                  <div
-                    className="bg-gray-500 h-2.5 rounded-full"
-                    style={{
-                      width: `${Math.floor(((selectedBand?.order ?? 0) / totalBands) * 100)}%`,
-                    }}
-                  ></div>
-                </div>
-                <div className="flex justify-between text-gray-500 text-sm">
+              <div>
+                <div className="mb-2 flex items-center justify-between text-xs text-gray-500">
                   <span>開演</span>
                   <span>終演</span>
                 </div>
-                <div className="flex items-center justify-center mb-4">
-                  <button
-                    onClick={closeModal}
-                    className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
-                  >
-                    close
-                  </button>
+                <div className="h-2.5 w-full rounded-full bg-gray-200">
+                  <div
+                    className="h-2.5 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500"
+                    style={{
+                      width: `${Math.min(
+                        100,
+                        Math.floor(((selectedBand?.order ?? 0) / totalBands) * 100)
+                      )}%`,
+                    }}
+                  />
                 </div>
+              </div>
+              <div className="flex gap-2 text-xs text-gray-400">
+                <span>スワイプまたは ← → でバンドを切り替え</span>
+              </div>
+              <div className="flex justify-end">
+                <button
+                  onClick={closeModal}
+                  className="rounded-full bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow hover:bg-gray-700"
+                >
+                  閉じる
+                </button>
               </div>
             </div>
           </div>
-        </Modal>
-      </div>
+        </div>
+      </Modal>
     </>
   );
 };

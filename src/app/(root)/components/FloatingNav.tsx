@@ -6,33 +6,39 @@ import { FaHome, FaCalendarAlt, FaEnvelope } from "react-icons/fa";
 
 const FloatingNav = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isMobileView, setIsMobileView] = useState(false);
+  const lastScrollYRef = React.useRef(0);
 
   useEffect(() => {
+    const evaluateViewport = () => {
+      if (typeof window === "undefined") return;
+      setIsMobileView(window.innerWidth < 768);
+    };
+
+    evaluateViewport();
+    window.addEventListener("resize", evaluateViewport, { passive: true });
+
     const handleScroll = () => {
+      if (typeof window === "undefined") return;
       const currentScrollY = window.scrollY;
-      // 一定の距離をスクロールした後にナビゲーションを表示
+      const lastScrollY = lastScrollYRef.current;
+
       if (currentScrollY > 300) {
         setIsVisible(true);
       } else {
         setIsVisible(false);
       }
-      setLastScrollY(currentScrollY);
+      lastScrollYRef.current = currentScrollY;
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", evaluateViewport);
+    };
+  }, []);
 
-  // モバイルでのみ表示（768px未満）
-  const isMobile = () => {
-    if (typeof window !== "undefined") {
-      return window.innerWidth < 768;
-    }
-    return false;
-  };
-
-  if (!isMobile()) return null;
+  if (!isMobileView) return null;
 
   return (
     <AnimatePresence>

@@ -197,20 +197,6 @@ const SNSClient: React.FC<SNSClientProps> = ({ faqItems }) => {
           >
             <SNSButton />
           </motion.div>
-
-          <motion.div
-            className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-            animate={{
-              y: [0, 10, 0],
-            }}
-            transition={{
-              repeat: Infinity,
-              duration: 2,
-              ease: "easeInOut",
-            }}
-          >
-            <FaComments className="text-gray-900 text-3xl opacity-70" />
-          </motion.div>
         </motion.div>
       </section>
 

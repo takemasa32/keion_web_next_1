@@ -31,11 +31,13 @@ const styles = `
 export const BandShowcase = ({ data }: { data: BandData[] }) => {
   const [selectedBand, setSelectedBand] = useState<BandData | null>(null);
   const [flippingIndex, setFlippingIndex] = useState<number | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [imageLoaded, setImageLoaded] = useState<Record<string, boolean>>({});
+  const [modalImageLoading, setModalImageLoading] = useState<boolean>(false);
   const totalBands = data.length;
 
   const openModal = (band: BandData, index: number) => {
     setFlippingIndex(index);
+    setModalImageLoading(true);
     setTimeout(() => {
       setSelectedBand(band);
     }, 300); // フリップアニメーションの時間に合わせる
@@ -44,6 +46,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
   const closeModal = () => {
     setSelectedBand(null);
     setFlippingIndex(null); // フリップインデックスをリセット
+    setModalImageLoading(false);
   };
 
   const handleSwipeLeft = () => {
@@ -81,7 +84,7 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
               onClick={() => openModal(band, index)}
             >
               <div className="relative w-full h-0 pb-[100%]">
-                {loading && <div className="loading-spinner"></div>}
+                {!imageLoaded[band.name] && <div className="loading-spinner"></div>}
                 <Image
                   src={band.photo}
                   alt={band.name}
@@ -89,9 +92,9 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
                   sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 25vw"
                   className="rounded-lg shadow-md transition-opacity duration-500 ease-in-out opacity-0"
                   style={{ objectFit: "cover" }}
-                  onLoad={(e) => {
-                    e.currentTarget.classList.remove("opacity-0");
-                    setLoading(false);
+                  onLoadingComplete={(img) => {
+                    img.classList.remove("opacity-0");
+                    setImageLoaded((prev) => ({ ...prev, [band.name]: true }));
                   }}
                 />
               </div>
@@ -105,8 +108,8 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
             closeModal={closeModal}
             handleSwipeLeft={handleSwipeLeft}
             handleSwipeRight={handleSwipeRight}
-            loading={loading}
-            setLoading={setLoading}
+            loading={modalImageLoading}
+            setLoading={setModalImageLoading}
             totalBands={totalBands}
           />
         )}

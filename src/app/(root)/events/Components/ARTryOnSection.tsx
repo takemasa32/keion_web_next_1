@@ -101,8 +101,30 @@ const ARTryOnSection = () => {
     front: createOverlayState(designAssets.front.defaultOverlay),
     back: createOverlayState(designAssets.back.defaultOverlay),
   }));
+  const [showCaptureFeedback, setShowCaptureFeedback] = useState(false);
+
+  const savedCardRef = useRef<HTMLDivElement | null>(null);
+  const captureToastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentOverlay = overlayStates[design];
+
+  const scrollToSavedShot = useCallback(() => {
+    if (!savedCardRef.current) {
+      return;
+    }
+    savedCardRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, []);
+
+  const triggerCaptureFeedback = useCallback(() => {
+    if (captureToastTimeoutRef.current) {
+      clearTimeout(captureToastTimeoutRef.current);
+    }
+    setShowCaptureFeedback(true);
+    captureToastTimeoutRef.current = setTimeout(() => {
+      setShowCaptureFeedback(false);
+      captureToastTimeoutRef.current = null;
+    }, 1000);
+  }, []);
 
   const computeHeightPercent = useCallback(
     (widthPercent: number, designKey: DesignKey) => {
@@ -144,6 +166,11 @@ const ARTryOnSection = () => {
     setIsActive(false);
     setIsLoadingCamera(false);
     setErrorMessage(null);
+    if (captureToastTimeoutRef.current) {
+      clearTimeout(captureToastTimeoutRef.current);
+      captureToastTimeoutRef.current = null;
+    }
+    setShowCaptureFeedback(false);
   }, [stopStream]);
 
   const updateAspectRatio = useCallback(() => {
@@ -350,16 +377,22 @@ const ARTryOnSection = () => {
         height,
         design,
       });
+      triggerCaptureFeedback();
       setErrorMessage(null);
     } catch (captureError) {
       console.error(captureError);
       setErrorMessage("写真の生成に失敗しました。通信環境をご確認ください。");
     }
-  }, [design, isActive, overlayStates]);
+  }, [design, isActive, overlayStates, triggerCaptureFeedback]);
 
   const handleRetake = useCallback(() => {
+    if (captureToastTimeoutRef.current) {
+      clearTimeout(captureToastTimeoutRef.current);
+      captureToastTimeoutRef.current = null;
+    }
     setCapturedPhoto(null);
     setErrorMessage(null);
+    setShowCaptureFeedback(false);
   }, []);
 
   const handleDownload = useCallback(() => {
@@ -384,6 +417,11 @@ const ARTryOnSection = () => {
       [design]: resetState,
     }));
     setCapturedPhoto(null);
+    if (captureToastTimeoutRef.current) {
+      clearTimeout(captureToastTimeoutRef.current);
+      captureToastTimeoutRef.current = null;
+    }
+    setShowCaptureFeedback(false);
   }, [clampOverlayState, design]);
 
   const handleSizeChange = useCallback(
@@ -519,6 +557,29 @@ const ARTryOnSection = () => {
 
   useEffect(() => {
     return () => {
+      if (captureToastTimeoutRef.current) {
+        clearTimeout(captureToastTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!capturedPhoto) {
+      return;
+    }
+    if (typeof window === "undefined") {
+      return;
+    }
+    const timeoutId = window.setTimeout(() => {
+      scrollToSavedShot();
+    }, 350);
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [capturedPhoto, scrollToSavedShot]);
+
+  useEffect(() => {
+    return () => {
       stopStream();
     };
   }, [stopStream]);
@@ -600,6 +661,16 @@ const ARTryOnSection = () => {
               muted
             />
 
+            {showCaptureFeedback && (
+              <div className="absolute inset-x-0 top-4 z-30 flex justify-center px-4 sm:justify-end sm:px-6">
+                <div className="pointer-events-auto flex flex-col items-center gap-2 rounded-2xl bg-emerald-400/95 px-4 py-3 text-slate-950 shadow-[0_18px_36px_rgba(16,185,129,0.35)] sm:flex-row">
+                  <span className="text-xs font-semibold uppercase tracking-[0.28em]">
+                    撮影完了
+                  </span>
+                </div>
+              </div>
+            )}
+
             {isActive && (
               <div
                 className={`pointer-events-auto absolute z-10 select-none ${
@@ -638,6 +709,52 @@ const ARTryOnSection = () => {
                 </p>
               </div>
             )}
+          </div>
+
+          <div className="mt-3 flex flex-col items-center gap-2 sm:hidden">
+            <div className="flex w-full max-w-[22rem] items-center justify-center gap-4 rounded-2xl border border-white/12 bg-slate-950/85 p-4 shadow-[0_18px_36px_rgba(15,23,42,0.45)] backdrop-blur">
+              <button
+                type="button"
+                onClick={isActive ? handleStop : handleStart}
+                className={`flex h-11 flex-1 items-center justify-center rounded-full border border-white/20 bg-black/40 px-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-white transition ${
+                  isLoadingCamera
+                    ? "opacity-50"
+                    : "hover:border-white/60 hover:bg-black/55 hover:text-white"
+                }`}
+                disabled={isLoadingCamera}
+              >
+                {isActive ? "停止" : "起動"}
+              </button>
+              <button
+                type="button"
+                onClick={handleCapture}
+                className={`group relative flex h-16 w-16 items-center justify-center rounded-full transition-all duration-200 ${
+                  !isActive || isLoadingCamera
+                    ? "opacity-40 cursor-not-allowed"
+                    : "active:scale-90 hover:scale-105"
+                }`}
+                disabled={!isActive || isLoadingCamera}
+                style={{ WebkitTapHighlightColor: "transparent" }}
+              >
+                {/* Outer glow ring */}
+                <span
+                  className={`absolute inset-0 rounded-full transition-all duration-300 ${
+                    isActive
+                      ? "border-[3px] border-white shadow-[0_0_20px_rgba(255,255,255,0.3)] group-active:shadow-[0_0_30px_rgba(16,185,129,0.5)]"
+                      : "border-2 border-white/30"
+                  }`}
+                />
+
+                {/* Inner shutter button */}
+                <span
+                  className={`absolute left-1/2 top-1/2 block h-[52px] w-[52px] -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-200 ${
+                    isActive
+                      ? "bg-white shadow-[0_4px_20px_rgba(255,255,255,0.4)] group-active:bg-emerald-400 group-active:h-12 group-active:w-12"
+                      : "bg-white/50"
+                  }`}
+                />
+              </button>
+            </div>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-black/40 p-4">
@@ -718,7 +835,7 @@ const ARTryOnSection = () => {
               </div>
             </div>
 
-            <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+            <div className="mt-5 hidden flex-col gap-2 sm:flex sm:flex-row">
               <button
                 type="button"
                 onClick={isActive ? handleStop : handleStart}
@@ -751,7 +868,14 @@ const ARTryOnSection = () => {
           </div>
 
           {capturedPhoto && (
-            <div className="space-y-3 rounded-2xl border border-white/12 bg-slate-900/70 p-4">
+            <div
+              ref={savedCardRef}
+              className={`space-y-3 rounded-2xl border border-white/12 bg-slate-900/70 p-4 transition ${
+                showCaptureFeedback
+                  ? "ring-2 ring-emerald-400/70 ring-offset-2 ring-offset-slate-950"
+                  : ""
+              }`}
+            >
               <p className="text-xs uppercase tracking-[0.28em] text-emerald-200">saved shot</p>
               <CustomImage
                 src={capturedPhoto.dataUrl}

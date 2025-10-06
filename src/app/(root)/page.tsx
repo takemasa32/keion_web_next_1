@@ -76,8 +76,8 @@ const PopupModal = ({
       isOpen={isOpen && shouldShow}
       onRequestClose={onRequestClose}
       contentLabel={contentLabel}
-      className="relative mx-auto w-full max-w-xl rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-500 to-pink-500 p-6 shadow-2xl focus:outline-none transition-transform duration-300"
-      overlayClassName="fixed inset-0 flex items-center justify-center bg-black/60 p-4 transition-opacity duration-300"
+      className="relative z-[10001] mx-auto w-full max-w-xl rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-500 to-pink-500 p-6 shadow-2xl focus:outline-none transition-transform duration-300"
+      overlayClassName="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 p-4 transition-opacity duration-300"
       closeTimeoutMS={300}
     >
       <motion.div

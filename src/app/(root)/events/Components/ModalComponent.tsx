@@ -104,10 +104,7 @@ const ModalComponent: React.FC<ModalComponentProps> = ({
 
   useEffect(() => {
     if (typeof document !== "undefined") {
-      const app = document.getElementById("__next");
-      if (app) {
-        Modal.setAppElement(app);
-      }
+      Modal.setAppElement(document.body);
     }
 
     if (selectedBand) {
@@ -155,7 +152,7 @@ const ModalComponent: React.FC<ModalComponentProps> = ({
                   alt={selectedBand.name}
                   fill
                   className="object-cover transition-opacity duration-500 ease-in-out"
-                  onLoadingComplete={() => setLoading(false)}
+                  onLoad={() => setLoading(false)}
                 />
               )}
             </div>

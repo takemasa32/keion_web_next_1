@@ -1,4 +1,37 @@
+export type Event = {
+  title: string;
+  date: string;
+  description: string;
+  image?: string;
+  link?: string;
+  tags: string[];
+};
+
 export const events: Event[] = [
+    {
+    title: "新歓ライブ",
+    date: "2026年5月2日, 5月3日, 5月4日",
+    description:
+      "部活動選びの参考としていただけたら幸いです。ご観覧いただくことを心よりお待ちしております。",
+    image: "/image/2025T/keionMiniLogo.JPG",
+    tags: ["新歓", "定期ライブ", "ライブ"],
+  },
+  {
+    title: "2025年度 定期演奏会",
+    date: "2025年12月14日",
+    description:
+      "2024年度の定期演奏会は12月14日に開催されます。ぜひアルテピアへ！年に一度、選りすぐりのバンドが集う島大軽音最大のイベントへ是非お越しください。",
+    image: "/image/2025T/keionMiniLogo.JPG",
+    tags: ["詳細あり", "定期演奏会", "定期ライブ", "ライブ"],
+  },
+  {
+    title: "定期演奏会争奪ライブ",
+    date: "2025年11月30日",
+    description:
+      "定期演奏会への出場バンドを決めるライブでした！ご観覧くださった方々、ありがとうございました！",
+    image: "/image/2025T/keionMiniLogo.JPG",
+    tags: ["定期ライブ", "ライブ"],
+  },
   {
     title: "2025年島根大学 大学祭",
     date: "2025年10月12日-10月13日",

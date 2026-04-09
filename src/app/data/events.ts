@@ -14,7 +14,7 @@ export const events: Event[] = [
     title: "新歓ライブ",
     date: "2026年5月2日, 5月3日, 5月4日",
     description:
-      "部活動選びの参考としていただけたら幸いです。ご観覧いただくことを心よりお待ちしております。",
+      "部活動選びの参考としていただけたら幸いです。ご観覧いただくことを心よりお待ちしております。詳細は確定次第SNSなどでお伝えします!",
     image: "/image/2025T/keionMiniLogo.JPG",
     tags: ["新歓", "定期ライブ", "ライブ"],
   },
@@ -115,8 +115,7 @@ export const events: Event[] = [
   {
     title: "2024年島根大学 大学祭",
     date: "2024年10月13日-10月14日",
-    description:
-      "大学祭が開催されます。ステージと室内の2箇所で行われます。詳細はこちらから。",
+    description: "大学祭が開催されます。ステージと室内の2箇所で行われます。詳細はこちらから。",
     image: "/image/2024keionMiniLogo.JPG",
     link: "/events/2024daigakusai",
     tags: ["詳細あり", "大学祭", "ライブ"],
@@ -180,8 +179,7 @@ export const events: Event[] = [
   {
     title: "2023年 部T完成",
     date: "2023年10月",
-    description:
-      "島根大学軽音部2023年度の部Tが完成しました！詳細はこちらから",
+    description: "島根大学軽音部2023年度の部Tが完成しました！詳細はこちらから",
     image: "/image/2023T/2023TシャツMain.jpg",
     link: "/events/2023BukatuT",
     tags: ["詳細あり", "グッズ", "大学祭"],

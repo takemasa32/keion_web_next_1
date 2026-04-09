@@ -34,36 +34,66 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
     return [dateString];
   };
 
+  const getExplicitYear = (dateString: string): number | null => {
+    const yearMatch = dateString.match(/(\d{4})年/);
+    if (yearMatch) {
+      return parseInt(yearMatch[1], 10);
+    }
+
+    const isoMatch = dateString.match(/(\d{4})-\d{1,2}-\d{1,2}/);
+    if (isoMatch) {
+      return parseInt(isoMatch[1], 10);
+    }
+
+    return null;
+  };
+
+  const formatWithLocale = (date: Date) =>
+    date.toLocaleDateString("ja-JP", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      weekday: "short",
+    });
+
   // 日付の解析と整形
   const formatDate = (dateString: string) => {
     // カンマで区切られた複数の日付をチェック
     if (dateString.includes(",")) {
       const dates = dateString.split(",").map((d) => d.trim());
+      let inferredYear = getExplicitYear(dates[0]);
+
+      const formattedDates = dates.map((date) => {
+        const explicitYear = getExplicitYear(date);
+        if (explicitYear) {
+          inferredYear = explicitYear;
+        }
+        return formatSingleDate(date, inferredYear ?? undefined);
+      });
 
       // 3日以上の場合の表示
       if (dates.length > 2) {
-        // 省略表示用
-        const firstDate = formatSingleDate(dates[0]);
-        const lastDate = formatSingleDate(dates[dates.length - 1]);
-        return `${firstDate} 〜 ${lastDate} (${dates.length}日間)`;
+        return `${formattedDates[0]} 〜 ${formattedDates[formattedDates.length - 1]} (${dates.length}日間)`;
       }
 
       // 2日の場合
-      const firstDate = formatSingleDate(dates[0]);
-      const lastDate = formatSingleDate(dates[1]);
-      return `${firstDate}, ${lastDate}`;
+      return `${formattedDates[0]}, ${formattedDates[1]}`;
     }
 
     // ハイフンで区切られた日付範囲をチェック
     if (dateString.includes("-")) {
       const [startDateStr, endDateStr] = dateString.split("-").map((d) => d.trim());
+      const startYear = getExplicitYear(startDateStr) ?? undefined;
 
       // 同じ年月の場合は、終了日は日付のみ表示
       if (endDateStr.indexOf("年") === -1) {
-        return `${formatSingleDate(startDateStr)} 〜 ${endDateStr}`;
+        return `${formatSingleDate(startDateStr, startYear)} 〜 ${formatSingleDate(
+          endDateStr,
+          startYear
+        )}`;
       }
 
-      return `${formatSingleDate(startDateStr)} 〜 ${formatSingleDate(endDateStr)}`;
+      return `${formatSingleDate(startDateStr, startYear)} 〜 ${formatSingleDate(endDateStr)}`;
     }
 
     // 単一日付の場合
@@ -71,58 +101,49 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
   };
 
   // 単一の日付をフォーマットする補助関数
-  const formatSingleDate = (dateString: string) => {
+  const formatSingleDate = (dateString: string, fallbackYear?: number) => {
     try {
       // 「2024年12月21日」形式の日付を解析
       const matches = dateString.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
       if (matches) {
         const [_, year, month, day] = matches;
         const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-
-        // 曜日も含めてフォーマット
-        return date.toLocaleDateString("ja-JP", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          weekday: "short",
-        });
+        return formatWithLocale(date);
       }
 
-      // 「○月○日」形式の場合は現在の年を補完
+      // 「○月○日」形式の場合は文脈上の年を補完
       const shortMatches = dateString.match(/(\d{1,2})月(\d{1,2})日/);
       if (shortMatches) {
         const [_, month, day] = shortMatches;
-        const year = new Date().getFullYear();
+        const year = fallbackYear ?? new Date().getFullYear();
         const date = new Date(year, parseInt(month) - 1, parseInt(day));
-
-        return date.toLocaleDateString("ja-JP", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          weekday: "short",
-        });
+        return formatWithLocale(date);
       }
 
       // 標準的な日付形式の場合
       const date = new Date(dateString);
       if (!isNaN(date.getTime())) {
-        return date.toLocaleDateString("ja-JP", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          weekday: "short",
-        });
+        return formatWithLocale(date);
       }
 
       // どの形式にも合わない場合は元の文字列を返す
       return dateString;
-    } catch (e) {
+    } catch {
       return dateString;
     }
   };
 
   // 複数日程かどうかを確認
   const hasMultipleDates = event.date.includes(",") && parseDateArray(event.date).length > 2;
+  const expandedDates = parseDateArray(event.date).map((date, idx, dates) => {
+    const fallbackYear = dates
+      .slice(0, idx + 1)
+      .map((value) => getExplicitYear(value))
+      .filter((value): value is number => value !== null)
+      .at(-1);
+
+    return formatSingleDate(date, fallbackYear);
+  });
 
   // リンクがあるかどうかのフラグ
   const hasLink = Boolean(event.link);
@@ -208,7 +229,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
             isLoading ? "opacity-0" : "opacity-100"
           }`}
           onError={handleImageError}
-          onLoadingComplete={() => setIsLoading(false)}
+          onLoad={() => setIsLoading(false)}
         />
       </div>
 
@@ -217,7 +238,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
         <div className="mb-2">
           <div className="flex items-center text-gray-700 text-sm">
             <FaCalendarAlt className="mr-2 flex-shrink-0 text-indigo-600" />
-            <time dateTime={event.date} className="line-clamp-3 leading-snug">
+            <time className="line-clamp-3 leading-snug">
               {formatDate(event.date)}
             </time>
 
@@ -250,10 +271,10 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
                 className="overflow-hidden mt-2 ml-6"
               >
                 <ul className="text-sm text-gray-600 space-y-1">
-                  {parseDateArray(event.date).map((date, idx) => (
+                  {expandedDates.map((date, idx) => (
                     <li key={idx} className="flex items-center">
                       <span className="inline-block w-1 h-1 rounded-full bg-indigo-400 mr-2"></span>
-                      {formatSingleDate(date)}
+                      {date}
                     </li>
                   ))}
                 </ul>

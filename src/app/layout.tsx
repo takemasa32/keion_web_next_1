@@ -1,8 +1,14 @@
 import "./globals.css";
 import { ReactNode } from "react";
+import { Metadata } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import Head from "next/head";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.shimadaikeion.com";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+};
 
 const RootLayout = ({ children }: { children: ReactNode }) => {
   return (

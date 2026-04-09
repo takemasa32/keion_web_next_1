@@ -1,6 +1,6 @@
 import React from "react";
-import Head from "next/head";
 import Link from "next/link";
+import { Metadata } from "next";
 import { events } from "../../../data/events";
 import CustomImage from "../Components/CustomImage";
 import EventList from "../Components/EventList";
@@ -9,27 +9,34 @@ import EventSection from "../Components/EventSection";
 import { bandData, bandScheduleData } from "./data";
 import BandShowcase from "./_components/BandShowcase";
 
-import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "2024年度 定期演奏会 | 島根大学軽音楽部",
   description: "島根大学軽音楽部 第58回定期演奏会紹介ページ。",
+  alternates: {
+    canonical: "/events/2024teikiensoukai",
+  },
+  openGraph: {
+    title: "2024年度 定期演奏会 | 島根大学軽音楽部",
+    description: "島根大学軽音楽部 第58回定期演奏会紹介ページ。",
+    url: "/events/2024teikiensoukai",
+    type: "website",
+    images: [
+      {
+        url: "/image/keionBackImage.JPG",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "島根大学軽音楽部 第58回定期演奏会",
+    description: "島根大学軽音楽部 第58回定期演奏会の紹介ページです。",
+    images: ["/image/keionBackImage.JPG"],
+  },
 };
 
 const EventsPage = () => {
   return (
     <>
-      <Head>
-        <meta property="og:image" content="/image/keionBackImage.JPG" />
-        <meta property="og:url" content="https://shimadaikeion.com/events/2024teikiensoukai" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="島根大学軽音楽部 第58回定期演奏会" />
-        <meta
-          name="twitter:description"
-          content="島根大学軽音楽部 第58回定期演奏会の紹介ページです。"
-        />
-        <meta name="twitter:image" content="/image/keionBackImage.JPG" />
-      </Head>
-
       <div className="relative bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-400 min-h-screen py-6 sm:py-8 lg:py-12">
         <div className="container relative z-10 mx-auto px-4">
           <div className="bg-black bg-opacity-50 p-4 rounded-lg mb-8 sm:mb-12">

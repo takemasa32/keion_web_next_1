@@ -7,8 +7,10 @@ export type Event = {
   tags: string[];
 };
 
+const DETAIL_TAG = "詳細あり";
+
 export const events: Event[] = [
-    {
+  {
     title: "新歓ライブ",
     date: "2026年5月2日, 5月3日, 5月4日",
     description:
@@ -20,9 +22,9 @@ export const events: Event[] = [
     title: "2025年度 定期演奏会",
     date: "2025年12月14日",
     description:
-      "2024年度の定期演奏会は12月14日に開催されます。ぜひアルテピアへ！年に一度、選りすぐりのバンドが集う島大軽音最大のイベントへ是非お越しください。",
+      "2025年度の定期演奏会は12月14日に開催されます。ぜひアルテピアへ。年に一度、選りすぐりのバンドが集う島大軽音最大のイベントへぜひお越しください。",
     image: "/image/2025T/keionMiniLogo.JPG",
-    tags: ["詳細あり", "定期演奏会", "定期ライブ", "ライブ"],
+    tags: ["定期演奏会", "定期ライブ", "ライブ"],
   },
   {
     title: "定期演奏会争奪ライブ",
@@ -89,7 +91,7 @@ export const events: Event[] = [
     title: "2024年度 定期演奏会",
     date: "2024年12月21日",
     description:
-      "2024年度の定期演奏会は12月21日に開催されます。ぜひアルテピアへ！年に一度、選りすぐりのバンドが集う島大軽音最大のイベントへ是非お越しください。詳細はこちらから",
+      "2024年度の定期演奏会は12月21日に開催されます。ぜひアルテピアへ。年に一度、選りすぐりのバンドが集う島大軽音最大のイベントへぜひお越しください。詳細はこちらから。",
     image: "/image/2024keionMiniLogo.JPG",
     link: "/events/2024teikiensoukai",
     tags: ["詳細あり", "定期演奏会", "定期ライブ", "ライブ"],
@@ -114,7 +116,7 @@ export const events: Event[] = [
     title: "2024年島根大学 大学祭",
     date: "2024年10月13日-10月14日",
     description:
-      "大学祭が開催されます。ステージと室内2箇所で行われます。詳細はこちらから",
+      "大学祭が開催されます。ステージと室内の2箇所で行われます。詳細はこちらから。",
     image: "/image/2024keionMiniLogo.JPG",
     link: "/events/2024daigakusai",
     tags: ["詳細あり", "大学祭", "ライブ"],
@@ -170,7 +172,7 @@ export const events: Event[] = [
     title: "2023年度 定期演奏会",
     date: "2023年12月16日",
     description:
-      "2023年度の定期演奏会は12月16日に開催されます。ぜひアルテピアへ！年に一度、選りすぐりのバンドが集うイベントへ是非お越しください。詳細はこちらから",
+      "2023年度の定期演奏会は12月16日に開催されます。ぜひアルテピアへ。年に一度、選りすぐりのバンドが集うイベントへぜひお越しください。詳細はこちらから。",
     image: "/image/2023T/2023Tシャツ.jpg",
     link: "/events/2023teikiensoukai",
     tags: ["詳細あり", "定期演奏会", "定期ライブ", "ライブ"],
@@ -185,3 +187,21 @@ export const events: Event[] = [
     tags: ["詳細あり", "グッズ", "大学祭"],
   },
 ];
+
+export const getAllTags = (): string[] => {
+  const tags = new Set<string>();
+
+  events.forEach((event) => {
+    event.tags.forEach((tag) => {
+      if (tag !== DETAIL_TAG) {
+        tags.add(tag);
+      }
+    });
+
+    if (event.link) {
+      tags.add(DETAIL_TAG);
+    }
+  });
+
+  return Array.from(tags);
+};

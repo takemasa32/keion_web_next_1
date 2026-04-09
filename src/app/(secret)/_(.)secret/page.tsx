@@ -1,4 +1,4 @@
-import Head from "next/head";
+import { Metadata } from "next";
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@tremor/react";
 import Image from "next/image";
@@ -6,6 +6,13 @@ import TopLoading from "../../(root)/components/TopLoading";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import AudioPlayer from "./components/AudioPlayer";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 const AudioPlayerPage: React.FC = () => {
   return (
@@ -24,9 +31,6 @@ const AudioPlayerPage: React.FC = () => {
       </header>
       <div className="bg-white">
         <TopLoading text="お楽しみコンテンツ" />
-        <Head>
-          <meta name="robots" content="noindex" />
-        </Head>
         <AudioPlayer />;
       </div>
       <footer className="bg-gray-800 text-white mt-auto">

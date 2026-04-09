@@ -92,7 +92,8 @@ export const BandShowcase = ({ data }: { data: BandData[] }) => {
                   sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 25vw"
                   className="rounded-lg shadow-md transition-opacity duration-500 ease-in-out opacity-0"
                   style={{ objectFit: "cover" }}
-                  onLoadingComplete={(img) => {
+                  onLoad={(event) => {
+                    const img = event.currentTarget;
                     img.classList.remove("opacity-0");
                     setImageLoaded((prev) => ({ ...prev, [band.name]: true }));
                   }}

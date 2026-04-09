@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
   // 構造化データ用のスクリプト（検索エンジン向け）
   alternates: {
-    canonical: "https://shimane-keion.vercel.app/sns",
+    canonical: "/sns",
   },
 };
 

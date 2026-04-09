@@ -26,7 +26,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ tags, activeTag, onTagChange }) =
   // 「すべて」を先頭に追加し、表示数を制限
   const displayTags = ["all", ...tags];
   const initialDisplayCount = 5; // モバイル表示で初期表示するタグ数
-  const visibleCount = isExpanded || isMobile ? displayTags.length : initialDisplayCount;
+  const visibleCount = isExpanded || !isMobile ? displayTags.length : initialDisplayCount;
 
   return (
     <div className="mb-6">
@@ -52,10 +52,10 @@ const FilterBar: React.FC<FilterBarProps> = ({ tags, activeTag, onTagChange }) =
 
       {/* もっと見るボタン（タグが多い場合のみ表示） */}
       <div className="mt-2 flex justify-center">
-        {displayTags.length > initialDisplayCount && (
+        {isMobile && displayTags.length > initialDisplayCount && (
           <motion.button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="hidden px-4 py-2 text-sm font-medium rounded-full bg-gray-50 text-gray-500 hover:bg-gray-100 border border-gray-200 sm:inline-flex"
+            className="inline-flex px-4 py-2 text-sm font-medium rounded-full bg-gray-50 text-gray-500 hover:bg-gray-100 border border-gray-200"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >

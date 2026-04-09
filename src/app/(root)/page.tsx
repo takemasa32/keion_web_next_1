@@ -52,12 +52,7 @@ const PopupModal = ({
   const [shouldShow, setShouldShow] = useState(false);
 
   useEffect(() => {
-    const appElement = document.getElementById("__next");
-    if (appElement) {
-      Modal.setAppElement(appElement);
-    } else {
-      console.error("App element not found");
-    }
+    Modal.setAppElement(document.body);
   }, []);
 
   useEffect(() => {
@@ -358,10 +353,7 @@ const Home = () => {
   });
 
   useEffect(() => {
-    const appElement = document.getElementById("__next");
-    if (appElement) {
-      Modal.setAppElement(appElement);
-    }
+    Modal.setAppElement(document.body);
 
     if (!upcomingEvent) {
       setIsModalOpen(false);

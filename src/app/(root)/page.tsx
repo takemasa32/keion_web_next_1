@@ -27,15 +27,63 @@ import {
 import { MdOutlineSchool, MdOutlineContactSupport, MdOutlineThumbUp } from "react-icons/md";
 import ActivityCard from "./events/Components/ActivityCard";
 
+const POPUP_AUTO_OPEN_DELAY_MS = 3000;
+const POPUP_AUTO_OPEN_COOLDOWN_MS = 1000 * 60 * 10;
+const POPUP_DISPLAY_WINDOW_DAYS = 30;
+const POPUP_SCROLL_THRESHOLD_PX = 160;
+
+const formatPopupDate = (date: Date): string =>
+  new Intl.DateTimeFormat("ja-JP", {
+    month: "long",
+    day: "numeric",
+    weekday: "short",
+  }).format(date);
+
+const buildPopupStorageKey = (event: KeionEvent): string =>
+  `home-popup:${event.title}:${event.date}:${event.link ?? "events"}`;
+
+const buildPopupStorageKeys = (storageKey: string) => ({
+  sessionSeenKey: `${storageKey}:session-seen`,
+  dismissedAtKey: `${storageKey}:dismissed-at`,
+});
+
+const isWithinPopupWindow = (date: Date): boolean => {
+  const now = new Date();
+  const start = new Date(date.getTime() - 1000 * 60 * 60 * 24 * POPUP_DISPLAY_WINDOW_DAYS);
+  const end = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999);
+  return now >= start && now <= end;
+};
+
+const hasSeenPopupThisVisit = (storageKey: string): boolean => {
+  const { sessionSeenKey } = buildPopupStorageKeys(storageKey);
+  return sessionStorage.getItem(sessionSeenKey) === "true";
+};
+
+const isPopupCoolingDown = (storageKey: string): boolean => {
+  const { dismissedAtKey } = buildPopupStorageKeys(storageKey);
+  const dismissedAt = Number(localStorage.getItem(dismissedAtKey) ?? "0");
+  return Number.isFinite(dismissedAt) && Date.now() - dismissedAt < POPUP_AUTO_OPEN_COOLDOWN_MS;
+};
+
+const markPopupSeenThisVisit = (storageKey: string): void => {
+  const { sessionSeenKey } = buildPopupStorageKeys(storageKey);
+  sessionStorage.setItem(sessionSeenKey, "true");
+};
+
+const markPopupDismissed = (storageKey: string): void => {
+  const { dismissedAtKey } = buildPopupStorageKeys(storageKey);
+  localStorage.setItem(dismissedAtKey, Date.now().toString());
+};
+
 // ポップアップモーダルコンポーネント
 const PopupModal = ({
   isOpen,
   onRequestClose,
   onConfirm,
   contentLabel,
-  children,
-  startDate,
-  endDate,
+  event,
+  eventDate,
+  daysUntilDate,
   cancelText,
   confirmText,
 }: {
@@ -43,63 +91,85 @@ const PopupModal = ({
   onRequestClose: () => void;
   onConfirm: () => void;
   contentLabel: string;
-  children: React.ReactNode;
-  startDate: Date;
-  endDate: Date;
+  event: KeionEvent;
+  eventDate: Date;
+  daysUntilDate: number;
   cancelText?: string;
   confirmText?: string;
 }) => {
-  const [shouldShow, setShouldShow] = useState(false);
-
   useEffect(() => {
-    Modal.setAppElement(document.body);
+    if (typeof document !== "undefined") {
+      Modal.setAppElement(document.body);
+    }
   }, []);
 
-  useEffect(() => {
-    const currentDate = new Date();
-    if (currentDate >= startDate && currentDate <= endDate) {
-      setShouldShow(true);
-    } else {
-      setShouldShow(false);
-    }
-
-    return undefined;
-  }, [startDate, endDate]);
+  const statusLabel =
+    daysUntilDate === 0
+      ? "本日開催"
+      : daysUntilDate === 1
+        ? "明日開催"
+        : `開催まであと${daysUntilDate}日`;
 
   return (
     <Modal
-      isOpen={isOpen && shouldShow}
+      isOpen={isOpen}
       onRequestClose={onRequestClose}
       contentLabel={contentLabel}
-      className="relative z-[10001] mx-auto w-full max-w-xl rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-500 to-pink-500 p-6 shadow-2xl focus:outline-none transition-transform duration-300"
-      overlayClassName="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 p-4 transition-opacity duration-300"
+      className="relative z-[10001] mx-auto flex w-full max-w-lg items-end focus:outline-none md:items-center"
+      overlayClassName="fixed inset-0 z-[10000] flex items-end justify-center bg-[#020817]/72 p-3 backdrop-blur-sm md:items-center md:p-6"
       closeTimeoutMS={300}
+      shouldCloseOnOverlayClick
+      shouldCloseOnEsc
     >
       <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="space-y-6 text-white"
+        initial={{ y: 24, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 16, opacity: 0 }}
+        transition={{ duration: 0.28, ease: "easeOut" }}
+        className="relative w-full overflow-hidden rounded-[28px] border border-white/10 bg-[#07111f] text-white shadow-[0_28px_90px_rgba(2,6,23,0.58)]"
       >
-        {children}
-        <div className="flex justify-end space-x-4">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={onRequestClose}
-            className="rounded-full bg-white/15 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-white/25"
-          >
-            {cancelText ? cancelText : "キャンセル"}
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={onConfirm}
-            className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-indigo-600 transition-colors duration-200 hover:bg-slate-100"
-          >
-            {confirmText ? confirmText : "移動する"}
-          </motion.button>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(125,211,252,0.12),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(251,191,36,0.1),transparent_30%)]" />
+        <button
+          onClick={onRequestClose}
+          className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/6 text-lg text-white/72 transition hover:bg-white/10 hover:text-white"
+          aria-label="ポップアップを閉じる"
+        >
+          ×
+        </button>
+
+        <div className="relative p-6 sm:p-8">
+          <p className="text-[0.72rem] uppercase tracking-[0.28em] text-sky-200/72">Next Event</p>
+          <h2 className="mt-3 text-3xl font-semibold leading-tight text-white sm:text-4xl">
+            {event.title}
+          </h2>
+          <div className="mt-5 flex flex-wrap items-center gap-3 text-sm text-white/78">
+            <span className="rounded-full border border-white/12 bg-white/6 px-4 py-2">
+              {formatPopupDate(eventDate)}
+            </span>
+            <span className="text-white/60">{statusLabel}</span>
+          </div>
+          <p className="mt-5 text-sm leading-7 text-white/68">
+            直近のイベントです。詳細ページから日程を確認できます。
+          </p>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
+            <motion.button
+              whileHover={{ y: -1 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={onRequestClose}
+              className="rounded-full border border-white/14 bg-white/6 px-5 py-3 text-sm font-medium text-white/86 transition hover:bg-white/10"
+            >
+              {cancelText ?? "閉じる"}
+            </motion.button>
+            <motion.button
+              whileHover={{ y: -1 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={onConfirm}
+              className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-[#07111f] transition hover:bg-slate-100"
+            >
+              {confirmText ?? "詳細を見る"}
+            </motion.button>
+          </div>
         </div>
       </motion.div>
     </Modal>
@@ -204,6 +274,7 @@ const findUpcomingEvent = (): { event: KeionEvent; date: Date } | null => {
 const Home = () => {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [hasScrolledForPopup, setHasScrolledForPopup] = useState(false);
   const initialLoadingText = "ようこそ軽音楽部へ";
   const loadingTime = 2000; // ローディング時間を設定
   const heroRef = useRef<HTMLElement | null>(null);
@@ -225,6 +296,10 @@ const Home = () => {
   useAnimations();
 
   const upcomingEvent = useMemo<{ event: KeionEvent; date: Date } | null>(findUpcomingEvent, []);
+  const popupStorageKey = useMemo(
+    () => (upcomingEvent ? buildPopupStorageKey(upcomingEvent.event) : null),
+    [upcomingEvent]
+  );
 
   // シークレット機能のカスタムフックを使用
   const secret = useSecretFeature({
@@ -233,26 +308,56 @@ const Home = () => {
   });
 
   useEffect(() => {
-    Modal.setAppElement(document.body);
+    const updateScrollState = () => {
+      if (window.scrollY >= POPUP_SCROLL_THRESHOLD_PX) {
+        setHasScrolledForPopup(true);
+      }
+    };
 
-    if (!upcomingEvent) {
+    updateScrollState();
+    window.addEventListener("scroll", updateScrollState, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", updateScrollState);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (
+      !upcomingEvent ||
+      !popupStorageKey ||
+      !isWithinPopupWindow(upcomingEvent.date) ||
+      !hasScrolledForPopup
+    ) {
+      setIsModalOpen(false);
+      return;
+    }
+
+    if (hasSeenPopupThisVisit(popupStorageKey) || isPopupCoolingDown(popupStorageKey)) {
       setIsModalOpen(false);
       return;
     }
 
     const timer = window.setTimeout(() => {
       setIsModalOpen(true);
-    }, loadingTime + 1000);
+      markPopupSeenThisVisit(popupStorageKey);
+    }, POPUP_AUTO_OPEN_DELAY_MS);
 
-    return () => window.clearTimeout(timer); // クリーンアップ
-  }, [loadingTime, upcomingEvent]);
+    return () => window.clearTimeout(timer);
+  }, [hasScrolledForPopup, popupStorageKey, upcomingEvent]);
 
   const closeModal = () => {
+    if (popupStorageKey) {
+      markPopupDismissed(popupStorageKey);
+    }
     setIsModalOpen(false);
   };
 
   const eventLink = upcomingEvent?.event?.link ?? "/events";
   const navigateToEventPage = () => {
+    if (popupStorageKey) {
+      markPopupDismissed(popupStorageKey);
+    }
     router.push(eventLink);
   };
 
@@ -270,42 +375,18 @@ const Home = () => {
   return (
     <SecretEffectWrapper secretClassName={secret.getSecretClassNames()}>
       {/* ポップアップモーダル */}
-      {modalShouldRender && eventDate && (
+      {modalShouldRender && eventDate && upcomingEvent && (
         <PopupModal
           isOpen={isModalOpen}
           onRequestClose={closeModal}
           onConfirm={navigateToEventPage}
           contentLabel="最新イベントのお知らせ"
-          startDate={new Date(eventDate.getTime() - 1000 * 60 * 60 * 24 * 60)}
-          endDate={eventDate}
+          event={upcomingEvent.event}
+          eventDate={eventDate}
+          daysUntilDate={daysUntilDate ?? 0}
           cancelText="閉じる"
           confirmText="詳細を見る"
-        >
-          <div className="flex justify-center mb-4">
-            <motion.div
-              animate={{
-                y: [0, -10, 0],
-                rotateZ: [0, 5, -5, 0],
-              }}
-              transition={{
-                repeat: Infinity,
-                duration: 2,
-              }}
-            >
-              <FaGuitar className="text-6xl h-12 w-12 my-2" />
-            </motion.div>
-          </div>
-          <h2 className="text-2xl font-bold mb-4 text-center text-white">
-            {upcomingEvent?.event.title ?? "最新イベント"}
-          </h2>
-          <p className="mb-4 text-center text-white">
-            {daysUntilDate === 0
-              ? "本日開催です。会場でお待ちしています！"
-              : `開催まであと${daysUntilDate}日。ぜひチェックしてください！`}
-            <br />
-            詳細ページに移動しますか？
-          </p>
-        </PopupModal>
+        />
       )}
 
       {/* ローディング画面 - シークレット機能のトリガー1つ目 */}

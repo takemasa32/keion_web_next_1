@@ -29,20 +29,20 @@ const FilterBar: React.FC<FilterBarProps> = ({ tags, activeTag, onTagChange }) =
   const visibleCount = isExpanded || !isMobile ? displayTags.length : initialDisplayCount;
 
   return (
-    <div className="mb-6">
+    <div>
       <div className="relative -mx-4 sm:mx-0">
-        <div className="flex gap-2 overflow-x-auto px-4 pb-2 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0">
+        <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 py-1 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0">
           {displayTags.slice(0, visibleCount).map((tag) => (
             <motion.button
               key={tag}
               onClick={() => onTagChange(tag)}
-              className={`relative flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full transition-all ${
+              className={`relative flex-shrink-0 rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
                 activeTag === tag
-                  ? "bg-indigo-600 text-white shadow-md"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "border-slate-900 bg-slate-900 text-white"
+                  : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900"
               }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ y: -1 }}
+              whileTap={{ scale: 0.98 }}
             >
               {tag === "all" ? "すべて" : tag}
             </motion.button>
@@ -55,11 +55,11 @@ const FilterBar: React.FC<FilterBarProps> = ({ tags, activeTag, onTagChange }) =
         {isMobile && displayTags.length > initialDisplayCount && (
           <motion.button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="inline-flex px-4 py-2 text-sm font-medium rounded-full bg-gray-50 text-gray-500 hover:bg-gray-100 border border-gray-200"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className="inline-flex rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-800"
+            whileHover={{ y: -1 }}
+            whileTap={{ scale: 0.98 }}
           >
-            {isExpanded ? "閉じる" : "もっと見る..."}
+            {isExpanded ? "閉じる" : "もっと見る"}
           </motion.button>
         )}
       </div>
@@ -69,7 +69,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ tags, activeTag, onTagChange }) =
         <motion.p
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center text-sm text-gray-500 mt-2"
+          className="mt-2 text-center text-sm text-slate-500"
         >
           「{activeTag}」のイベントを表示しています
         </motion.p>

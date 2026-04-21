@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import { events, getAllTags } from "@/app/data/events";
 import EventCard from "./Components/EventCard";
 import { motion } from "framer-motion";
@@ -7,35 +7,18 @@ import FilterBar from "./Components/FilterBar";
 import FloatingButton from "./Components/FloatingButton";
 
 const EventsPage = () => {
-  const [filteredEvents, setFilteredEvents] = useState(events);
   const [activeTag, setActiveTag] = useState("all");
-  const [scrolled, setScrolled] = useState(false);
 
   // 全タグを取得
   const allTags = getAllTags();
-
-  // スクロール検出
-  useEffect(() => {
-    const handleScroll = () => {
-      const isScrolled = window.scrollY > 20;
-      if (isScrolled !== scrolled) {
-        setScrolled(isScrolled);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [scrolled]);
+  const filteredEvents = useMemo(
+    () => (activeTag === "all" ? events : events.filter((event) => event.tags.includes(activeTag))),
+    [activeTag]
+  );
 
   // タグフィルタリング処理
   const filterEventsByTag = (tag: string) => {
     setActiveTag(tag);
-
-    if (tag === "all") {
-      setFilteredEvents(events);
-    } else {
-      setFilteredEvents(events.filter((event) => event.tags.includes(tag)));
-    }
   };
 
   // アニメーションのバリアント
@@ -44,42 +27,50 @@ const EventsPage = () => {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
+        staggerChildren: 0.04,
       },
     },
   };
 
   return (
-    <div className="min-h-screen bg-white py-6 sm:py-8 lg:py-12">
+    <div className="min-h-screen bg-slate-50 pb-16 pt-6 sm:pt-8 lg:pt-10">
       <div className="container mx-auto px-4">
         <motion.div
-          initial={{ y: -20, opacity: 0 }}
+          initial={{ y: 14, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className={`sticky top-0 z-10 transition-all duration-300 ${
-            scrolled ? "bg-white/95 backdrop-blur-sm shadow-md py-3" : "py-6"
-          }`}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="mx-auto max-w-3xl text-center"
         >
-          <h1
-            className={`text-3xl font-bold text-center text-black mb-4 transition-all duration-300 ${
-              scrolled ? "text-2xl" : "text-3xl"
-            }`}
-          >
+          <p className="text-[0.7rem] font-medium uppercase tracking-[0.28em] text-indigo-500">
+            Live Schedule
+          </p>
+          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
             イベント情報
           </h1>
+          <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">
+            新歓ライブ、大学祭、定期演奏会など、島根大学軽音楽部の活動予定と記録をまとめています。
+          </p>
+        </motion.div>
 
+        <motion.div
+          initial={{ y: 12, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="sticky top-16 z-30 mt-8 border-y border-slate-200/80 bg-slate-50/95 py-3 backdrop-blur-md md:top-20"
+        >
           {/* タグフィルターバー */}
           <FilterBar tags={allTags} activeTag={activeTag} onTagChange={filterEventsByTag} />
         </motion.div>
 
         <motion.div
-          className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-8"
+          key={activeTag}
+          className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3"
           variants={container}
           initial="hidden"
           animate="show"
         >
           {filteredEvents.map((event, index) => (
-            <EventCard key={index} event={event} index={index} />
+            <EventCard key={`${event.title}-${event.date}`} event={event} index={index} />
           ))}
         </motion.div>
 
@@ -92,7 +83,7 @@ const EventsPage = () => {
             <p className="text-gray-500 text-xl">「{activeTag}」のイベントはありません</p>
             <button
               onClick={() => filterEventsByTag("all")}
-              className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-colors"
+              className="mt-4 rounded-lg bg-slate-900 px-4 py-2 text-white transition-colors hover:bg-slate-700"
             >
               すべてのイベントを表示
             </button>

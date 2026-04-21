@@ -115,60 +115,80 @@ const PopupModal = ({
       isOpen={isOpen}
       onRequestClose={onRequestClose}
       contentLabel={contentLabel}
-      className="relative z-[10001] mx-auto flex w-full max-w-lg items-end focus:outline-none md:items-center"
-      overlayClassName="fixed inset-0 z-[10000] flex items-end justify-center bg-[#020817]/72 p-3 backdrop-blur-sm md:items-center md:p-6"
+      className="relative z-[10001] mx-auto flex w-full max-w-2xl items-end focus:outline-none md:items-center"
+      overlayClassName="fixed inset-0 z-[10000] flex items-end justify-center bg-[#020817]/75 p-3 backdrop-blur-sm md:items-center md:p-6"
       closeTimeoutMS={300}
       shouldCloseOnOverlayClick
       shouldCloseOnEsc
     >
       <motion.div
-        initial={{ y: 24, opacity: 0 }}
+        initial={{ y: 22, opacity: 0, scale: 0.98 }}
         animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 16, opacity: 0 }}
-        transition={{ duration: 0.28, ease: "easeOut" }}
-        className="relative w-full overflow-hidden rounded-[28px] border border-white/10 bg-[#07111f] text-white shadow-[0_28px_90px_rgba(2,6,23,0.58)]"
+        exit={{ y: 14, opacity: 0, scale: 0.98 }}
+        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+        className="relative w-full overflow-hidden rounded-2xl border border-white/10 bg-[#07111f] text-white shadow-[0_28px_90px_rgba(2,6,23,0.58)]"
       >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(125,211,252,0.12),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(251,191,36,0.1),transparent_30%)]" />
         <button
           onClick={onRequestClose}
-          className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/6 text-lg text-white/72 transition hover:bg-white/10 hover:text-white"
+          className="absolute right-4 top-4 z-20 inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-[#07111f]/70 text-lg text-white/70 backdrop-blur transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
           aria-label="ポップアップを閉じる"
         >
           ×
         </button>
 
-        <div className="relative p-6 sm:p-8">
-          <p className="text-[0.72rem] uppercase tracking-[0.28em] text-sky-200/72">Next Event</p>
-          <h2 className="mt-3 text-3xl font-semibold leading-tight text-white sm:text-4xl">
-            {event.title}
-          </h2>
-          <div className="mt-5 flex flex-wrap items-center gap-3 text-sm text-white/78">
-            <span className="rounded-full border border-white/12 bg-white/6 px-4 py-2">
-              {formatPopupDate(eventDate)}
-            </span>
-            <span className="text-white/60">{statusLabel}</span>
+        <div className="grid md:grid-cols-[0.86fr_1.14fr]">
+          <div className="relative min-h-52 overflow-hidden border-b border-white/10 md:min-h-full md:border-b-0 md:border-r">
+            <Image
+              src={event.image ?? "/image/root/live-performance.jpg"}
+              alt=""
+              fill
+              sizes="(max-width: 768px) 100vw, 280px"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-[#07111f]/40" />
+            <div className="absolute bottom-4 left-4 right-16">
+              <p className="text-[0.68rem] font-medium uppercase tracking-[0.3em] text-white/60">
+                Next Event
+              </p>
+              <p className="mt-2 text-sm font-medium text-white/90">{statusLabel}</p>
+            </div>
           </div>
-          <p className="mt-5 text-sm leading-7 text-white/68">
-            直近のイベントです。詳細ページから日程を確認できます。
-          </p>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
-            <motion.button
-              whileHover={{ y: -1 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={onRequestClose}
-              className="rounded-full border border-white/14 bg-white/6 px-5 py-3 text-sm font-medium text-white/86 transition hover:bg-white/10"
-            >
-              {cancelText ?? "閉じる"}
-            </motion.button>
-            <motion.button
-              whileHover={{ y: -1 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={onConfirm}
-              className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-[#07111f] transition hover:bg-slate-100"
-            >
-              {confirmText ?? "詳細を見る"}
-            </motion.button>
+          <div className="relative p-6 sm:p-8">
+            <p className="text-[0.68rem] font-medium uppercase tracking-[0.3em] text-white/50">
+              Shimane University Keion Club
+            </p>
+            <h2 className="mt-4 text-3xl font-semibold leading-tight text-white sm:text-4xl">
+              {event.title}
+            </h2>
+            <div className="mt-6 border-y border-white/10 py-4">
+              <p className="text-[0.7rem] uppercase tracking-[0.26em] text-white/40">
+                Schedule
+              </p>
+              <p className="mt-2 text-base font-medium text-white">{formatPopupDate(eventDate)}</p>
+            </div>
+            <p className="mt-5 text-sm leading-7 text-white/70">
+              直近のイベントのお知らせです。日程や詳細はイベントページから確認できます。
+            </p>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
+              <motion.button
+                whileHover={{ y: -1 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={onRequestClose}
+                className="rounded-lg border border-white/15 bg-transparent px-5 py-3 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              >
+                {cancelText ?? "閉じる"}
+              </motion.button>
+              <motion.button
+                whileHover={{ y: -1 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={onConfirm}
+                className="rounded-lg bg-white px-5 py-3 text-sm font-semibold text-[#07111f] transition hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              >
+                {confirmText ?? "詳細を見る"}
+              </motion.button>
+            </div>
           </div>
         </div>
       </motion.div>

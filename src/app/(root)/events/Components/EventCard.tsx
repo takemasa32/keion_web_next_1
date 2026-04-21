@@ -23,7 +23,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
 
   // 画像の読み込みエラー処理
   const handleImageError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    event.currentTarget.src = "/image/keionMiniLogo.JPG";
+    event.currentTarget.src = "/icons/icon-512x512.png";
   };
 
   // カンマで区切られた日付を配列に変換
@@ -155,26 +155,20 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.5,
-        delay: index * 0.1, // カードごとに時間差表示
+        duration: 0.38,
+        ease: [0.22, 1, 0.36, 1],
+        delay: Math.min(index * 0.035, 0.22),
       },
     },
   };
 
-  // タグの色をランダムに設定する（一貫性を保つために固定の色パレットを使用）
+  // タグの色を一貫した控えめなパレットにする
   const tagColors = [
-    "bg-blue-100 text-blue-700",
-    "bg-green-100 text-green-700",
-    "bg-purple-100 text-purple-700",
-    "bg-yellow-100 text-yellow-700",
-    "bg-pink-100 text-pink-700",
-    "bg-indigo-100 text-indigo-700",
-    "bg-red-100 text-red-700",
-    "bg-teal-100 text-teal-700",
-    "bg-orange-100 text-orange-700",
-    "bg-gray-100 text-gray-700",
-    "bg-cyan-100 text-cyan-700",
-    "bg-lime-100 text-lime-700",
+    "border-slate-200 bg-slate-50 text-slate-600",
+    "border-indigo-100 bg-indigo-50 text-indigo-700",
+    "border-emerald-100 bg-emerald-50 text-emerald-700",
+    "border-sky-100 bg-sky-50 text-sky-700",
+    "border-amber-100 bg-amber-50 text-amber-700",
   ];
 
   // タグごとに一貫した色を生成するためのハッシュ関数
@@ -191,41 +185,41 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
       variants={cardVariants}
       initial="hidden"
       animate="visible"
-      className={`relative flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-lg transition-shadow duration-300
+      className={`relative flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-[border-color,box-shadow,transform] duration-300
         ${
           hasLink
-            ? "cursor-pointer border-2 border-transparent hover:border-indigo-300 hover:shadow-xl"
-            : "border border-gray-100"
+            ? "cursor-pointer border border-slate-200 hover:border-indigo-200 hover:shadow-md"
+            : "border border-slate-200"
         }`}
-      whileHover={hasLink ? { scale: 1.01 } : undefined}
-      whileTap={hasLink ? { scale: 0.99 } : undefined}
+      whileHover={hasLink ? { y: -3 } : undefined}
+      whileTap={hasLink ? { scale: 0.995 } : undefined}
     >
-      <div className="relative w-full overflow-hidden bg-gray-100 aspect-[4/3] sm:aspect-[16/10]">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100 sm:aspect-[16/10]">
         {/* リンク付きイベントの場合、左上にインジケータを表示 */}
         {hasLink && (
-          <div className="absolute top-0 left-0 z-20 m-2 rounded-md bg-indigo-600 px-2 py-1 text-xs font-medium text-white shadow-md">
+          <div className="absolute left-3 top-3 z-20 rounded-md bg-slate-950/88 px-2.5 py-1 text-xs font-medium text-white backdrop-blur">
             詳細あり
           </div>
         )}
 
         {/* 複数日程のイベントにはバッジ表示 */}
         {hasMultipleDates && !hasLink && (
-          <div className="absolute top-0 left-0 z-20 m-2 rounded-md bg-amber-500 px-2 py-1 text-xs font-medium text-white shadow-md">
+          <div className="absolute left-3 top-3 z-20 rounded-md bg-white/90 px-2.5 py-1 text-xs font-medium text-slate-800 backdrop-blur">
             複数日程
           </div>
         )}
 
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-8 h-8 border-4 border-t-indigo-600 border-gray-200 rounded-full animate-spin"></div>
+            <div className="h-8 w-8 rounded-full border-2 border-slate-200 border-t-indigo-500 animate-spin"></div>
           </div>
         )}
         <Image
-          src={event.image || "/image/keionMiniLogo.JPG"}
+          src={event.image || "/icons/icon-512x512.png"}
           alt={event.title}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className={`w-full h-full object-cover transition-all duration-500 ${
+          className={`h-full w-full object-cover transition-all duration-500 ${
             isLoading ? "opacity-0" : "opacity-100"
           }`}
           onError={handleImageError}
@@ -236,7 +230,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
       <div className="flex flex-1 flex-col p-4 sm:p-5">
         {/* 日付表示 - 複数日程対応 */}
         <div className="mb-2">
-          <div className="flex items-center text-gray-700 text-sm">
+          <div className="flex items-center text-sm text-slate-600">
             <FaCalendarAlt className="mr-2 flex-shrink-0 text-indigo-600" />
             <time className="line-clamp-3 leading-snug">
               {formatDate(event.date)}
@@ -249,7 +243,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
                   e.preventDefault(); // リンクの遷移を防止
                   setShowAllDates(!showAllDates);
                 }}
-                className="ml-2 text-indigo-600 hover:text-indigo-800 transition-colors"
+                className="ml-2 rounded-md p-1 text-indigo-600 transition-colors hover:bg-indigo-50 hover:text-indigo-800"
                 aria-label={showAllDates ? "日程を折りたたむ" : "すべての日程を表示"}
               >
                 <FaCaretDown
@@ -268,12 +262,12 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden mt-2 ml-6"
+                className="ml-6 mt-2 overflow-hidden"
               >
-                <ul className="text-sm text-gray-600 space-y-1">
+                <ul className="space-y-1 text-sm text-slate-600">
                   {expandedDates.map((date, idx) => (
                     <li key={idx} className="flex items-center">
-                      <span className="inline-block w-1 h-1 rounded-full bg-indigo-400 mr-2"></span>
+                      <span className="mr-2 inline-block h-1 w-1 rounded-full bg-indigo-400"></span>
                       {date}
                     </li>
                   ))}
@@ -285,12 +279,12 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
 
         <h2
           className={`mb-2 text-base font-semibold leading-snug line-clamp-2 sm:text-lg ${
-            hasLink ? "text-indigo-800 group-hover:text-indigo-600" : "text-gray-800"
+            hasLink ? "text-slate-950 group-hover:text-indigo-700" : "text-slate-900"
           }`}
         >
           {event.title}
         </h2>
-        <p className="mb-4 text-sm leading-relaxed text-gray-700 sm:text-base sm:leading-relaxed line-clamp-4 sm:line-clamp-3">
+        <p className="mb-4 line-clamp-4 text-sm leading-relaxed text-slate-600 sm:line-clamp-3 sm:text-base sm:leading-relaxed">
           {event.description}
         </p>
 
@@ -300,7 +294,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
             {event.tags.map((tag, i) => (
               <span
                 key={i}
-                className={`text-xs font-medium px-2 py-1 rounded-full ${
+                className={`rounded-md border px-2 py-1 text-xs font-medium ${
                   tagColors[getTagColorIndex(tag)]
                 }`}
               >
@@ -313,7 +307,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
         {/* リンクがある場合はボタンを表示 */}
         {hasLink && (
           <div className="mt-auto pt-2">
-            <div className="flex items-center justify-end text-sm font-medium text-indigo-600">
+            <div className="flex items-center justify-end text-sm font-medium text-indigo-600 transition-colors group-hover:text-indigo-700">
               詳細を見る
               <FaExternalLinkAlt className="ml-1" />
             </div>
@@ -323,14 +317,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
 
       {/* リンクがある場合はホバー時に表示されるオーバーレイ */}
       {hasLink && (
-        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-indigo-600 bg-opacity-0 opacity-0 transition-opacity duration-300 group-hover:bg-opacity-10 group-hover:opacity-100">
-          <div className="rounded-full bg-white/95 px-4 py-2 font-medium text-indigo-700 shadow-lg backdrop-blur-sm">
-            <span className="flex items-center">
-              詳細ページへ
-              <FaExternalLinkAlt className="ml-2" />
-            </span>
-          </div>
-        </div>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1 bg-indigo-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       )}
     </motion.div>
   );

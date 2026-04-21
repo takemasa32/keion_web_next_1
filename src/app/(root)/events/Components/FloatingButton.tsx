@@ -19,7 +19,7 @@ const FloatingButton: React.FC = () => {
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth"
+      behavior: "smooth",
     });
   };
 
@@ -27,13 +27,15 @@ const FloatingButton: React.FC = () => {
     <AnimatePresence>
       {isVisible && (
         <motion.button
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.5 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 12 }}
+          transition={{ duration: 0.22, ease: "easeOut" }}
+          whileHover={{ y: -2 }}
+          whileTap={{ scale: 0.96 }}
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 p-3 bg-indigo-600 text-white rounded-full shadow-lg z-50"
+          className="fixed bottom-6 right-6 z-50 rounded-lg bg-slate-900 p-3 text-white shadow-lg transition-colors hover:bg-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+          aria-label="ページ上部へ戻る"
         >
           <FaArrowUp />
         </motion.button>

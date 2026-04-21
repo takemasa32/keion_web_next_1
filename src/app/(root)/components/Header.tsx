@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -29,8 +29,6 @@ const Header = () => {
   const [atTop, setAtTop] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const lastScrollYRef = useRef(0);
-  const [hideHeader, setHideHeader] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -63,18 +61,8 @@ const Header = () => {
       if (typeof window === "undefined") return;
 
       const currentScrollY = window.scrollY;
-      const lastScrollY = lastScrollYRef.current;
-
-      if (currentScrollY > lastScrollY + 8 && currentScrollY > 220) {
-        setHideHeader(true);
-      } else if (currentScrollY < lastScrollY - 8 || currentScrollY <= 220) {
-        setHideHeader(false);
-      }
-
-      lastScrollYRef.current = currentScrollY;
-
-      setScrolled(currentScrollY > 24);
-      setAtTop(currentScrollY < 32);
+      setScrolled(currentScrollY > 112);
+      setAtTop(currentScrollY < 48);
     };
 
     handleScroll();
@@ -82,15 +70,17 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const headerBgClass = scrolled
-    ? "bg-white bg-opacity-90 backdrop-blur-md text-gray-800 shadow-lg"
-    : atTop
-    ? "bg-gradient-to-b from-black/40 via-black/10 to-transparent text-white"
-    : "bg-indigo-900/40 backdrop-blur-md text-white";
-
   const isHome = pathname === "/";
-  const isExpanded = isHome && atTop && !scrolled;
-  const logoSize = isExpanded ? (isMobile ? 64 : 80) : 40;
+  const isSolidHeader = !isHome || scrolled;
+
+  const headerBgClass = isSolidHeader
+    ? "border-gray-200/80 bg-white/95 text-gray-800 shadow-sm backdrop-blur-md"
+    : atTop
+      ? "border-transparent bg-transparent text-white"
+      : "border-white/10 bg-[#07111f]/70 text-white backdrop-blur-md";
+
+  const isHeroTop = isHome && atTop && !scrolled;
+  const logoSize = isSolidHeader ? 40 : 44;
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
@@ -98,80 +88,64 @@ const Header = () => {
 
   return (
     <motion.header
-      className={`fixed top-0 w-full z-50 transition-colors duration-300 ${headerBgClass}`}
+      className={`fixed top-0 z-50 w-full border-b transition-[background-color,border-color,box-shadow,backdrop-filter] duration-500 ease-out ${headerBgClass}`}
       initial={false}
-      animate={{
-        y: hideHeader ? -110 : 0,
-        opacity: hideHeader ? 0 : 1,
-      }}
-      transition={{ type: "spring", stiffness: 260, damping: 28 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
     >
       <div
-        className={`relative container mx-auto px-4 ${
-          isExpanded
-            ? "flex flex-col items-center justify-center space-y-4 py-4 md:py-6"
-            : "flex items-center justify-between py-3"
+        className={`container relative mx-auto flex items-center justify-between px-4 transition-[padding] duration-500 ease-out ${
+          scrolled ? "py-2.5" : "py-3.5"
         }`}
       >
         <Link href="/">
           <motion.div
-            className={`flex ${isExpanded ? "flex-col items-center gap-2" : "items-center gap-2"}`}
-            whileHover={{ scale: 1.03 }}
+            className="flex items-center gap-2.5"
+            whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
           >
             <motion.div
-              animate={
-                isExpanded
-                  ? {
-                      boxShadow: [
-                        "0px 0px 0px rgba(79, 70, 229, 0.2)",
-                        "0px 0px 24px rgba(99, 102, 241, 0.65)",
-                        "0px 0px 0px rgba(79, 70, 229, 0.2)",
-                      ],
-                    }
-                  : { boxShadow: "0px 0px 0px rgba(0,0,0,0)" }
-              }
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              className="relative shrink-0 overflow-hidden rounded-lg"
+              animate={{
+                width: logoSize,
+                height: logoSize,
+                boxShadow: isHeroTop
+                  ? "0 10px 30px rgba(0,0,0,0.28)"
+                  : "0 6px 18px rgba(0,0,0,0.16)",
+              }}
+              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
             >
               <Image
                 src={IMAGES.logo.path}
                 alt={IMAGES.logo.alt}
-                width={logoSize}
-                height={logoSize}
+                fill
+                sizes="44px"
                 priority
-                className="rounded-lg shadow-lg"
+                className="object-cover"
               />
             </motion.div>
-            {isExpanded ? (
-              <h1 className="text-center text-2xl md:text-3xl font-bold text-white drop-shadow-2xl">
-                {SITE_INFO.title}
-              </h1>
-            ) : (
-              <span
-                className={`text-lg font-semibold ${
-                  scrolled ? "text-indigo-600" : "text-white drop-shadow-md"
-                }`}
-              >
-                {isMobile ? "島根大学 軽音楽部" : SITE_INFO.title}
-              </span>
-            )}
+            <span
+              className={`text-base font-semibold transition-colors duration-500 sm:text-lg ${
+                isSolidHeader ? "text-indigo-600" : "text-white"
+              }`}
+            >
+              {isMobile ? "島根大学 軽音楽部" : SITE_INFO.title}
+            </span>
           </motion.div>
         </Link>
 
         {!isMobile && (
-          <nav
-            className={`transition-opacity duration-300 ${
-              isExpanded ? "pointer-events-none opacity-0" : "opacity-100"
-            }`}
-          >
+          <nav className="opacity-100 transition-opacity duration-300">
             <div className="flex items-center space-x-6">
               {SITE_INFO.navLinks.map((link, index) => (
                 <Link href={link.href} key={index}>
                   <motion.span
-                    className={`font-medium ${
-                      scrolled ? "text-gray-700 hover:text-indigo-600" : "text-white"
+                    className={`font-medium transition-colors duration-500 ${
+                      isSolidHeader
+                        ? "text-gray-700 hover:text-indigo-600"
+                        : "text-white/90 hover:text-white"
                     }`}
-                    whileHover={{ scale: 1.06 }}
+                    whileHover={{ y: -1 }}
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   >
                     {link.label}
@@ -184,9 +158,9 @@ const Header = () => {
 
         {isMobile && (
           <motion.button
-            className={`absolute right-4 ${
-              isExpanded ? "top-4" : "top-1/2 -translate-y-1/2"
-            } rounded-md p-2 transition-colors ${scrolled ? "text-gray-800" : "text-white"}`}
+            className={`absolute right-4 top-1/2 -translate-y-1/2 rounded-md p-2 transition-colors duration-500 ${
+              isSolidHeader ? "text-gray-800" : "text-white"
+            }`}
             onClick={toggleMenu}
             whileTap={{ scale: 0.9 }}
             aria-label="ナビゲーションメニューを開く"

@@ -47,6 +47,11 @@ const buildPopupStorageKeys = (storageKey: string) => ({
   dismissedAtKey: `${storageKey}:dismissed-at`,
 });
 
+const getStartOfToday = (): Date => {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+};
+
 const isWithinPopupWindow = (date: Date): boolean => {
   const now = new Date();
   const start = new Date(date.getTime() - 1000 * 60 * 60 * 24 * POPUP_DISPLAY_WINDOW_DAYS);
@@ -55,24 +60,40 @@ const isWithinPopupWindow = (date: Date): boolean => {
 };
 
 const hasSeenPopupThisVisit = (storageKey: string): boolean => {
-  const { sessionSeenKey } = buildPopupStorageKeys(storageKey);
-  return sessionStorage.getItem(sessionSeenKey) === "true";
+  try {
+    const { sessionSeenKey } = buildPopupStorageKeys(storageKey);
+    return sessionStorage.getItem(sessionSeenKey) === "true";
+  } catch {
+    return false;
+  }
 };
 
 const isPopupCoolingDown = (storageKey: string): boolean => {
-  const { dismissedAtKey } = buildPopupStorageKeys(storageKey);
-  const dismissedAt = Number(localStorage.getItem(dismissedAtKey) ?? "0");
-  return Number.isFinite(dismissedAt) && Date.now() - dismissedAt < POPUP_AUTO_OPEN_COOLDOWN_MS;
+  try {
+    const { dismissedAtKey } = buildPopupStorageKeys(storageKey);
+    const dismissedAt = Number(localStorage.getItem(dismissedAtKey) ?? "0");
+    return Number.isFinite(dismissedAt) && Date.now() - dismissedAt < POPUP_AUTO_OPEN_COOLDOWN_MS;
+  } catch {
+    return false;
+  }
 };
 
 const markPopupSeenThisVisit = (storageKey: string): void => {
-  const { sessionSeenKey } = buildPopupStorageKeys(storageKey);
-  sessionStorage.setItem(sessionSeenKey, "true");
+  try {
+    const { sessionSeenKey } = buildPopupStorageKeys(storageKey);
+    sessionStorage.setItem(sessionSeenKey, "true");
+  } catch {
+    // Ignore storage failures so popup rendering never breaks the page.
+  }
 };
 
 const markPopupDismissed = (storageKey: string): void => {
-  const { dismissedAtKey } = buildPopupStorageKeys(storageKey);
-  localStorage.setItem(dismissedAtKey, Date.now().toString());
+  try {
+    const { dismissedAtKey } = buildPopupStorageKeys(storageKey);
+    localStorage.setItem(dismissedAtKey, Date.now().toString());
+  } catch {
+    // Ignore storage failures so popup rendering never breaks the page.
+  }
 };
 
 // ポップアップモーダルコンポーネント
@@ -140,7 +161,7 @@ const PopupModal = ({
           <div className="relative min-h-52 overflow-hidden border-b border-white/10 md:min-h-full md:border-b-0 md:border-r">
             <Image
               src={event.image ?? "/image/root/live-performance.jpg"}
-              alt=""
+              alt={`${event.title}のイベント画像`}
               fill
               sizes="(max-width: 768px) 100vw, 280px"
               className="object-cover"
@@ -272,12 +293,12 @@ const extractCandidateDates = (dateText: string): Date[] => {
 };
 
 const findUpcomingEvent = (): { event: KeionEvent; date: Date } | null => {
-  const now = new Date();
+  const today = getStartOfToday();
   let nextEvent: { event: KeionEvent; date: Date } | null = null;
 
   eventData.forEach((eventItem) => {
     const candidateDates = extractCandidateDates(eventItem.date);
-    const futureDates = candidateDates.filter((date) => date >= now);
+    const futureDates = candidateDates.filter((date) => date >= today);
     if (futureDates.length === 0) return;
 
     futureDates.sort((a, b) => a.getTime() - b.getTime());

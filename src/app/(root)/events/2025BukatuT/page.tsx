@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import CustomImage from "../Components/CustomImage";
 import ARTryOnSection from "../Components/ARTryOnSection";
 import EventList from "../Components/EventList";
@@ -11,15 +12,16 @@ export const metadata: Metadata = {
 
 const BukatuTPage = () => {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
-      {/* 背景のやわらかなグラデーション */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-950 to-black" />
-        <div className="absolute -top-24 left-1/2 h-60 w-60 -translate-x-1/2 rounded-full bg-indigo-500/25 blur-3xl" />
-        <div className="absolute bottom-[-20%] right-[-10%] h-72 w-72 rounded-full bg-rose-500/20 blur-3xl" />
-      </div>
-
+    <div className="relative min-h-screen overflow-hidden bg-[#17252c] text-white">
       <div className="relative mx-auto flex max-w-5xl flex-col gap-14 px-4 py-12 sm:px-6 sm:py-16 lg:px-10 lg:py-20">
+        <div>
+          <Link className="text-sm underline underline-offset-4" href="/events">
+            ← イベント一覧へ
+          </Link>
+          <p className="mt-4 text-xs text-slate-300">
+            2025年度の部Tの記録です。カメラ機能は下の操作から起動できます。
+          </p>
+        </div>
         {/* ヒーロー */}
         <section className="flex flex-col items-center gap-5 text-center sm:gap-6">
           <span className="rounded-full border border-white/20 px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em] text-slate-200">

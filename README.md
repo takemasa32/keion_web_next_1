@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 島根大学 軽音楽部 Webサイト
 
-## Getting Started
+Next.js App Router を使った紹介サイトです。DBは使用せず、イベント・出演バンド・FAQをリポジトリ内のTypeScriptファイルから読み込みます。
 
-First, run the development server:
+## 開発
+
+基本的にWSLのUbuntu上で実行します。Node.js 20以上を使用してください。
 
 ```bash
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ブラウザーで http://localhost:3000 を開きます。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## データの更新
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- イベント一覧：`src/app/data/events.ts`
+- FAQ・公式SNS：`src/app/data/site.ts`
+- 定期演奏会の出演者・時間割：各イベントディレクトリの `data.ts`
+- 写真・音源：`public/image` と `public/secret/audio`
 
-## Learn More
+イベントにはタイトル、開催日、説明、タグを設定します。詳細ページがある場合は `link` を追加してください。「詳細あり」の絞り込みはリンクの有無で判定します。
 
-To learn more about Next.js, take a look at the following resources:
+日付は `2026年5月2日`、`2026年5月2日, 5月3日`、`2026年5月2日-5月3日`、`2026年5月`、または `2026-05-02` の形式です。最初の日付には必ず年を指定します。複数日程では最後の日まで、月だけの指定では月末まで「これから開催」に分類します。判定は日本時間です。データファイルを更新したら再ビルド・再デプロイしてください。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+過去の詳細ページには、開催当時の記録であることを表示します。イベントの日程や出演情報は確認済みの内容だけを追加してください。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## デザイン
 
-## Deploy on Vercel
+基本構成と既存コンテンツを維持し、実際の活動写真とロゴを中心にしています。濃紺・生成りをベースに、操作箇所にはライム色を使います。特徴は文章、活動は写真、イベントは一覧、FAQは開閉式で表示します。不要な自動ポップアップや表示待ちは設けません。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+色、余白、文字サイズ、画面幅ごとの調整は `src/app/globals.css` で管理します。SNSとFAQは共通データを使用し、画面間で内容が食い違わないようにします。
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## 残している遊びの機能
+
+ホームの「音楽と」を7回、その後「島根大学 軽音楽部の特徴」を7回押すと隠しページへ進めます。見出しはキーボードでも操作できます。セッション内のアクセス許可は既定で60分です。これはイースターエッグの演出であり、機密情報を保護する認証ではありません。
+
+隠しページの音源、バーチャルピアノ、波形編集、ビジュアライザー、ロゴを5回押す追加演出を維持しています。2025年度の部Tページにはカメラ合成機能があります。カメラはユーザー操作で起動し、撮影データはブラウザー内で扱います。
+
+## 検証
+
+```bash
+npm test
+npx tsc --noEmit
+npm run lint
+npm run build
+```
+
+日付処理には複数日程、年の補完、範囲、月単位、日本時間の境界を確認するテストがあります。画面変更時はPCとスマートフォンの幅で、メニュー・検索・FAQ・バンド詳細・隠しページへの遷移も確認してください。
+
+## 環境変数
+
+- `NEXT_PUBLIC_SITE_URL`：メタデータの基準URL。未設定時は既存のサイトURLを使用します。
+- `GA_ID`：Google Analyticsの測定ID。設定されている場合だけ読み込みます。
+
+一時的な画像や検証ファイルはリポジトリにpushしません。

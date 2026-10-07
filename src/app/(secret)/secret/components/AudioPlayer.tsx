@@ -58,15 +58,22 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ onSoundChange }) => {
   const [isMuted, setIsMuted] = useState(false);
   const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null);
   const audioBuffersRef = useRef<Record<string, AudioBuffer>>({});
+  const requestIdRef = useRef(0);
+  const [error, setError] = useState("");
 
   // 特定の音源IDを指定して再生
   const playSpecificSound = async (soundId: string) => {
+    const requestId = ++requestIdRef.current;
+    setError("");
     try {
       // 既存の音源を停止
       if (sourceNodeRef.current) {
+        sourceNodeRef.current.onended = null;
         sourceNodeRef.current.stop();
         sourceNodeRef.current = null;
       }
+      setIsPlaying(false);
+      setPlayingSound(null);
 
       // AudioContextManagerを取得
       const audioManager = AudioContextManager.getInstance();
@@ -80,8 +87,6 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ onSoundChange }) => {
       // 指定された音声ファイルの取得
       const selectedSound = soundSamples.find((sound) => sound.id === soundId);
       if (!selectedSound) return;
-
-      console.log(`Loading sound: ${selectedSound.file}`);
 
       // AudioBufferを取得または作成
       let buffer: AudioBuffer;
@@ -101,9 +106,13 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ onSoundChange }) => {
           audioBuffersRef.current[soundId] = buffer;
         } catch (err) {
           console.error(`Error loading sound file: ${selectedSound.file}`, err);
+          if (requestId === requestIdRef.current)
+            setError("音源を読み込めませんでした。もう一度お試しください。");
           return;
         }
       }
+
+      if (requestId !== requestIdRef.current) return;
 
       // 音源を作成
       const source = ctx.createBufferSource();
@@ -115,6 +124,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ onSoundChange }) => {
 
       // 再生完了時の処理
       source.onended = () => {
+        if (sourceNodeRef.current !== source) return;
         setIsPlaying(false);
         setPlayingSound(null);
         sourceNodeRef.current = null;
@@ -136,6 +146,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ onSoundChange }) => {
       }
     } catch (e) {
       console.error("音声再生エラー", e);
+      if (requestId !== requestIdRef.current) return;
+      setError("音声を再生できませんでした。もう一度お試しください。");
       setIsPlaying(false);
       setPlayingSound(null);
     }
@@ -148,7 +160,9 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ onSoundChange }) => {
 
   // 再生を停止
   const stopSound = () => {
+    requestIdRef.current++;
     if (sourceNodeRef.current) {
+      sourceNodeRef.current.onended = null;
       try {
         sourceNodeRef.current.stop();
       } catch (e) {
@@ -220,6 +234,11 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ onSoundChange }) => {
 
   return (
     <div className="space-y-4">
+      {error && (
+        <p role="alert" className="text-sm text-amber-200">
+          {error}
+        </p>
+      )}
       {/* サウンドコントロール - モバイル向けにレイアウト調整 */}
       <motion.div
         className="bg-black/20 backdrop-blur-sm rounded-lg p-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 sm:justify-between"
@@ -239,6 +258,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ onSoundChange }) => {
           <div className="flex items-center gap-1 w-full sm:w-auto">
             <button
               onClick={toggleMute}
+              aria-label={isMuted ? "ミュートを解除" : "ミュートする"}
               className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10"
             >
               {isMuted ? (
@@ -250,6 +270,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ onSoundChange }) => {
 
             <input
               type="range"
+              aria-label="音量"
               min="0"
               max="1"
               step="0.01"
@@ -265,6 +286,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ onSoundChange }) => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={selectRandomSound}
+              aria-label="ランダムな音源を再生"
               className="w-12 h-12 sm:w-10 sm:h-10 rounded-full bg-purple-600/50 flex items-center justify-center text-white"
             >
               <FaRandom className="text-lg sm:text-base" />
@@ -274,6 +296,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ onSoundChange }) => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={isPlaying ? stopSound : playSound}
+              aria-label={isPlaying ? "音源を停止" : "選択した音源を再生"}
               className={`w-14 h-14 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white ${
                 isPlaying ? "bg-red-600" : "bg-indigo-600"
               }`}

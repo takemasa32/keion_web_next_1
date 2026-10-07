@@ -1,37 +1,23 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import { Metadata } from "next";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import FloatingNav from "./components/FloatingNav";
-
 export const metadata: Metadata = {
   title: "島根大学 軽音楽部",
-  description: "島根大学軽音楽部 紹介ページ",
-  icons: {
-    icon: "./../favicon.ico",
-  },
-  other: {
-    "google-fonts": "https://fonts.googleapis.com/icon?family=Material+Icons",
-    "font-awesome": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css",
-    "material-symbols":
-      "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=optional",
-  },
+  description:
+    "島根大学軽音楽部の活動、ライブ・イベント情報、見学・入部のご案内。初心者も経験者も歓迎しています。",
 };
-
-export const viewport = {
-  viewport: "width=device-width, initial-scale=1, viewport-fit=cover",
-  themeColor: "#4f46e5",
-};
-
-const SubLayout = ({ children }: { children: ReactNode }) => {
+export default function SubLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-screen flex-col">
+      <a className="skip-link" href="#main-content">
+        本文へ移動
+      </a>
       <Header />
-      <main className="flex-grow pt-24 md:pt-28">{children}</main>
+      <main id="main-content" className="flex-grow" tabIndex={-1}>
+        {children}
+      </main>
       <Footer />
-      <FloatingNav />
     </div>
   );
-};
-
-export default SubLayout;
+}

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 import Image from "next/image";
 import CustomImage from "../Components/CustomImage";
@@ -9,8 +10,12 @@ export const metadata: Metadata = {
 };
 const BukatuTPage = () => {
   return (
-    <div className="relative bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-400 min-h-screen py-6 sm:py-8 lg:py-12">
+    <div className="detail-shell relative min-h-screen">
       <div className="container relative z-10 mx-auto px-4">
+        <div className="detail-back">
+          <Link href="/events">← イベント一覧へ</Link>
+        </div>
+        <p className="archive-notice">過去の活動の記録です。日程・出演情報は開催当時のものです。</p>
         <div className="bg-black bg-opacity-50 p-4 rounded-lg mb-8 sm:mb-12">
           <div>
             <h1 className="text-3xl sm:text-4xl font-bold text-center text-white break-words">
@@ -23,7 +28,7 @@ const BukatuTPage = () => {
             <p className="text-base sm:text-lg text-white text-center break-words">
               島根大学軽音楽部の新しい部Tが完成しました！
               <br />
-              今年のデザインは、背面にはベースを弾いている女性が書かれたものとなっています。
+              この年のデザインは、背面にはベースを弾いている女性が書かれたものとなっています。
             </p>
           </div>
         </div>
@@ -31,13 +36,13 @@ const BukatuTPage = () => {
         {/* Tシャツデザイン */}
         <div className="mt-8 sm:mt-12 bg-white bg-opacity-80 p-6 rounded-lg shadow-lg">
           <h2 className="text-2xl sm:text-2xl font-bold text-center text-black mb-6 sm:mb-8 break-words">
-            今年の部Tが完成しました！
+            部Tのデザイン
           </h2>
           <div className="flex justify-center space-x-8">
             <div className="flex flex-col items-center">
               <CustomImage
                 src="/image/2024T/keionBackImage.JPG"
-                alt="今年のTシャツ背面デザイン"
+                alt="この年のTシャツ背面デザイン"
                 width={400}
                 height={400}
                 className="rounded-lg shadow-lg object-cover"
@@ -49,7 +54,7 @@ const BukatuTPage = () => {
             <div className="flex flex-col items-center">
               <CustomImage
                 src="/image/2024T/keionMiniLogo.JPG"
-                alt="今年のTシャツワンポイントデザイン"
+                alt="この年のTシャツワンポイントデザイン"
                 width={400}
                 height={400}
                 className="rounded-lg shadow-lg object-cover"
@@ -60,7 +65,7 @@ const BukatuTPage = () => {
             </div>
           </div>
           <p className="text-base sm:text-lg text-center text-gray-700 mt-4 break-words">
-            今年のTシャツは、このようなデザインとなっています。部員がデザインしました！
+            この年のTシャツは、このようなデザインとなっています。部員がデザインしました！
           </p>
         </div>
         {/* イベント情報 */}

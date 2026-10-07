@@ -18,10 +18,17 @@ const SecretPage: React.FC = () => {
 
         // アクセス許可があるか確認
         if (accessAllowed === "true" && accessTime) {
-          const timestamp = parseInt(accessTime);
+          const timestamp = Number(accessTime);
+          const duration =
+            Number(sessionStorage.getItem("secretExpirationMinutes") ?? "60") * 60 * 1000;
           const currentTime = new Date().getTime();
           // 60分以内のアクセスであれば許可
-          if (currentTime - timestamp < 60 * 60 * 1000) {
+          if (
+            Number.isFinite(timestamp) &&
+            duration > 0 &&
+            currentTime >= timestamp &&
+            currentTime - timestamp < duration
+          ) {
             setHasAccess(true);
           }
         }
@@ -33,7 +40,7 @@ const SecretPage: React.FC = () => {
     };
 
     // 少し遅延させて検証（よりスムーズな体験のため）
-    setTimeout(checkAccess, 300);
+    checkAccess();
   }, []);
 
   if (loading) {

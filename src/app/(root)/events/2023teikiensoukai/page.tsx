@@ -15,8 +15,14 @@ export const metadata: Metadata = {
 const EventsPage = () => {
   return (
     <>
-      <div className="relative bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-400 min-h-screen py-6 sm:py-8 lg:py-12">
+      <div className="detail-shell relative min-h-screen">
         <div className="container relative z-10 mx-auto px-4">
+          <div className="detail-back">
+            <Link href="/events">← イベント一覧へ</Link>
+          </div>
+          <p className="archive-notice">
+            過去の活動の記録です。日程・出演情報は開催当時のものです。
+          </p>
           <div className="bg-black bg-opacity-50 p-4 rounded-lg mb-8 sm:mb-12">
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold text-center text-white break-words">
@@ -29,7 +35,7 @@ const EventsPage = () => {
               <p className="text-base sm:text-lg text-white text-center break-words">
                 〜定期演奏会？じゃあ何？みんなこの日のために頑張ってきたってこと？
                 <br />
-                全員で協力して、それで今年の定演も大成功しちゃえばいいんだ？〜
+                全員で協力して、それでこの年の定演も大成功しちゃえばいいんだ？〜
               </p>
             </div>
           </div>
@@ -65,7 +71,7 @@ const EventsPage = () => {
                 <div className="flex flex-col items-center">
                   <CustomImage
                     src="/image/2023T/2023Tシャツ.jpg"
-                    alt="今年のTシャツワンポイントデザイン"
+                    alt="この年のTシャツワンポイントデザイン"
                     width={400}
                     height={400}
                     className="rounded-lg shadow-lg object-cover"
@@ -77,12 +83,12 @@ const EventsPage = () => {
               </div>
             </Link>
             <p className="text-base sm:text-lg text-center text-gray-700 mt-4 break-words">
-              今年のTシャツは、このようになりました。部員がデザインしました！
+              この年のTシャツは、このようになりました。部員がデザインしました！
             </p>
           </div>
           <div className="mt-8 sm:mt-12 bg-white bg-opacity-80 p-6 rounded-lg shadow-lg">
             <div className="mb-8 text-center">
-              <p className="text-lg text-gray-500">詳細な情報については以下のSNSから？</p>
+              <p className="text-lg text-gray-500">お問い合わせは公式SNSから。</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <a
@@ -92,7 +98,7 @@ const EventsPage = () => {
                 className="flex items-center justify-center p-6 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600 transition duration-300"
               >
                 <i className="fab fa-twitter fa-3x"></i>
-                <span className="ml-4 text-xl font-semibold">Twitter</span>
+                <span className="ml-4 text-xl font-semibold">X / Twitter</span>
               </a>
               <a
                 href="https://www.instagram.com/shimadai_keion/"

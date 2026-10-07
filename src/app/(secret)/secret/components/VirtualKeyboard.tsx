@@ -173,6 +173,23 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
   const soundBuffersRef = useRef<Record<string, AudioBuffer>>({});
   const keyMappingRef = useRef<Map<string, PianoKey>>(new Map());
   const waveformMenuRef = useRef<HTMLDivElement>(null);
+  const activeSourcesRef = useRef<Set<AudioScheduledSourceNode>>(new Set());
+  const noteTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    mountedRef.current = true;
+    const activeSources = activeSourcesRef.current;
+    return () => {
+      mountedRef.current = false;
+      clearTimeout(noteTimerRef.current);
+      activeSources.forEach((source) => {
+        try {
+          source.stop();
+        } catch {}
+      });
+      activeSources.clear();
+    };
+  }, []);
 
   // オクターブに基づいてキーボードレイアウトを更新
   useEffect(() => {
@@ -192,6 +209,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
   // 現在選択されているサウンドIDが変更されたときにバッファをロード
   useEffect(() => {
     if (!currentSoundId) return;
+    let cancelled = false;
 
     const loadSelectedSound = async () => {
       const selectedSound = soundSamples.find((s) => s.id === currentSoundId);
@@ -213,13 +231,16 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
           soundBuffersRef.current[currentSoundId] = buffer;
         }
 
-        audioBufferRef.current = soundBuffersRef.current[currentSoundId];
+        if (!cancelled) audioBufferRef.current = soundBuffersRef.current[currentSoundId];
       } catch (err) {
         console.error("サウンドファイルのロードエラー:", err);
       }
     };
 
     loadSelectedSound();
+    return () => {
+      cancelled = true;
+    };
   }, [currentSoundId]);
 
   // 波形メニュー外のクリックを検知してメニューを閉じる
@@ -238,22 +259,77 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
 
   // --- playNote, handleOctaveChangeをuseEffectより前に移動・重複排除 ---
   const playNote = useCallback(
-    (key: PianoKey) => {
+    async (key: PianoKey) => {
       setActiveKey(key.note);
-      setTimeout(() => setActiveKey(null), 300);
+      clearTimeout(noteTimerRef.current);
+      noteTimerRef.current = setTimeout(() => setActiveKey(null), 300);
 
       try {
         // AudioContextManagerを使用
         const audioManager = AudioContextManager.getInstance();
         const ctx = audioManager.getContext();
-        // ...既存のplayNote本体の処理...
+        if (ctx.state === "suspended") await ctx.resume();
+        if (!mountedRef.current) return;
+        const start = ctx.currentTime;
+        const track = (source: AudioScheduledSourceNode, nodes: AudioNode[] = []) => {
+          activeSourcesRef.current.add(source);
+          source.onended = () => {
+            activeSourcesRef.current.delete(source);
+            source.disconnect();
+            nodes.forEach((node) => node.disconnect());
+          };
+        };
+        if (playMode !== "effectOnly") {
+          const oscillator = ctx.createOscillator();
+          const envelope = ctx.createGain();
+          const filter = ctx.createBiquadFilter();
+          oscillator.type = waveformType;
+          oscillator.frequency.value = key.frequency;
+          oscillator.detune.value = waveformParams.detune;
+          filter.type = waveformParams.filterType;
+          filter.frequency.value = waveformParams.filterFreq;
+          filter.Q.value = waveformParams.filterQ;
+          const peak = 0.18;
+          const attackEnd = start + Math.max(0.01, waveformParams.attack);
+          const decayEnd = attackEnd + Math.max(0.01, waveformParams.decay);
+          const releaseStart = decayEnd + 0.2;
+          const end = releaseStart + Math.max(0.01, waveformParams.release);
+          envelope.gain.setValueAtTime(0, start);
+          envelope.gain.linearRampToValueAtTime(peak, attackEnd);
+          envelope.gain.linearRampToValueAtTime(peak * waveformParams.sustain, decayEnd);
+          envelope.gain.setValueAtTime(peak * waveformParams.sustain, releaseStart);
+          envelope.gain.linearRampToValueAtTime(0, end);
+          oscillator.connect(filter);
+          filter.connect(envelope);
+          audioManager.connectSource(envelope);
+          track(oscillator, [filter, envelope]);
+          if (waveformParams.vibratoDepth > 0 && waveformParams.vibratoRate > 0) {
+            const vibrato = ctx.createOscillator();
+            const depth = ctx.createGain();
+            vibrato.frequency.value = waveformParams.vibratoRate;
+            depth.gain.value = waveformParams.vibratoDepth;
+            vibrato.connect(depth);
+            depth.connect(oscillator.detune);
+            track(vibrato, [depth]);
+            vibrato.start(start);
+            vibrato.stop(end + 0.02);
+          }
+          oscillator.start(start);
+          oscillator.stop(end + 0.02);
+        }
+        if (playMode !== "pianoOnly" && audioBufferRef.current) {
+          const sample = ctx.createBufferSource();
+          sample.buffer = audioBufferRef.current;
+          sample.playbackRate.value = key.frequency / calculateFrequency("C", 3);
+          audioManager.connectSource(sample);
+          track(sample);
+          sample.start(start);
+        }
       } catch (err) {
         console.error("サウンドファイルのロードエラー:", err);
       }
     },
-    [
-      /* 必要な依存配列をここに */
-    ]
+    [playMode, waveformType, waveformParams]
   );
 
   const handleOctaveChange = useCallback((change: number) => {
@@ -268,13 +344,24 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.repeat) return; // キーリピートを防ぐ
+      if (
+        e.ctrlKey ||
+        e.metaKey ||
+        e.altKey ||
+        (e.target instanceof HTMLElement &&
+          e.target.closest("input, select, textarea, [contenteditable='true']"))
+      )
+        return;
 
       const key = keyMappingRef.current.get(e.key.toLowerCase());
       if (key) {
+        e.preventDefault();
         playNote(key);
       } else if (e.key === "ArrowUp") {
+        e.preventDefault();
         handleOctaveChange(1);
       } else if (e.key === "ArrowDown") {
+        e.preventDefault();
         handleOctaveChange(-1);
       }
     };
@@ -680,6 +767,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
         <div className="flex items-center gap-2">
           <motion.button
             onClick={() => handleOctaveChange(-1)}
+            aria-label="オクターブを下げる"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             disabled={baseOctave <= 0}
@@ -698,6 +786,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
 
           <motion.button
             onClick={() => handleOctaveChange(1)}
+            aria-label="オクターブを上げる"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             disabled={baseOctave >= 7}
@@ -740,8 +829,11 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
             const { note, octave } = getNoteAndOctave(key.note);
 
             return (
-              <motion.div
+              <motion.button
                 key={key.note}
+                type="button"
+                aria-label={key.label + "を鳴らす"}
+                aria-keyshortcuts={key.keyboardKey}
                 className={`relative ${isWhiteKey ? "white-key z-0" : "black-key z-10"}`}
                 animate={{
                   backgroundColor: isActive
@@ -749,8 +841,8 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
                       ? "rgba(147, 51, 234, 0.9)"
                       : "rgba(236, 72, 153, 0.9)"
                     : isWhiteKey
-                    ? "rgba(255, 255, 255, 0.9)"
-                    : "rgba(0, 0, 0, 0.9)",
+                      ? "rgba(255, 255, 255, 0.9)"
+                      : "rgba(0, 0, 0, 0.9)",
                   y: isActive ? 4 : 0,
                 }}
                 transition={{ duration: 0.1 }}
@@ -787,7 +879,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
                     </span>
                   )}
                 </div>
-              </motion.div>
+              </motion.button>
             );
           })}
         </div>

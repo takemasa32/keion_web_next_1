@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/image/keionBackImage.JPG",
+        url: "/image/2024T/keionBackImage.JPG",
       },
     ],
   },
@@ -30,15 +30,21 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "島根大学軽音楽部 第58回定期演奏会",
     description: "島根大学軽音楽部 第58回定期演奏会の紹介ページです。",
-    images: ["/image/keionBackImage.JPG"],
+    images: ["/image/2024T/keionBackImage.JPG"],
   },
 };
 
 const EventsPage = () => {
   return (
     <>
-      <div className="relative bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-400 min-h-screen py-6 sm:py-8 lg:py-12">
+      <div className="detail-shell relative min-h-screen">
         <div className="container relative z-10 mx-auto px-4">
+          <div className="detail-back">
+            <Link href="/events">← イベント一覧へ</Link>
+          </div>
+          <p className="archive-notice">
+            過去の活動の記録です。日程・出演情報は開催当時のものです。
+          </p>
           <div className="bg-black bg-opacity-50 p-4 rounded-lg mb-8 sm:mb-12">
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold text-center text-white break-words">
@@ -170,14 +176,14 @@ const EventsPage = () => {
           </div>
           <div className="mt-8 sm:mt-12 bg-white bg-opacity-80 p-6 rounded-lg shadow-lg">
             <h2 className="text-2xl sm:text-2xl font-bold text-center text-black mb-6 sm:mb-8 break-words">
-              今年の部Tが完成しました！
+              部Tのデザイン
             </h2>
             <Link href="/events/2024BukatuT">
               <div className="flex justify-center space-x-8 cursor-pointer">
                 <div className="flex flex-col items-center">
                   <CustomImage
-                    src="/image/keionBackImage.JPG"
-                    alt="今年のTシャツ背面デザイン"
+                    src="/image/2024T/keionBackImage.JPG"
+                    alt="この年のTシャツ背面デザイン"
                     width={400}
                     height={400}
                     className="rounded-lg shadow-lg object-cover"
@@ -189,7 +195,7 @@ const EventsPage = () => {
                 <div className="flex flex-col items-center">
                   <CustomImage
                     src="/image/2024keionMiniLogo.JPG"
-                    alt="今年のTシャツワンポイントデザイン"
+                    alt="この年のTシャツワンポイントデザイン"
                     width={400}
                     height={400}
                     className="rounded-lg shadow-lg object-cover"
@@ -201,12 +207,12 @@ const EventsPage = () => {
               </div>
             </Link>
             <p className="text-base sm:text-lg text-center text-gray-700 mt-4 break-words">
-              今年のTシャツは、このようになりました。部員がデザインしました！
+              この年のTシャツは、このようになりました。部員がデザインしました！
             </p>
           </div>
           <div id="sns" className="mt-8 sm:mt-12 bg-white bg-opacity-80 p-6 rounded-lg shadow-lg">
             <div className="mb-8 text-center">
-              <p className="text-lg text-gray-500">詳細な情報については以下のSNSから？</p>
+              <p className="text-lg text-gray-500">お問い合わせは公式SNSから。</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <a
@@ -216,7 +222,7 @@ const EventsPage = () => {
                 className="flex items-center justify-center p-6 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600 transition duration-300"
               >
                 <i className="fab fa-twitter fa-3x"></i>
-                <span className="ml-4 text-xl font-semibold">Twitter</span>
+                <span className="ml-4 text-xl font-semibold">X / Twitter</span>
               </a>
               <a
                 href="https://www.instagram.com/shimadai_keion/"

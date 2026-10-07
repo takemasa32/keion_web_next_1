@@ -4,6 +4,7 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "🎵 | 島根大学軽音楽部",
   description: "特別なコンテンツページ",
+  robots: { index: false, follow: false },
 };
 
 export default function SecretLayout({ children }: { children: React.ReactNode }) {

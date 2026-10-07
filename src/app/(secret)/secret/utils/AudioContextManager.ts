@@ -7,6 +7,7 @@ class AudioContextManager {
   private audioContext: AudioContext | null = null;
   private analyzer: AnalyserNode | null = null;
   private gainNode: GainNode | null = null;
+  private volume = 0.7;
   // 音声ファイルのバッファをキャッシュ
   private audioBuffers: Map<string, AudioBuffer> = new Map();
 
@@ -58,7 +59,7 @@ class AudioContextManager {
 
     // ゲインノードを作成
     this.gainNode = this.audioContext.createGain();
-    this.gainNode.gain.value = 1.0;
+    this.gainNode.gain.value = this.volume;
 
     // ノードを接続
     this.gainNode.connect(this.analyzer);
@@ -117,8 +118,9 @@ class AudioContextManager {
    * 音量を設定します
    */
   public setVolume(volume: number): void {
+    this.volume = Math.max(0, Math.min(1, volume));
     if (this.gainNode) {
-      this.gainNode.gain.value = volume;
+      this.gainNode.gain.value = this.volume;
     }
   }
 

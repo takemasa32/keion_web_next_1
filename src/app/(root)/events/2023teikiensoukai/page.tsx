@@ -101,7 +101,7 @@ const EventsPage = () => {
                 <span className="ml-4 text-xl font-semibold">X / Twitter</span>
               </a>
               <a
-                href="https://www.instagram.com/shimadai_keion/"
+                href="https://www.instagram.com/su_keion_matsue/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center p-6 bg-pink-500 text-white rounded-lg shadow-lg hover:bg-pink-600 transition duration-300"

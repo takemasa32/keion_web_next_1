@@ -2,8 +2,8 @@ export const socialLinks = [
   { name: "X / Twitter", handle: "@shimaneU_keion", href: "https://twitter.com/shimaneU_keion" },
   {
     name: "Instagram",
-    handle: "@shimadai_keion",
-    href: "https://www.instagram.com/shimadai_keion/",
+    handle: "@su_keion_matsue",
+    href: "https://www.instagram.com/su_keion_matsue/",
   },
 ];
 

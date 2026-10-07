@@ -11,11 +11,52 @@ const DETAIL_TAG = "詳細あり";
 
 export const events: Event[] = [
   {
+    title: "定期演奏会争奪ライブ",
+    date: "2026年11月7日",
+    description: "定期演奏会への出演バンドを決めるライブです。",
+    image: "/icons/icon-512x512.png",
+    tags: ["定期ライブ", "ライブ"],
+  },
+  {
+    title: "2026年島根大学 大学祭",
+    date: "2026年10月11日-10月12日",
+    description: "島根大学の大学祭で行う軽音楽部のライブです。",
+    image: "/icons/icon-512x512.png",
+    tags: ["大学祭", "ライブ"],
+  },
+  {
+    title: "OS争奪ライブ",
+    date: "2026年9月19日, 9月22日, 9月23日",
+    description: "大学祭のオープンステージへの出演バンドを決めるライブです。",
+    image: "/icons/icon-512x512.png",
+    tags: ["大学祭", "定期ライブ", "ライブ"],
+  },
+  {
+    title: "1・2回生ライブ",
+    date: "2026年8月26日-8月27日",
+    description: "1・2回生が出演するライブです。",
+    image: "/icons/icon-512x512.png",
+    tags: ["定期ライブ", "ライブ", "新歓"],
+  },
+  {
+    title: "七夕ライブ",
+    date: "2026年7月29日-7月31日",
+    description: "前期の締めくくりとなる部内ライブです。",
+    image: "/icons/icon-512x512.png",
+    tags: ["定期ライブ", "ライブ"],
+  },
+  {
+    title: "お手並み拝見ライブ",
+    date: "2026年6月20日, 6月27日, 6月28日",
+    description: "新入部員が初めて出演する部内ライブです。",
+    image: "/icons/icon-512x512.png",
+    tags: ["新歓", "定期ライブ", "ライブ"],
+  },
+  {
     title: "新歓ライブ",
-    date: "2026年5月2日, 5月3日, 5月4日",
-    description:
-      "部活動選びの参考としていただけたら幸いです。ご観覧いただくことを心よりお待ちしております。詳細は確定次第SNSなどでお伝えします!",
-    image: "/image/2025T/keionMiniLogo.JPG",
+    date: "2026年5月2日-5月4日",
+    description: "入部を検討している方に向けたライブです。",
+    image: "/icons/icon-512x512.png",
     tags: ["新歓", "定期ライブ", "ライブ"],
   },
   {

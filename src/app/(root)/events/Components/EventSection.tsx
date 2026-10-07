@@ -88,6 +88,7 @@ const EventSection: React.FC<EventSectionProps> = ({
               </div>
             )}
             <iframe
+              title={location + "の地図"}
               src={mapSrc}
               width="100%"
               height="100%"

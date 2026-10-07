@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import Image from "next/image";
 import EventList from "../Components/EventList";
 import { Metadata } from "next/dist/lib/metadata/types/metadata-interface";
@@ -8,9 +9,13 @@ export const metadata: Metadata = {
 };
 const BukatuTPage = () => {
   return (
-    <div className="relative bg-gradient-to-r from-teal-400 via-cyan-500 to-green-500 min-h-screen py-6 sm:py-8 lg:py-12">
+    <div className="detail-shell relative min-h-screen">
       <div className="container relative z-10 mx-auto px-4">
-        <div className="bg-white bg-opacity-10 p-4 rounded-lg mb-8 sm:mb-12">
+        <div className="detail-back">
+          <Link href="/events">← イベント一覧へ</Link>
+        </div>
+        <p className="archive-notice">過去の活動の記録です。日程・掲載情報は当時のものです。</p>
+        <div className="bg-black bg-opacity-50 p-4 rounded-lg mb-8 sm:mb-12">
           <div>
             <h1 className="text-3xl sm:text-4xl font-bold text-center text-white break-words">
               2023年
@@ -22,7 +27,7 @@ const BukatuTPage = () => {
             <p className="text-base sm:text-lg text-white text-center break-words">
               島根大学軽音楽部の新しい部Tが完成しました！
               <br />
-              今年のデザインは、背面にはギターを弾いている女性が描かれたものとなっています。
+              この年のデザインは、背面にはギターを弾いている女性が描かれたものとなっています。
             </p>
           </div>
         </div>

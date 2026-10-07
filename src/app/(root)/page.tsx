@@ -102,7 +102,7 @@ export default function Home() {
               ? upcoming[0].date + " ｜ " + upcoming[0].title
               : "最新の活動予定は、公式SNSでお知らせしています。"}
           </p>
-          <Link href={upcoming[0]?.link ?? "/sns"}>
+          <Link href={upcoming[0] ? upcoming[0].link ?? "/events" : "/sns"}>
             {upcoming[0] ? "イベントを見る ↗" : "公式SNSへ ↗"}
           </Link>
         </div>

@@ -4,7 +4,7 @@ Next.js App Router を使った紹介サイトです。DBは使用せず、イ�
 
 ## 開発
 
-基本的にWSLのUbuntu上で実行します。Node.js 20以上を使用してください。
+基本的にWSLのUbuntu上で実行します。Node.jsのバージョンはCIとデプロイ環境の設定に合わせてください。
 
 ```bash
 npm ci
@@ -38,6 +38,12 @@ npm run dev
 
 隠しページの音源、バーチャルピアノ、波形編集、ビジュアライザー、ロゴを5回押す追加演出を維持しています。2025年度の部Tページにはカメラ合成機能があります。カメラはユーザー操作で起動し、撮影データはブラウザー内で扱います。
 
+## ブランチ運用
+
+[GitHub Flow](https://docs.github.com/en/get-started/using-github/github-flow)を採用します。最新の `main` から短命の作業ブランチを作り、`main` 向けのPRで変更を確認します。必須チェックの成功とレビューの結果を確認してからマージします。リモートの作業ブランチはマージ後に自動削除されます。`main` への直接pushやforce pushは通常の運用にしません。
+
+`develop`・`release`・`hotfix` を長期ブランチとして新設しません。既存の `develop` は当面、過去の履歴を保持するために残し、新しい作業には使用しません。具体的な手順は [CONTRIBUTING.md](CONTRIBUTING.md) を参照してください。
+
 ## 検証
 
 ```bash
@@ -51,7 +57,7 @@ npm run build
 
 ## 環境変数
 
-- `NEXT_PUBLIC_SITE_URL`：メタデータの基準URL。未設定時は既存のサイトURLを使用します。
+- `NEXT_PUBLIC_SITE_URL`：メタデータの基準URL。未設定時は `https://www.shimadaikeion.com` を使用します。
 - `GA_ID`：Google Analyticsの測定ID。設定されている場合だけ読み込みます。
 
-一時的な画像や検証ファイルはリポジトリにpushしません。
+一時的な画像や検証用ファイルはリポジトリにコミット・pushしません。

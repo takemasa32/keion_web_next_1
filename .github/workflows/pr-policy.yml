@@ -1,0 +1,23 @@
+name: GitHub Flow policy
+
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  pr-base:
+    name: PR base
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Require main as the integration branch
+        env:
+          BASE_BRANCH: ${{ github.base_ref }}
+        run: |
+          if [ "$BASE_BRANCH" != "main" ]; then
+            echo "::error::GitHub Flow requires pull requests to target main."
+            exit 1
+          fi

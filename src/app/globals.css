@@ -1021,3 +1021,213 @@ h2 {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* The hidden room shares the site's palette, with a darker studio surface. */
+.secret-studio {
+  min-height: 100vh;
+  background: #17252c;
+  color: #f4f3e9;
+}
+.secret-studio button,
+.secret-studio a,
+.secret-studio input,
+.secret-studio select {
+  outline-offset: 5px;
+}
+.secret-studio :focus-visible {
+  outline: 2px solid #d4e785;
+}
+.studio-header {
+  max-width: 1120px;
+  margin: auto;
+  padding: 24px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 1px solid #435158;
+}
+.studio-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-weight: 700;
+}
+.studio-brand button {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #435158;
+  color: #d4e785;
+  border-radius: 6px;
+}
+.studio-brand small {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: #acbbb9;
+  margin-top: 4px;
+}
+.studio-header > a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.studio-main {
+  max-width: 1000px;
+  margin: auto;
+  padding: 64px 32px 72px;
+}
+.studio-eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  color: #d4e785;
+  margin-bottom: 16px;
+}
+.studio-intro h1 {
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  margin-bottom: 24px;
+}
+.studio-intro > p:last-child {
+  line-height: 1.9;
+  color: #bdc9c8;
+  font-size: 14px;
+}
+.studio-section {
+  margin-top: 48px;
+}
+.studio-section-title {
+  display: flex;
+  gap: 18px;
+  align-items: baseline;
+  margin-bottom: 20px;
+}
+.studio-section-title > span {
+  color: #d4e785;
+  font-size: 12px;
+  font-family: monospace;
+}
+.studio-section-title h2 {
+  font-size: 21px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.studio-section-title p {
+  color: #bdc9c8;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.studio-discovery {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 20px;
+  margin-top: 32px;
+  background: #d4e785;
+  color: #17252c;
+  border-radius: 6px;
+}
+.studio-discovery p {
+  font-size: 13px;
+  margin-top: 6px;
+  line-height: 1.7;
+}
+.studio-monitor {
+  border: 1px solid #435158;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.studio-monitor canvas {
+  display: block;
+  width: 100%;
+  height: 180px;
+}
+.studio-monitor > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 16px;
+  background: #202d34;
+  font-size: 12px;
+  color: #bdc9c8;
+}
+.studio-monitor button {
+  padding: 8px 12px;
+  border: 1px solid #657477;
+  border-radius: 4px;
+  white-space: nowrap;
+  color: #f4f3e9;
+}
+.studio-footer {
+  max-width: 1120px;
+  margin: auto;
+  border-top: 1px solid #435158;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 32px;
+  font-size: 11px;
+  color: #bdc9c8;
+}
+.studio-locked {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 32px 20px;
+}
+.studio-locked > svg {
+  font-size: 32px;
+  color: #d4e785;
+  margin-bottom: 32px;
+}
+.studio-locked h1 {
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+.studio-locked > p:not(.studio-eyebrow) {
+  color: #bdc9c8;
+  line-height: 1.9;
+  font-size: 14px;
+}
+.studio-locked > a {
+  margin-top: 32px;
+  background: #d4e785;
+  color: #17252c;
+  padding: 14px 20px;
+  border-radius: 4px;
+}
+@media (max-width: 640px) {
+  .studio-header {
+    padding: 16px;
+    gap: 12px;
+  }
+  .studio-brand {
+    gap: 10px;
+    font-size: 12px;
+  }
+  .studio-header > a {
+    font-size: 12px;
+  }
+  .studio-main {
+    padding: 40px 16px 48px;
+  }
+  .studio-section {
+    margin-top: 36px;
+  }
+  .studio-monitor canvas {
+    height: 130px;
+  }
+  .studio-footer {
+    padding: 20px 16px;
+    flex-wrap: wrap;
+  }
+}

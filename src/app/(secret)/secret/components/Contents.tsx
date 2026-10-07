@@ -1,171 +1,89 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import { FaLock, FaHome, FaGuitar, FaMusic, FaMagic, FaStar } from "react-icons/fa";
+import { useState } from "react";
+import Link from "next/link";
+import { FaMusic, FaArrowLeft } from "react-icons/fa";
 import VirtualKeyboard from "./VirtualKeyboard";
 import MusicVisualizer from "./MusicVisualizer";
 import AudioPlayer from "./AudioPlayer";
 
-const Contents: React.FC = () => {
-  const router = useRouter();
-  const [showWelcome, setShowWelcome] = useState(true);
-  const [easterEggFound, setEasterEggFound] = useState(false);
+export default function Contents() {
   const [clickCount, setClickCount] = useState(0);
   const [selectedSoundId, setSelectedSoundId] = useState("wii");
-
-  // 3秒後にウェルカム画面を非表示
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowWelcome(false);
-    }, 600);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // イースターエッグのための隠しクリックカウンター
-  const handleLogoClick = () => {
-    setClickCount((prev) => {
-      const newCount = prev + 1;
-      if (newCount === 5) {
-        // イースターエッグ発動
-        setEasterEggFound(true);
-      }
-      return newCount;
-    });
-  };
-
-  // 音源選択時の処理（AudioPlayerから呼び出される）
-  const handleSoundChange = (soundId: string) => {
-    setSelectedSoundId(soundId);
-  };
+  const easterEggFound = clickCount >= 5;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#17252c]">
-      {/* ウェルカム画面 - スマホ向けにテキストサイズ調整 */}
-      <motion.div
-        aria-hidden={!showWelcome}
-        initial={{ opacity: 1 }}
-        animate={{ opacity: showWelcome ? 1 : 0 }}
-        transition={{ duration: 0.8 }}
-        className={`fixed inset-0 z-50 flex items-center justify-center bg-black ${
-          showWelcome ? "block" : "pointer-events-none"
-        }`}
-      >
-        <motion.div
-          initial={{ scale: 0.8 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 100 }}
-          className="text-center px-4"
-        >
-          <motion.div
-            animate={{
-              rotate: [0, 10, -10, 0],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{ duration: 2, repeat: 1 }}
-            className="mb-6"
+    <div className="secret-studio">
+      <header className="studio-header">
+        <div className="studio-brand">
+          <button
+            type="button"
+            aria-label="音楽のロゴ"
+            onClick={() => setClickCount((count) => Math.min(count + 1, 5))}
           >
-            <FaGuitar className="text-6xl sm:text-8xl mx-auto text-purple-500" />
-          </motion.div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3">シークレットモード</h1>
-          <p className="text-sm sm:text-base text-gray-300">
-            特別なページを発見しました！音楽を奏でて楽しんでください
-          </p>
-        </motion.div>
-      </motion.div>
-
-      {/* ヘッダー - モバイル向けに調整 */}
-      <motion.header
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0, duration: 0.5 }}
-        className="bg-black/30 backdrop-blur-md shadow-lg p-3 sm:p-4 sticky top-0 z-30"
-      >
-        <div className="container mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-2 sm:space-x-3">
-            <motion.button
-              aria-label="音楽のロゴ"
-              whileHover={{ rotate: [0, -10, 10, -5, 5, 0] }}
-              transition={{ duration: 0.5 }}
-              onClick={handleLogoClick}
-              className="cursor-pointer"
-            >
-              <FaMusic className="text-2xl sm:text-3xl text-purple-400" />
-            </motion.button>
-            <h1 className="text-lg sm:text-xl font-bold text-white">軽音部 シークレット</h1>
-          </div>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => router.push("/")}
-            className="flex items-center space-x-1 sm:space-x-2 py-1.5 px-3 sm:py-2 sm:px-4 rounded-full bg-gray-800 hover:bg-gray-700 text-white text-xs sm:text-sm"
-          >
-            <FaHome />
-            <span>ホームへ</span>
-          </motion.button>
+            <FaMusic aria-hidden="true" />
+          </button>
+          <span>
+            島根大学 軽音楽部 <small>SECRET ROOM</small>
+          </span>
         </div>
-      </motion.header>
-
-      {/* メインコンテンツ - パディング調整 */}
-      <motion.main
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0, duration: 0.8 }}
-        className="flex-1 container mx-auto p-3 sm:p-4 md:p-6"
-      >
-        {/* イースターエッグ効果 */}
+        <Link href="/">
+          <FaArrowLeft aria-hidden="true" /> ホームへ
+        </Link>
+      </header>
+      <main className="studio-main">
+        <div className="studio-intro">
+          <p className="studio-eyebrow">部室の、もうひとつ奥。</p>
+          <h1>ちょっと、音で遊ぼう。</h1>
+          <p>
+            好きな音を選んで、鍵盤を鳴らしてみてください。
+            <br />
+            いつもの軽音部とは少し違う、小さな音の実験室です。
+          </p>
+        </div>
         {easterEggFound && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 p-4 sm:p-6 rounded-xl shadow-lg mb-6 text-center"
-          >
-            <FaMagic className="text-3xl sm:text-4xl text-white mx-auto mb-3" />
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">隠し要素を発見！</h2>
-            <p className="text-sm text-white/90">
-              おめでとうございます！あなたは隠し機能を発見しました。
-            </p>
-          </motion.div>
+          <aside className="studio-discovery" role="status">
+            <FaMusic aria-hidden="true" />
+            <div>
+              <strong>隠し要素を発見！</strong>
+              <p>ここまで見つけたあなたも、今日から部室の常連です。</p>
+            </div>
+          </aside>
         )}
-
-        {/* 音楽ビジュアライザー */}
-        <div className="mb-6">
-          <h2 className="text-lg sm:text-xl font-bold text-white mb-3 flex items-center">
-            <FaStar className="mr-2 text-yellow-400" /> 音の視覚化
-          </h2>
-          <MusicVisualizer />
-        </div>
-
-        {/* バーチャルキーボード */}
-        <div className="mb-6">
-          <h2 className="text-lg sm:text-xl font-bold text-white mb-3">音楽を奏でる</h2>
+        <section className="studio-section" aria-labelledby="studio-sounds">
+          <div className="studio-section-title">
+            <span>01</span>
+            <div>
+              <h2 id="studio-sounds">音を選ぶ</h2>
+              <p>音源を押すと再生します。選んだ音は鍵盤にも反映されます。</p>
+            </div>
+          </div>
+          <AudioPlayer onSoundChange={setSelectedSoundId} />
+        </section>
+        <section className="studio-section" aria-labelledby="studio-keys">
+          <div className="studio-section-title">
+            <span>02</span>
+            <div>
+              <h2 id="studio-keys">鍵盤で遊ぶ</h2>
+              <p>鍵盤をタップ、または表示されたキーで演奏できます。</p>
+            </div>
+          </div>
           <VirtualKeyboard currentSoundId={selectedSoundId} />
-        </div>
-
-        {/* オーディオプレイヤー */}
-        <div className="mb-6">
-          <h2 className="text-lg sm:text-xl font-bold text-white mb-3">サウンドエフェクト</h2>
-          <AudioPlayer onSoundChange={handleSoundChange} />
-        </div>
-      </motion.main>
-
-      {/* フッター - モバイル用に調整 */}
-      <motion.footer
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0, duration: 0.5 }}
-        className="bg-black/40 backdrop-blur-sm py-4 px-3 sm:p-6"
-      >
-        <div className="container mx-auto text-center">
-          <p className="text-white/50 text-xs sm:text-sm">
-            島根大学軽音楽部 - シークレットページ © {new Date().getFullYear()}
-          </p>
-          <p className="text-white/30 text-xs mt-1 sm:mt-2">音楽の力で世界を変えよう</p>
-        </div>
-      </motion.footer>
+        </section>
+        <section className="studio-section" aria-labelledby="studio-monitor">
+          <div className="studio-section-title">
+            <span>03</span>
+            <div>
+              <h2 id="studio-monitor">音を眺める</h2>
+              <p>鳴らした音の強さが、バーの動きに変わります。</p>
+            </div>
+          </div>
+          <MusicVisualizer />
+        </section>
+      </main>
+      <footer className="studio-footer">
+        <span>島根大学 軽音楽部 / SECRET ROOM</span>
+        <Link href="/">ホームに戻る ↗</Link>
+      </footer>
     </div>
   );
-};
-
-export default Contents;
+}

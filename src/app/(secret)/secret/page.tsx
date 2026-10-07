@@ -1,11 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Contents from "./components/Contents";
 import NotFound from "./components/NotFound";
 
 const SecretPage: React.FC = () => {
-  const router = useRouter();
   const [hasAccess, setHasAccess] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -39,14 +37,13 @@ const SecretPage: React.FC = () => {
       setLoading(false);
     };
 
-    // 少し遅延させて検証（よりスムーズな体験のため）
     checkAccess();
   }, []);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-black">
-        <div className="w-12 h-12 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
+      <div className="secret-studio flex items-center justify-center" role="status">
+        <p className="text-sm text-[#bdc9c8]">入口を確認しています…</p>
       </div>
     );
   }

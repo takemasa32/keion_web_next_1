@@ -1,21 +1,7 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { motion } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
 import AudioContextManager from "../utils/AudioContextManager";
 import { soundSamples } from "./AudioPlayer";
-import {
-  FaMusic,
-  FaGuitar,
-  FaToggleOn,
-  FaWaveSquare,
-  FaSlidersH,
-  FaTools,
-  FaTimes,
-  FaArrowUp,
-  FaArrowDown,
-  FaArrowLeft,
-  FaArrowRight,
-} from "react-icons/fa";
 
 // ピアノキーの配置データ型定義
 type PianoKey = {
@@ -33,11 +19,11 @@ type PlayMode = "combined" | "effectOnly" | "pianoOnly";
 type WaveformType = "sine" | "square" | "sawtooth" | "triangle";
 
 // 音色の定義
-const waveforms: { type: WaveformType; label: string; color: string }[] = [
-  { type: "sine", label: "サイン波", color: "bg-blue-600" },
-  { type: "square", label: "矩形波", color: "bg-purple-600" },
-  { type: "triangle", label: "三角波", color: "bg-green-600" },
-  { type: "sawtooth", label: "ノコギリ波", color: "bg-red-600" },
+const waveforms: { type: WaveformType; label: string }[] = [
+  { type: "sine", label: "サイン波" },
+  { type: "square", label: "矩形波" },
+  { type: "triangle", label: "三角波" },
+  { type: "sawtooth", label: "ノコギリ波" },
 ];
 
 // 波形パラメータの型定義
@@ -137,51 +123,67 @@ const generateKeyboardLayout = (
   return layout;
 };
 
-interface VirtualKeyboardProps {
-  currentSoundId?: string;
-}
+const defaultParams: WaveformParams = {
+  attack: 0.01,
+  decay: 0.1,
+  sustain: 0.7,
+  release: 0.2,
+  detune: 0,
+  filterFreq: 5000,
+  filterQ: 1,
+  filterType: "lowpass",
+  vibratoRate: 5,
+  vibratoDepth: 10,
+};
+const modes: { value: PlayMode; label: string }[] = [
+  { value: "combined", label: "シンセ＋音源" },
+  { value: "pianoOnly", label: "シンセのみ" },
+  { value: "effectOnly", label: "音源のみ" },
+];
+type NumericParam = Exclude<keyof WaveformParams, "filterType">;
+const sliders: {
+  key: NumericParam;
+  label: string;
+  min: number;
+  max: number;
+  step: number;
+  unit: string;
+}[] = [
+  { key: "attack", label: "アタック", min: 0.01, max: 2, step: 0.01, unit: "秒" },
+  { key: "decay", label: "ディケイ", min: 0.01, max: 2, step: 0.01, unit: "秒" },
+  { key: "sustain", label: "サスティン", min: 0, max: 1, step: 0.01, unit: "" },
+  { key: "release", label: "リリース", min: 0.01, max: 5, step: 0.01, unit: "秒" },
+  { key: "detune", label: "デチューン", min: -100, max: 100, step: 1, unit: "セント" },
+  { key: "filterFreq", label: "フィルター周波数", min: 50, max: 10000, step: 10, unit: "Hz" },
+  { key: "filterQ", label: "フィルターQ", min: 0.1, max: 20, step: 0.1, unit: "" },
+  { key: "vibratoRate", label: "ビブラート速度", min: 0, max: 20, step: 0.1, unit: "Hz" },
+  { key: "vibratoDepth", label: "ビブラート深さ", min: 0, max: 50, step: 1, unit: "セント" },
+];
 
-const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii" }) => {
+export default function VirtualKeyboard({ currentSoundId = "wii" }: { currentSoundId?: string }) {
   const [activeKey, setActiveKey] = useState<string | null>(null);
-  const [playMode, setPlayMode] = useState<PlayMode>("combined"); // 再生モード
-  const [waveformType, setWaveformType] = useState<WaveformType>("sine"); // 波形タイプ
-  const [showWaveformMenu, setShowWaveformMenu] = useState(false); // 波形メニューの表示状態
-  const [showEditor, setShowEditor] = useState(false); // エディター表示状態
-  const [baseOctave, setBaseOctave] = useState(3); // 基本オクターブ（C3〜B4を表示）
-  const [waveformParams, setWaveformParams] = useState<WaveformParams>({
-    attack: 0.01,
-    decay: 0.1,
-    sustain: 0.7,
-    release: 0.2,
-    detune: 0,
-    filterFreq: 5000,
-    filterQ: 1,
-    filterType: "lowpass",
-    vibratoRate: 5,
-    vibratoDepth: 10,
-  });
+  const [playMode, setPlayMode] = useState<PlayMode>("combined");
+  const [waveformType, setWaveformType] = useState<WaveformType>("sine");
+  const [showEditor, setShowEditor] = useState(false);
+  const [baseOctave, setBaseOctave] = useState(3);
+  const [params, setParams] = useState<WaveformParams>(defaultParams);
+  const [soundLoading, setSoundLoading] = useState(true);
+  const [error, setError] = useState("");
+  const audioBuffer = useRef<AudioBuffer | null>(null);
+  const sources = useRef<Set<AudioScheduledSourceNode>>(new Set());
+  const keyTimer = useRef<ReturnType<typeof setTimeout>>();
+  const mounted = useRef(true);
+  const noteGeneration = useRef(0);
+  const layout = generateKeyboardLayout(baseOctave);
 
-  // キーボードレイアウトの状態
-  const [keyboardLayout, setKeyboardLayout] = useState<PianoKey[]>([]);
-
-  // スクロール操作に関する状態
-  const [isScrolling, setIsScrolling] = useState(false);
-  const [scrollStartX, setScrollStartX] = useState(0);
-  const keyboardContainerRef = useRef<HTMLDivElement>(null);
-
-  const audioBufferRef = useRef<AudioBuffer | null>(null);
-  const soundBuffersRef = useRef<Record<string, AudioBuffer>>({});
-  const keyMappingRef = useRef<Map<string, PianoKey>>(new Map());
-  const waveformMenuRef = useRef<HTMLDivElement>(null);
-  const activeSourcesRef = useRef<Set<AudioScheduledSourceNode>>(new Set());
-  const noteTimerRef = useRef<ReturnType<typeof setTimeout>>();
-  const mountedRef = useRef(true);
   useEffect(() => {
-    mountedRef.current = true;
-    const activeSources = activeSourcesRef.current;
+    mounted.current = true;
+    const activeSources = sources.current;
+    const generation = noteGeneration;
     return () => {
-      mountedRef.current = false;
-      clearTimeout(noteTimerRef.current);
+      mounted.current = false;
+      generation.current++;
+      clearTimeout(keyTimer.current);
       activeSources.forEach((source) => {
         try {
           source.stop();
@@ -191,123 +193,86 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
     };
   }, []);
 
-  // オクターブに基づいてキーボードレイアウトを更新
   useEffect(() => {
-    const newLayout = generateKeyboardLayout(baseOctave);
-    setKeyboardLayout(newLayout);
-
-    // キーマッピングを更新
-    const mapping = new Map<string, PianoKey>();
-    newLayout.forEach((key) => {
-      if (key.keyboardKey) {
-        mapping.set(key.keyboardKey, key);
-      }
-    });
-    keyMappingRef.current = mapping;
-  }, [baseOctave]);
-
-  // 現在選択されているサウンドIDが変更されたときにバッファをロード
-  useEffect(() => {
-    if (!currentSoundId) return;
     let cancelled = false;
-
-    const loadSelectedSound = async () => {
-      const selectedSound = soundSamples.find((s) => s.id === currentSoundId);
-      if (!selectedSound) return;
-
-      try {
-        const audioManager = AudioContextManager.getInstance();
-
-        // バッファが既にロードされているか確認
-        if (!soundBuffersRef.current[currentSoundId]) {
-          console.log(`Loading keyboard sound: ${selectedSound.file}`);
-          const response = await fetch(selectedSound.file);
-          if (!response.ok) {
-            throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
-          }
-          const arrayBuffer = await response.arrayBuffer();
-          const ctx = audioManager.getContext();
-          const buffer = await ctx.decodeAudioData(arrayBuffer);
-          soundBuffersRef.current[currentSoundId] = buffer;
+    audioBuffer.current = null;
+    setSoundLoading(true);
+    setError("");
+    const sample = soundSamples.find((sound) => sound.id === currentSoundId);
+    if (!sample) {
+      setSoundLoading(false);
+      return;
+    }
+    AudioContextManager.getInstance()
+      .loadAudioFile(sample.file)
+      .then((buffer) => {
+        if (!cancelled) audioBuffer.current = buffer;
+      })
+      .catch((cause) => {
+        if (!cancelled) {
+          console.error("鍵盤の音源読み込みに失敗しました", cause);
+          setError(
+            "選択した音源を読み込めませんでした。別の音源を選ぶか、シンセのみでお試しください。"
+          );
         }
-
-        if (!cancelled) audioBufferRef.current = soundBuffersRef.current[currentSoundId];
-      } catch (err) {
-        console.error("サウンドファイルのロードエラー:", err);
-      }
-    };
-
-    loadSelectedSound();
+      })
+      .finally(() => {
+        if (!cancelled) setSoundLoading(false);
+      });
     return () => {
       cancelled = true;
     };
   }, [currentSoundId]);
 
-  // 波形メニュー外のクリックを検知してメニューを閉じる
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (waveformMenuRef.current && !waveformMenuRef.current.contains(event.target as Node)) {
-        setShowWaveformMenu(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  // --- playNote, handleOctaveChangeをuseEffectより前に移動・重複排除 ---
   const playNote = useCallback(
     async (key: PianoKey) => {
+      const generation = noteGeneration.current;
+      clearTimeout(keyTimer.current);
       setActiveKey(key.note);
-      clearTimeout(noteTimerRef.current);
-      noteTimerRef.current = setTimeout(() => setActiveKey(null), 300);
-
+      keyTimer.current = setTimeout(() => setActiveKey(null), 300);
       try {
-        // AudioContextManagerを使用
-        const audioManager = AudioContextManager.getInstance();
-        const ctx = audioManager.getContext();
-        if (ctx.state === "suspended") await ctx.resume();
-        if (!mountedRef.current) return;
-        const start = ctx.currentTime;
+        const manager = AudioContextManager.getInstance();
+        const context = manager.getContext();
+        if (context.state === "suspended") await context.resume();
+        if (!mounted.current || generation !== noteGeneration.current) return;
+        const start = context.currentTime;
         const track = (source: AudioScheduledSourceNode, nodes: AudioNode[] = []) => {
-          activeSourcesRef.current.add(source);
+          sources.current.add(source);
           source.onended = () => {
-            activeSourcesRef.current.delete(source);
+            sources.current.delete(source);
             source.disconnect();
             nodes.forEach((node) => node.disconnect());
           };
         };
         if (playMode !== "effectOnly") {
-          const oscillator = ctx.createOscillator();
-          const envelope = ctx.createGain();
-          const filter = ctx.createBiquadFilter();
+          const oscillator = context.createOscillator();
+          const envelope = context.createGain();
+          const filter = context.createBiquadFilter();
           oscillator.type = waveformType;
           oscillator.frequency.value = key.frequency;
-          oscillator.detune.value = waveformParams.detune;
-          filter.type = waveformParams.filterType;
-          filter.frequency.value = waveformParams.filterFreq;
-          filter.Q.value = waveformParams.filterQ;
+          oscillator.detune.value = params.detune;
+          filter.type = params.filterType;
+          filter.frequency.value = params.filterFreq;
+          filter.Q.value = params.filterQ;
           const peak = 0.18;
-          const attackEnd = start + Math.max(0.01, waveformParams.attack);
-          const decayEnd = attackEnd + Math.max(0.01, waveformParams.decay);
+          const attackEnd = start + params.attack;
+          const decayEnd = attackEnd + params.decay;
           const releaseStart = decayEnd + 0.2;
-          const end = releaseStart + Math.max(0.01, waveformParams.release);
+          const end = releaseStart + params.release;
           envelope.gain.setValueAtTime(0, start);
           envelope.gain.linearRampToValueAtTime(peak, attackEnd);
-          envelope.gain.linearRampToValueAtTime(peak * waveformParams.sustain, decayEnd);
-          envelope.gain.setValueAtTime(peak * waveformParams.sustain, releaseStart);
+          envelope.gain.linearRampToValueAtTime(peak * params.sustain, decayEnd);
+          envelope.gain.setValueAtTime(peak * params.sustain, releaseStart);
           envelope.gain.linearRampToValueAtTime(0, end);
           oscillator.connect(filter);
           filter.connect(envelope);
-          audioManager.connectSource(envelope);
+          manager.connectSource(envelope);
           track(oscillator, [filter, envelope]);
-          if (waveformParams.vibratoDepth > 0 && waveformParams.vibratoRate > 0) {
-            const vibrato = ctx.createOscillator();
-            const depth = ctx.createGain();
-            vibrato.frequency.value = waveformParams.vibratoRate;
-            depth.gain.value = waveformParams.vibratoDepth;
+          if (params.vibratoDepth > 0 && params.vibratoRate > 0) {
+            const vibrato = context.createOscillator();
+            const depth = context.createGain();
+            vibrato.frequency.value = params.vibratoRate;
+            depth.gain.value = params.vibratoDepth;
             vibrato.connect(depth);
             depth.connect(oscillator.detune);
             track(vibrato, [depth]);
@@ -317,589 +282,263 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ currentSoundId = "wii
           oscillator.start(start);
           oscillator.stop(end + 0.02);
         }
-        if (playMode !== "pianoOnly" && audioBufferRef.current) {
-          const sample = ctx.createBufferSource();
-          sample.buffer = audioBufferRef.current;
+        if (playMode !== "pianoOnly" && audioBuffer.current) {
+          const sample = context.createBufferSource();
+          sample.buffer = audioBuffer.current;
           sample.playbackRate.value = key.frequency / calculateFrequency("C", 3);
-          audioManager.connectSource(sample);
+          manager.connectSource(sample);
           track(sample);
           sample.start(start);
         }
-      } catch (err) {
-        console.error("サウンドファイルのロードエラー:", err);
+      } catch (cause) {
+        console.error("鍵盤の再生に失敗しました", cause);
+        if (mounted.current) setError("音を再生できませんでした。もう一度お試しください。");
       }
     },
-    [playMode, waveformType, waveformParams]
+    [playMode, waveformType, params]
   );
 
-  const handleOctaveChange = useCallback((change: number) => {
-    setBaseOctave((prev) => {
-      const newOctave = prev + change;
-      // オクターブの範囲を1〜7に制限
-      return Math.max(0, Math.min(7, newOctave));
-    });
-  }, []);
-
-  // キーボードイベントを監視
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.repeat) return; // キーリピートを防ぐ
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.repeat || event.isComposing || event.ctrlKey || event.metaKey || event.altKey)
+        return;
       if (
-        e.ctrlKey ||
-        e.metaKey ||
-        e.altKey ||
-        (e.target instanceof HTMLElement &&
-          e.target.closest("input, select, textarea, [contenteditable='true']"))
+        event.target instanceof HTMLElement &&
+        event.target.closest("input, select, textarea, [contenteditable], [role=slider]")
       )
         return;
-
-      const key = keyMappingRef.current.get(e.key.toLowerCase());
+      const key = generateKeyboardLayout(baseOctave).find(
+        (note) => note.keyboardKey === event.key.toLowerCase()
+      );
       if (key) {
-        e.preventDefault();
-        playNote(key);
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        handleOctaveChange(1);
-      } else if (e.key === "ArrowDown") {
-        e.preventDefault();
-        handleOctaveChange(-1);
+        event.preventDefault();
+        void playNote(key);
+      }
+      if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+        event.preventDefault();
+        setBaseOctave((octave) =>
+          Math.max(0, Math.min(7, octave + (event.key === "ArrowUp" ? 1 : -1)))
+        );
       }
     };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [baseOctave, playNote]);
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [baseOctave, currentSoundId, playMode, waveformType, playNote, handleOctaveChange]); // オクターブの変更もトラッキング
-
-  // モードを切り替える関数
-  const toggleMode = () => {
-    setPlayMode((prev) => {
-      // モードを循環させる: combined -> effectOnly -> pianoOnly -> combined
-      if (prev === "combined") return "effectOnly";
-      if (prev === "effectOnly") return "pianoOnly";
-      return "combined";
+  const stopNotes = () => {
+    noteGeneration.current++;
+    clearTimeout(keyTimer.current);
+    setActiveKey(null);
+    sources.current.forEach((source) => {
+      try {
+        source.stop();
+      } catch {}
     });
   };
 
-  // 波形メニューの表示を切り替える
-  const toggleWaveformMenu = () => {
-    setShowWaveformMenu((prev) => !prev);
-  };
-
-  // 波形タイプを変更する
-  const changeWaveformType = (type: WaveformType) => {
-    setWaveformType(type);
-    setShowWaveformMenu(false);
-  };
-
-  // 波形エディターの表示/非表示を切り替え
-  const toggleEditor = () => {
-    setShowEditor((prev) => !prev);
-  };
-
-  // 波形パラメータを更新する関数
-  const updateWaveformParam = (param: keyof WaveformParams, value: number | BiquadFilterType) => {
-    setWaveformParams((prev) => ({
-      ...prev,
-      [param]: value,
-    }));
-  };
-
-  // スクロール開始の処理
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setIsScrolling(true);
-    setScrollStartX(e.touches[0].clientX);
-  };
-
-  // スクロール中の処理
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isScrolling || !keyboardContainerRef.current) return;
-
-    const touchDeltaX = e.touches[0].clientX - scrollStartX;
-    if (Math.abs(touchDeltaX) > 50) {
-      // 左にスワイプ: オクターブアップ
-      if (touchDeltaX < 0) {
-        handleOctaveChange(1);
-      }
-      // 右にスワイプ: オクターブダウン
-      else {
-        handleOctaveChange(-1);
-      }
-      setIsScrolling(false);
-    }
-  };
-
-  // スクロール終了の処理
-  const handleTouchEnd = () => {
-    setIsScrolling(false);
-  };
-
-  // モードに応じたボタン表示を取得
-  const getModeButton = () => {
-    switch (playMode) {
-      case "effectOnly":
-        return (
-          <>
-            <FaGuitar className="text-white" />
-            <span className="text-xs text-white">エフェクトのみ</span>
-          </>
-        );
-      case "pianoOnly":
-        return (
-          <>
-            <FaMusic className="text-white" />
-            <span className="text-xs text-white">ピアノ音のみ</span>
-          </>
-        );
-      default:
-        return (
-          <>
-            <FaMusic className="text-white" />
-            <span className="text-xs text-white">ピアノ+エフェクト</span>
-          </>
-        );
-    }
-  };
-
-  // モードに応じた背景色を取得
-  const getModeColor = () => {
-    switch (playMode) {
-      case "effectOnly":
-        return "bg-purple-600";
-      case "pianoOnly":
-        return "bg-blue-600";
-      default:
-        return "bg-gray-700";
-    }
-  };
-
-  // モードに応じたヘルプテキストを取得
-  const getModeHelpText = () => {
-    switch (playMode) {
-      case "effectOnly":
-        return "サウンドエフェクトのみモード：ピアノ音なしでエフェクトサウンドを演奏します";
-      case "pianoOnly":
-        return "ピアノ音のみモード：純粋なピアノ音だけで演奏します";
-      default:
-        return "キーボードのキー（A, S, D...）でも演奏できます";
-    }
-  };
-
-  // 現在選択中の波形タイプを取得
-  const getCurrentWaveform = () => {
-    return waveforms.find((w) => w.type === waveformType) || waveforms[0];
-  };
-
+  const control =
+    "min-h-11 border border-[#435158] bg-[#202d34] px-3 py-2 text-sm text-[#f2f4ee] hover:bg-[#34444c] disabled:opacity-40";
   return (
-    <div className="w-full bg-black/20 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border border-white/10">
-      {/* ヘッダー部分 - モバイル向けに調整 */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
-        <h3 className="text-white text-lg font-medium">バーチャルピアノ</h3>
-
-        {/* コントロールボタン - モバイル用に横スクロール可能に */}
-        <div className="flex gap-2 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0 scrollbar-hide">
-          {/* 波形エディターボタン */}
-          <motion.button
-            onClick={toggleEditor}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className={`flex-shrink-0 flex items-center gap-1 px-3 py-2 rounded-md ${
-              showEditor ? "bg-emerald-600" : "bg-gray-700"
-            }`}
-          >
-            <FaTools className="text-white" />
-            <span className="text-xs text-white whitespace-nowrap">波形エディタ</span>
-          </motion.button>
-
-          {/* 波形タイプ選択ボタン */}
-          <div className="relative flex-shrink-0">
-            <motion.button
-              onClick={toggleWaveformMenu}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`flex items-center gap-1 px-3 py-2 rounded-md ${
-                getCurrentWaveform().color
-              }`}
-            >
-              <FaWaveSquare className="text-white" />
-              <span className="text-xs text-white whitespace-nowrap">
-                {getCurrentWaveform().label}
-              </span>
-              <FaSlidersH className="text-white/70 ml-1" />
-            </motion.button>
-
-            {/* 波形選択メニュー - z-indexを上げて最前面に表示 */}
-            {showWaveformMenu && (
-              <motion.div
-                ref={waveformMenuRef}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="absolute right-0 mt-1 bg-gray-800 rounded-md shadow-lg z-[9999] min-w-[120px]"
-                style={{ position: "absolute", zIndex: 9999 }}
-              >
-                {waveforms.map((waveform) => (
-                  <button
-                    key={waveform.type}
-                    onClick={() => changeWaveformType(waveform.type)}
-                    className={`w-full text-left px-3 py-2 text-xs rounded-md text-white hover:bg-gray-700 flex items-center justify-between ${
-                      waveformType === waveform.type ? "bg-gray-700" : ""
-                    }`}
-                  >
-                    {waveform.label}
-                    <div
-                      className={`w-2 h-2 rounded-full ${waveform.color.replace("bg-", "bg-")}`}
-                    ></div>
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </div>
-
-          {/* 再生モード切替ボタン */}
-          <motion.button
-            onClick={toggleMode}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className={`flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${getModeColor()}`}
-          >
-            {getModeButton()}
-            <FaToggleOn className="text-white ml-1" />
-          </motion.button>
-        </div>
+    <section
+      className="min-w-0 border border-[#435158] bg-[#202d34] p-4 sm:p-6"
+      aria-labelledby="keyboard-title"
+    >
+      <div className="mb-5 flex flex-wrap items-baseline justify-between gap-2">
+        <h3 id="keyboard-title" className="text-lg font-semibold text-[#f2f4ee]">
+          バーチャル鍵盤
+        </h3>
+        <p className="text-xs text-[#bdc8cd]">
+          C{baseOctave} — B{baseOctave + 1}
+        </p>
       </div>
-
-      {/* 波形エディターパネル - モバイル向けにスクロール可能に */}
-      {showEditor && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          className="mb-4 bg-gray-800/80 rounded-lg p-3 sm:p-4 overflow-hidden"
+      <div className="mb-5 flex flex-wrap gap-2" role="group" aria-label="再生モード">
+        {modes.map((mode) => (
+          <button
+            key={mode.value}
+            type="button"
+            aria-pressed={mode.value === playMode}
+            onClick={() => setPlayMode(mode.value)}
+            className={
+              control +
+              (playMode === mode.value ? " !border-[#d4e785] !bg-[#d4e785] !text-[#17252c]" : "")
+            }
+          >
+            {mode.label}
+          </button>
+        ))}
+      </div>
+      <div className="mb-5 flex flex-wrap items-center gap-3">
+        <label className="flex items-center gap-2 text-sm text-[#bdc8cd]">
+          音色
+          <select
+            value={waveformType}
+            onChange={(event) => setWaveformType(event.target.value as WaveformType)}
+            className={control}
+          >
+            {waveforms.map((wave) => (
+              <option key={wave.type} value={wave.type}>
+                {wave.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button
+          type="button"
+          className={control}
+          aria-expanded={showEditor}
+          aria-controls="waveform-editor"
+          onClick={() => setShowEditor((value) => !value)}
         >
-          <div className="flex justify-between items-center mb-3">
-            <h4 className="text-white/90 text-sm font-medium">波形エディター</h4>
-            <button onClick={toggleEditor} className="text-white/60 hover:text-white p-2">
-              <FaTimes />
+          音色を調整 {showEditor ? "−" : "＋"}
+        </button>
+      </div>
+      {showEditor && (
+        <div id="waveform-editor" className="mb-6 border-y border-[#435158] py-5">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <h4 className="text-sm font-semibold text-[#f2f4ee]">波形エディター</h4>
+            <button
+              type="button"
+              className="min-h-11 px-2 text-xs text-[#d4e785]"
+              onClick={() => setParams({ ...defaultParams })}
+            >
+              設定を戻す
             </button>
           </div>
-
-          {/* パラメーター部分をスクロール可能に */}
-          <div className="max-h-[50vh] overflow-y-auto pr-1">
-            <div className="grid grid-cols-1 gap-4">
-              {/* エンベロープ設定 */}
-              <div className="space-y-3">
-                <h5 className="text-white/80 text-xs font-medium mb-2">エンベロープ (ADSR)</h5>
-                <div className="space-y-2">
-                  <label className="text-white/70 text-xs flex justify-between">
-                    アタック
-                    <span>{waveformParams.attack.toFixed(2)}秒</span>
-                  </label>
-                  <input
-                    type="range"
-                    min="0.001"
-                    max="2"
-                    step="0.01"
-                    value={waveformParams.attack}
-                    onChange={(e) => updateWaveformParam("attack", parseFloat(e.target.value))}
-                    className="w-full accent-emerald-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-white/70 text-xs flex justify-between">
-                    ディケイ
-                    <span>{waveformParams.decay.toFixed(2)}秒</span>
-                  </label>
-                  <input
-                    type="range"
-                    min="0.001"
-                    max="2"
-                    step="0.01"
-                    value={waveformParams.decay}
-                    onChange={(e) => updateWaveformParam("decay", parseFloat(e.target.value))}
-                    className="w-full accent-emerald-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-white/70 text-xs flex justify-between">
-                    サスティン
-                    <span>{waveformParams.sustain.toFixed(2)}</span>
-                  </label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.01"
-                    value={waveformParams.sustain}
-                    onChange={(e) => updateWaveformParam("sustain", parseFloat(e.target.value))}
-                    className="w-full accent-emerald-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-white/70 text-xs flex justify-between">
-                    リリース
-                    <span>{waveformParams.release.toFixed(2)}秒</span>
-                  </label>
-                  <input
-                    type="range"
-                    min="0.001"
-                    max="5"
-                    step="0.01"
-                    value={waveformParams.release}
-                    onChange={(e) => updateWaveformParam("release", parseFloat(e.target.value))}
-                    className="w-full accent-emerald-500"
-                  />
-                </div>
-              </div>
-
-              {/* 効果設定 */}
-              <div className="space-y-3">
-                <h5 className="text-white/80 text-xs font-medium mb-2">エフェクト</h5>
-
-                <div className="space-y-2">
-                  <label className="text-white/70 text-xs flex justify-between">
-                    デチューン
-                    <span>{waveformParams.detune}セント</span>
-                  </label>
-                  <input
-                    type="range"
-                    min="-100"
-                    max="100"
-                    step="1"
-                    value={waveformParams.detune}
-                    onChange={(e) => updateWaveformParam("detune", parseFloat(e.target.value))}
-                    className="w-full accent-emerald-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-white/70 text-xs flex justify-between">
-                    フィルター周波数
-                    <span>{waveformParams.filterFreq}Hz</span>
-                  </label>
-                  <input
-                    type="range"
-                    min="50"
-                    max="10000"
-                    step="10"
-                    value={waveformParams.filterFreq}
-                    onChange={(e) => updateWaveformParam("filterFreq", parseFloat(e.target.value))}
-                    className="w-full accent-emerald-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-white/70 text-xs flex justify-between">
-                    フィルターQ
-                    <span>{waveformParams.filterQ.toFixed(1)}</span>
-                  </label>
-                  <input
-                    type="range"
-                    min="0.1"
-                    max="20"
-                    step="0.1"
-                    value={waveformParams.filterQ}
-                    onChange={(e) => updateWaveformParam("filterQ", parseFloat(e.target.value))}
-                    className="w-full accent-emerald-500"
-                  />
-                </div>
-
-                <div className="flex space-x-2 items-center">
-                  <label className="text-white/70 text-xs">フィルタータイプ</label>
-                  <select
-                    value={waveformParams.filterType}
-                    onChange={(e) =>
-                      updateWaveformParam("filterType", e.target.value as BiquadFilterType)
-                    }
-                    className="bg-gray-900 text-white/90 text-xs rounded px-2 py-1 border border-gray-700"
-                  >
-                    <option value="lowpass">ローパス</option>
-                    <option value="highpass">ハイパス</option>
-                    <option value="bandpass">バンドパス</option>
-                    <option value="notch">ノッチ</option>
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-white/70 text-xs flex justify-between">
-                    ビブラート速度
-                    <span>{waveformParams.vibratoRate}Hz</span>
-                  </label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="20"
-                    step="0.1"
-                    value={waveformParams.vibratoRate}
-                    onChange={(e) => updateWaveformParam("vibratoRate", parseFloat(e.target.value))}
-                    className="w-full accent-emerald-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-white/70 text-xs flex justify-between">
-                    ビブラート深さ
-                    <span>{waveformParams.vibratoDepth}</span>
-                  </label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="50"
-                    step="1"
-                    value={waveformParams.vibratoDepth}
-                    onChange={(e) =>
-                      updateWaveformParam("vibratoDepth", parseFloat(e.target.value))
-                    }
-                    className="w-full accent-emerald-500"
-                  />
-                </div>
-              </div>
-            </div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {sliders.map((slider) => (
+              <label key={slider.key} className="block text-xs text-[#bdc8cd]">
+                <span className="mb-2 flex justify-between gap-2">
+                  <span>{slider.label}</span>
+                  <span>
+                    {params[slider.key]}
+                    {slider.unit}
+                  </span>
+                </span>
+                <input
+                  type="range"
+                  value={params[slider.key]}
+                  min={slider.min}
+                  max={slider.max}
+                  step={slider.step}
+                  onChange={(event) =>
+                    setParams((value) => ({ ...value, [slider.key]: Number(event.target.value) }))
+                  }
+                  className="w-full accent-[#d4e785]"
+                />
+              </label>
+            ))}
+            <label className="block text-xs text-[#bdc8cd]">
+              <span className="mb-2 block">フィルタータイプ</span>
+              <select
+                value={params.filterType}
+                onChange={(event) =>
+                  setParams((value) => ({
+                    ...value,
+                    filterType: event.target.value as BiquadFilterType,
+                  }))
+                }
+                className={control + " w-full"}
+              >
+                <option value="lowpass">ローパス</option>
+                <option value="highpass">ハイパス</option>
+                <option value="bandpass">バンドパス</option>
+                <option value="notch">ノッチ</option>
+              </select>
+            </label>
           </div>
-        </motion.div>
+        </div>
       )}
-
-      {/* オクターブ切り替えコントロール */}
-      <div className="flex justify-between items-center mb-2">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <motion.button
-            onClick={() => handleOctaveChange(-1)}
+          <button
+            type="button"
+            className={control}
+            onClick={() => setBaseOctave((value) => Math.max(0, value - 1))}
+            disabled={baseOctave === 0}
             aria-label="オクターブを下げる"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            disabled={baseOctave <= 0}
-            className={`p-2 rounded-md ${
-              baseOctave <= 0 ? "bg-gray-700 text-gray-500" : "bg-indigo-700 text-white"
-            }`}
           >
-            <FaArrowDown className="text-sm" />
-          </motion.button>
-
-          <div className="bg-black/30 px-3 py-1 rounded-md">
-            <span className="text-white text-xs">
-              オクターブ: {baseOctave}-{baseOctave + 1}
-            </span>
-          </div>
-
-          <motion.button
-            onClick={() => handleOctaveChange(1)}
+            −
+          </button>
+          <span className="text-xs text-[#bdc8cd]">
+            音域 {baseOctave}–{baseOctave + 1}
+          </span>
+          <button
+            type="button"
+            className={control}
+            onClick={() => setBaseOctave((value) => Math.min(7, value + 1))}
+            disabled={baseOctave === 7}
             aria-label="オクターブを上げる"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            disabled={baseOctave >= 7}
-            className={`p-2 rounded-md ${
-              baseOctave >= 7 ? "bg-gray-700 text-gray-500" : "bg-indigo-700 text-white"
-            }`}
           >
-            <FaArrowUp className="text-sm" />
-          </motion.button>
+            ＋
+          </button>
         </div>
-
-        <div className="text-white/50 text-xs hidden sm:flex items-center">
-          <FaArrowLeft className="mr-1" />
-          <span>スワイプで音域変更</span>
-          <FaArrowRight className="ml-1" />
-        </div>
+        <button type="button" className={control} onClick={stopNotes}>
+          鍵盤の音を止める ■
+        </button>
+        <p className="text-xs text-[#bdc8cd]" aria-live="polite">
+          {playMode !== "pianoOnly"
+            ? soundLoading
+              ? "音源を読み込み中…"
+              : "音源：" + soundSamples.find((sound) => sound.id === currentSoundId)?.label
+            : "シンセ音で演奏"}
+        </p>
       </div>
-
-      <p className="text-white/60 text-xs mb-4 text-center">
-        {currentSoundId && playMode !== "pianoOnly"
-          ? `現在の音源: ${
-              soundSamples.find((s) => s.id === currentSoundId)?.label || currentSoundId
-            }, 音色: ${getCurrentWaveform().label}`
-          : `音色: ${getCurrentWaveform().label}`}
-        {showEditor && " - 波形エディターモード"}
-      </p>
-
-      {/* キーボード - タッチ操作とスワイプ向けに最適化 */}
       <div
-        className="touch-manipulation overflow-x-auto pb-2"
-        ref={keyboardContainerRef}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+        className="overflow-x-auto pb-2"
+        style={{ touchAction: "pan-x pan-y" }}
+        tabIndex={0}
+        role="region"
+        aria-label="左右にスクロールできる鍵盤"
       >
-        <div className="flex min-w-[600px] relative h-32 sm:h-40 md:h-48 rounded-md overflow-hidden">
-          {keyboardLayout.map((key) => {
-            const isActive = activeKey === key.note;
-            const isWhiteKey = key.color === "white";
-            const { note, octave } = getNoteAndOctave(key.note);
-
+        <div className="relative flex h-40 min-w-[600px] sm:h-48">
+          {layout.map((key) => {
+            const white = key.color === "white";
+            const active = activeKey === key.note;
+            const note = getNoteAndOctave(key.note);
             return (
-              <motion.button
+              <button
                 key={key.note}
                 type="button"
                 aria-label={key.label + "を鳴らす"}
                 aria-keyshortcuts={key.keyboardKey}
-                className={`relative ${isWhiteKey ? "white-key z-0" : "black-key z-10"}`}
-                animate={{
-                  backgroundColor: isActive
-                    ? isWhiteKey
-                      ? "rgba(147, 51, 234, 0.9)"
-                      : "rgba(236, 72, 153, 0.9)"
-                    : isWhiteKey
-                      ? "rgba(255, 255, 255, 0.9)"
-                      : "rgba(0, 0, 0, 0.9)",
-                  y: isActive ? 4 : 0,
-                }}
-                transition={{ duration: 0.1 }}
-                onClick={() => playNote(key)}
+                onClick={() => void playNote(key)}
+                className={"relative flex-shrink-0 " + (white ? "z-0" : "z-10")}
                 style={{
-                  flex: isWhiteKey ? 1 : "none",
-                  height: isWhiteKey ? "100%" : "60%",
-                  width: isWhiteKey ? "auto" : "30px",
-                  marginLeft: isWhiteKey ? 0 : "-15px",
-                  marginRight: isWhiteKey ? 0 : "-15px",
-                  borderRadius: isWhiteKey ? "0 0 6px 6px" : "0 0 4px 4px",
-                  border: isWhiteKey ? "1px solid rgba(0,0,0,0.2)" : "none",
-                  boxShadow: isWhiteKey
-                    ? "0 2px 5px rgba(0,0,0,0.15)"
-                    : "0 2px 3px rgba(0,0,0,0.3)",
-                  cursor: "pointer",
+                  flex: white ? 1 : "none",
+                  height: white ? "100%" : "60%",
+                  width: white ? "auto" : 30,
+                  marginLeft: white ? 0 : -15,
+                  marginRight: white ? 0 : -15,
+                  background: active ? "#d4e785" : white ? "#f2f2e9" : "#111b20",
+                  color: active || white ? "#17252c" : "#dde4df",
+                  border: "1px solid " + (white ? "#82908b" : "#060d10"),
+                  borderRadius: "0 0 3px 3px",
+                  transform: active ? "translateY(3px)" : undefined,
                 }}
               >
-                <div className="absolute bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
-                  <span
-                    className={`text-xs sm:text-sm ${
-                      isWhiteKey ? "text-gray-500" : "text-gray-300"
-                    }`}
-                  >
-                    {note}
-                    <sub className="text-[0.6em]">{octave}</sub>
+                <span className="absolute bottom-3 left-1/2 -translate-x-1/2 text-xs">
+                  <span className="block">
+                    {note.note}
+                    <sub>{note.octave}</sub>
                   </span>
                   {key.keyboardKey && (
-                    <span
-                      className={`hidden sm:inline-block text-xs mt-1 px-1.5 py-0.5 rounded-sm bg-black/20
-                      ${isWhiteKey ? "text-gray-500" : "text-gray-300"}`}
-                    >
-                      {key.keyboardKey}
-                    </span>
+                    <span className="mt-1 block text-[10px]">{key.keyboardKey.toUpperCase()}</span>
                   )}
-                </div>
-              </motion.button>
+                </span>
+              </button>
             );
           })}
         </div>
       </div>
-      <div className="sm:hidden flex justify-center mt-3 bg-black/30 py-2 rounded-md">
-        {/* スマホ向けスワイプガイド */}
-        <div className="sm:hidden flex justify-center mt-3 bg-black/30 py-2 rounded-md">
-          <div className="flex items-center text-white/50 text-xs">
-            <FaArrowLeft className="mr-2 text-white/50" />
-            <span>左右にスワイプして音域を変更</span>
-            <FaArrowRight className="ml-2 text-white/50" />
-          </div>
-        </div>
-
-        <p className="text-center text-white/40 text-xs mt-4">
-          {showEditor ? "波形パラメータを調整して独自の音色を作成してください" : getModeHelpText()}
+      <p className="mt-3 text-xs text-[#bdc8cd]">
+        鍵盤を押すと音が鳴ります。PCでは
+        A・W・S・E…、↑↓で音域を変更できます。スマートフォンでは鍵盤を左右にスクロールできます。
+      </p>
+      {error && (
+        <p role="alert" className="mt-3 text-sm text-[#f4d39d]">
+          {error}
         </p>
-      </div>
-    </div>
+      )}
+    </section>
   );
-};
-
-export default VirtualKeyboard;
+}

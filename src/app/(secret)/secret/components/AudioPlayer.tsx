@@ -1,44 +1,36 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
-import { FaPlay, FaPause, FaRandom, FaMusic, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
+import { useCallback, useEffect, useRef, useState } from "react";
 import AudioContextManager from "../utils/AudioContextManager";
 
-// 利用可能な音源ファイルの定義
 const soundSamples = [
   {
     id: "baikinman",
     label: "バイキンマン",
     description: "アニメキャラクターの名称",
-    color: "from-purple-500 to-pink-400",
     file: "/secret/audio/baikinman.mp3",
   },
   {
     id: "burudo-za-",
     label: "ブルドーザー",
     description: "建設機械の名称",
-    color: "from-yellow-500 to-orange-400",
     file: "/secret/audio/burudo-za-.mp3",
   },
   {
     id: "dosu",
     label: "ドス",
     description: "効果音",
-    color: "from-red-500 to-orange-400",
     file: "/secret/audio/dosu.mp3",
   },
   {
     id: "meow",
     label: "ニャー",
     description: "猫の鳴き声",
-    color: "from-green-500 to-emerald-400",
     file: "/secret/audio/meow.mp3",
   },
   {
     id: "wii",
     label: "Wii",
     description: "ゲーム機の名称",
-    color: "from-blue-500 to-cyan-400",
     file: "/secret/audio/wii.mp3",
   },
 ];
@@ -49,294 +41,176 @@ export { soundSamples };
 interface AudioPlayerProps {
   onSoundChange?: (soundId: string) => void;
 }
-
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ onSoundChange }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentSound, setCurrentSound] = useState<string>("wii");
+export default function AudioPlayer({ onSoundChange }: AudioPlayerProps) {
+  const [currentSound, setCurrentSound] = useState("wii");
   const [playingSound, setPlayingSound] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const [volume, setVolume] = useState(0.7);
-  const [isMuted, setIsMuted] = useState(false);
-  const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null);
-  const audioBuffersRef = useRef<Record<string, AudioBuffer>>({});
-  const requestIdRef = useRef(0);
+  const [muted, setMuted] = useState(false);
   const [error, setError] = useState("");
+  const sourceRef = useRef<AudioBufferSourceNode | null>(null);
+  const requestRef = useRef(0);
 
-  // 特定の音源IDを指定して再生
-  const playSpecificSound = async (soundId: string) => {
-    const requestId = ++requestIdRef.current;
-    setError("");
-    try {
-      // 既存の音源を停止
-      if (sourceNodeRef.current) {
-        sourceNodeRef.current.onended = null;
-        sourceNodeRef.current.stop();
-        sourceNodeRef.current = null;
-      }
-      setIsPlaying(false);
-      setPlayingSound(null);
-
-      // AudioContextManagerを取得
-      const audioManager = AudioContextManager.getInstance();
-      const ctx = audioManager.getContext();
-
-      // ユーザーインタラクションに応じてAudioContextを再開
-      if (ctx.state === "suspended") {
-        await ctx.resume();
-      }
-
-      // 指定された音声ファイルの取得
-      const selectedSound = soundSamples.find((sound) => sound.id === soundId);
-      if (!selectedSound) return;
-
-      // AudioBufferを取得または作成
-      let buffer: AudioBuffer;
-      if (audioBuffersRef.current[soundId]) {
-        buffer = audioBuffersRef.current[soundId];
-      } else {
-        try {
-          // 音声ファイルの読み込み
-          const response = await fetch(selectedSound.file);
-          if (!response.ok) {
-            throw new Error(
-              `Failed to fetch sound file: ${response.status} ${response.statusText}`
-            );
-          }
-          const arrayBuffer = await response.arrayBuffer();
-          buffer = await ctx.decodeAudioData(arrayBuffer);
-          audioBuffersRef.current[soundId] = buffer;
-        } catch (err) {
-          console.error(`Error loading sound file: ${selectedSound.file}`, err);
-          if (requestId === requestIdRef.current)
-            setError("音源を読み込めませんでした。もう一度お試しください。");
-          return;
-        }
-      }
-
-      if (requestId !== requestIdRef.current) return;
-
-      // 音源を作成
-      const source = ctx.createBufferSource();
-      source.buffer = buffer;
-
-      // AudioContextManagerを通して接続
-      audioManager.connectSource(source);
-      sourceNodeRef.current = source;
-
-      // 再生完了時の処理
-      source.onended = () => {
-        if (sourceNodeRef.current !== source) return;
-        setIsPlaying(false);
-        setPlayingSound(null);
-        sourceNodeRef.current = null;
-      };
-
-      // 再生開始
-      source.start(0);
-      setIsPlaying(true);
-      setPlayingSound(soundId);
-
-      // 状態更新
-      if (currentSound !== soundId) {
-        setCurrentSound(soundId);
-      }
-
-      // 親コンポーネントに選択した音源を通知
-      if (onSoundChange) {
-        onSoundChange(soundId);
-      }
-    } catch (e) {
-      console.error("音声再生エラー", e);
-      if (requestId !== requestIdRef.current) return;
-      setError("音声を再生できませんでした。もう一度お試しください。");
-      setIsPlaying(false);
-      setPlayingSound(null);
-    }
-  };
-
-  // 現在選択中の音源を再生
-  const playSound = async () => {
-    await playSpecificSound(currentSound);
-  };
-
-  // 再生を停止
-  const stopSound = () => {
-    requestIdRef.current++;
-    if (sourceNodeRef.current) {
-      sourceNodeRef.current.onended = null;
+  const stopSound = useCallback(() => {
+    requestRef.current++;
+    const source = sourceRef.current;
+    if (source) {
+      source.onended = null;
       try {
-        sourceNodeRef.current.stop();
-      } catch (e) {
-        console.error("音声停止エラー", e);
-      }
-      sourceNodeRef.current = null;
+        source.stop();
+      } catch {}
+      source.disconnect();
+      sourceRef.current = null;
     }
-    setIsPlaying(false);
     setPlayingSound(null);
-  };
-
-  // サウンドを選択して自動再生
-  const selectSound = (soundId: string) => {
-    if (isPlaying && currentSound === soundId) {
-      // 既に再生中の場合は停止
-      stopSound();
-    } else {
-      // 新しい音源を直接再生（非同期処理の問題を回避）
-      playSpecificSound(soundId);
-    }
-  };
-
-  // ランダムなサウンドを選択
-  const selectRandomSound = () => {
-    const randomIndex = Math.floor(Math.random() * soundSamples.length);
-    const newSoundId = soundSamples[randomIndex].id;
-
-    // ランダムに選んだ音源を直接再生
-    playSpecificSound(newSoundId);
-  };
-
-  // 音量調整
-  const handleVolumeChange = (newVolume: number) => {
-    setVolume(newVolume);
-    const audioManager = AudioContextManager.getInstance();
-    audioManager.setVolume(isMuted ? 0 : newVolume);
-  };
-
-  // ミュート切り替え
-  const toggleMute = () => {
-    const audioManager = AudioContextManager.getInstance();
-    if (isMuted) {
-      audioManager.setVolume(volume);
-    } else {
-      audioManager.setVolume(0);
-    }
-    setIsMuted(!isMuted);
-  };
-
-  // 初期音量設定
-  useEffect(() => {
-    const audioManager = AudioContextManager.getInstance();
-    audioManager.setVolume(isMuted ? 0 : volume);
-  }, [volume, isMuted]);
-
-  // 初期音源を親コンポーネントに通知
-  useEffect(() => {
-    if (onSoundChange) {
-      onSoundChange(currentSound);
-    }
-  }, [currentSound, onSoundChange]);
-
-  // コンポーネントのアンマウント時にリソースを解放
-  useEffect(() => {
-    return () => {
-      stopSound();
-    };
+    setLoading(false);
   }, []);
 
+  useEffect(
+    () => () => {
+      stopSound();
+    },
+    [stopSound]
+  );
+  useEffect(() => {
+    AudioContextManager.getInstance().setVolume(muted ? 0 : volume);
+  }, [muted, volume]);
+  useEffect(() => {
+    onSoundChange?.(currentSound);
+  }, [currentSound, onSoundChange]);
+
+  const playSound = async (id: string) => {
+    stopSound();
+    const request = ++requestRef.current;
+    setCurrentSound(id);
+    setError("");
+    setLoading(true);
+    try {
+      const manager = AudioContextManager.getInstance();
+      const context = manager.getContext();
+      if (context.state === "suspended") await context.resume();
+      if (request !== requestRef.current) return;
+      const sample = soundSamples.find((sound) => sound.id === id);
+      if (!sample) throw new Error("Unknown sound");
+      const buffer = await manager.loadAudioFile(sample.file);
+      if (request !== requestRef.current) return;
+      const source = context.createBufferSource();
+      source.buffer = buffer;
+      manager.connectSource(source);
+      sourceRef.current = source;
+      source.onended = () => {
+        source.disconnect();
+        if (sourceRef.current !== source) return;
+        sourceRef.current = null;
+        setPlayingSound(null);
+      };
+      source.start();
+      setPlayingSound(id);
+    } catch (cause) {
+      if (request !== requestRef.current) return;
+      console.error("音源の再生に失敗しました", cause);
+      setError("音源を再生できませんでした。もう一度お試しください。");
+      setPlayingSound(null);
+    } finally {
+      if (request === requestRef.current) setLoading(false);
+    }
+  };
+
+  const busy = playingSound !== null || loading;
+  const selected = soundSamples.find((sound) => sound.id === currentSound);
+  const control =
+    "min-h-11 border border-[#435158] px-4 py-2 text-sm text-[#f2f4ee] hover:bg-[#34444c] disabled:opacity-40";
   return (
-    <div className="space-y-4">
+    <section
+      className="border border-[#435158] bg-[#202d34] p-4 sm:p-6"
+      aria-labelledby="sound-bank-title"
+    >
+      <div className="mb-5 flex flex-wrap items-baseline justify-between gap-2">
+        <h3 id="sound-bank-title" className="text-lg font-semibold text-[#f2f4ee]">
+          サウンドバンク
+        </h3>
+        <p className="text-xs text-[#bdc8cd]" aria-live="polite">
+          {loading
+            ? "読み込み中…"
+            : playingSound
+              ? "再生中：" + selected?.label
+              : "選択中：" + selected?.label}
+        </p>
+      </div>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+        {soundSamples.map((sound) => (
+          <button
+            key={sound.id}
+            type="button"
+            aria-pressed={currentSound === sound.id}
+            onClick={() =>
+              busy && currentSound === sound.id ? stopSound() : void playSound(sound.id)
+            }
+            className={
+              "min-h-20 border p-3 text-left " +
+              (currentSound === sound.id
+                ? "border-[#d4e785] bg-[#d4e785] text-[#17252c]"
+                : "border-[#435158] text-[#f2f4ee] hover:bg-[#34444c]")
+            }
+          >
+            <span className="block text-sm font-semibold">{sound.label}</span>
+            <span
+              className={
+                "mt-1 block text-xs " +
+                (currentSound === sound.id ? "text-[#334337]" : "text-[#bdc8cd]")
+              }
+            >
+              {sound.description}
+            </span>
+          </button>
+        ))}
+      </div>
+      <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-[#435158] pt-5">
+        <button
+          type="button"
+          className={control}
+          onClick={() => (busy ? stopSound() : void playSound(currentSound))}
+        >
+          {busy ? "停止 ■" : "再生 ▶"}
+        </button>
+        <button
+          type="button"
+          className={control}
+          onClick={() =>
+            void playSound(soundSamples[Math.floor(Math.random() * soundSamples.length)].id)
+          }
+        >
+          ランダム
+        </button>
+        <button
+          type="button"
+          className={control}
+          aria-pressed={muted}
+          onClick={() => setMuted((value) => !value)}
+        >
+          {muted ? "ミュート解除" : "ミュート"}
+        </button>
+        <label className="flex min-h-11 flex-1 items-center gap-3 text-sm text-[#bdc8cd]">
+          <span className="whitespace-nowrap">音量 {Math.round(volume * 100)}%</span>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value={volume}
+            onChange={(event) => setVolume(Number(event.target.value))}
+            className="min-w-20 flex-1 accent-[#d4e785]"
+          />
+        </label>
+      </div>
+      <p className="mt-3 text-xs text-[#bdc8cd]">
+        音源を押すと再生されます。音量とミュートは鍵盤にも反映されます。
+      </p>
       {error && (
-        <p role="alert" className="text-sm text-amber-200">
+        <p role="alert" className="mt-3 text-sm text-[#f4d39d]">
           {error}
         </p>
       )}
-      {/* サウンドコントロール - モバイル向けにレイアウト調整 */}
-      <motion.div
-        className="bg-black/20 backdrop-blur-sm rounded-lg p-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 sm:justify-between"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="flex-1">
-          <h3 className="text-white text-sm font-medium mb-1">サウンドエフェクト</h3>
-          <p className="text-white/60 text-xs">
-            現在: {soundSamples.find((s) => s.id === currentSound)?.label || currentSound}
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3 sm:gap-2">
-          {/* 音量コントロール - モバイル向けに調整 */}
-          <div className="flex items-center gap-1 w-full sm:w-auto">
-            <button
-              onClick={toggleMute}
-              aria-label={isMuted ? "ミュートを解除" : "ミュートする"}
-              className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10"
-            >
-              {isMuted ? (
-                <FaVolumeMute className="text-white/70 text-lg" />
-              ) : (
-                <FaVolumeUp className="text-white/70 text-lg" />
-              )}
-            </button>
-
-            <input
-              type="range"
-              aria-label="音量"
-              min="0"
-              max="1"
-              step="0.01"
-              value={volume}
-              onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-              className="w-full sm:w-24 accent-purple-500"
-            />
-          </div>
-
-          {/* 再生コントロールボタン - タップしやすく調整 */}
-          <div className="flex items-center gap-3 sm:gap-2 w-full sm:w-auto justify-center">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={selectRandomSound}
-              aria-label="ランダムな音源を再生"
-              className="w-12 h-12 sm:w-10 sm:h-10 rounded-full bg-purple-600/50 flex items-center justify-center text-white"
-            >
-              <FaRandom className="text-lg sm:text-base" />
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={isPlaying ? stopSound : playSound}
-              aria-label={isPlaying ? "音源を停止" : "選択した音源を再生"}
-              className={`w-14 h-14 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white ${
-                isPlaying ? "bg-red-600" : "bg-indigo-600"
-              }`}
-            >
-              {isPlaying ? <FaPause className="text-xl" /> : <FaPlay className="text-xl" />}
-            </motion.button>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* サウンドサンプルグリッド - モバイルでも見やすく調整 */}
-      <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-3">
-        {soundSamples.map((sound) => (
-          <motion.button
-            key={sound.id}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => selectSound(sound.id)}
-            className={`p-4 rounded-lg bg-gradient-to-br ${sound.color} relative overflow-hidden
-              ${currentSound === sound.id ? "ring-2 ring-white" : "opacity-80"}`}
-          >
-            {playingSound === sound.id && (
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: [1, 1.5, 1.8] }}
-                transition={{ repeat: Infinity, duration: 1 }}
-                className="absolute inset-0 bg-white/20 rounded-full mx-auto my-auto w-8 h-8"
-                style={{ left: "calc(50% - 1rem)", top: "calc(50% - 1rem)" }}
-              />
-            )}
-            <div className="relative z-10">
-              <FaMusic className="mb-1 mx-auto text-white/90 text-lg" />
-              <p className="text-sm font-medium text-white mb-1">{sound.label}</p>
-              <p className="text-xs text-white/80">{sound.description}</p>
-            </div>
-          </motion.button>
-        ))}
-      </div>
-    </div>
+    </section>
   );
-};
-
-export default AudioPlayer;
+}

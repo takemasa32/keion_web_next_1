@@ -7,7 +7,6 @@ import { isUpcoming, sortEvents } from "@/app/lib/event-dates";
 import { useSecretFeature } from "./toSecrets/useSecretFeature";
 import FAQ from "./components/FAQ";
 import SNSButton from "./components/SNSButton";
-import PhotoViewer from "./components/PhotoViewer";
 const features = [
   [
     "初心者歓迎",
@@ -159,7 +158,12 @@ export default function Home() {
             {activities.map((item) => (
               <article key={item.image}>
                 <div className="activity-photo">
-                  <PhotoViewer src={"/image/root/" + item.image + ".jpg"} alt={item.alt} />
+                  <Image
+                    src={"/image/root/" + item.image + ".jpg"}
+                    alt={item.alt}
+                    fill
+                    sizes="(max-width: 760px) 100vw, 50vw"
+                  />
                 </div>
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>

@@ -1,8 +1,9 @@
 import { socialLinks } from "@/app/data/site";
+import { FaInstagram, FaXTwitter } from "react-icons/fa6";
 export default function SNSButton() {
   return (
     <div className="social-grid">
-      {socialLinks.map((link, index) => (
+      {socialLinks.map((link) => (
         <a
           className="social-card"
           key={link.href}
@@ -11,7 +12,7 @@ export default function SNSButton() {
           rel="noopener noreferrer"
         >
           <span className="social-symbol" aria-hidden="true">
-            {index === 0 ? "𝕏" : "◎"}
+            {link.name === "Instagram" ? <FaInstagram /> : <FaXTwitter />}
           </span>
           <span>
             <strong>{link.name}</strong>

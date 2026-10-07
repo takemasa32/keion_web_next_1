@@ -313,51 +313,6 @@ h2 {
 .activity-photo img {
   object-fit: cover;
 }
-.photo-open {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-.photo-open > span {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  background: #17252ce0;
-  color: white;
-  padding: 4px 12px;
-  font-size: 11px;
-}
-.photo-dialog {
-  width: min(1000px, 94vw);
-  max-height: 90dvh;
-  border: none;
-  background: var(--paper);
-  color: var(--ink);
-  padding: 20px;
-}
-.photo-dialog::backdrop {
-  background: #081218d9;
-}
-.photo-full {
-  position: relative;
-  height: min(65dvh, 650px);
-}
-.photo-full img {
-  object-fit: contain;
-}
-.photo-close {
-  display: block;
-  margin-left: auto;
-  padding: 10px;
-  min-height: 44px;
-  font-size: 13px;
-}
-.photo-dialog p {
-  font-size: 12px;
-  margin-top: 16px;
-  text-align: center;
-}
 .activity-grid article:first-child .activity-photo {
   aspect-ratio: 4/5;
 }
@@ -485,8 +440,17 @@ h2 {
   margin-top: 4px;
 }
 .social-symbol {
-  font-size: 35px;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+}
+.social-symbol svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .social-arrow {
   margin-left: auto;
